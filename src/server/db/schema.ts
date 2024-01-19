@@ -11,20 +11,20 @@ import {
   boolean,
 } from "drizzle-orm/mysql-core";
 
-export const mysqlTable = mysqlTableCreator((name) => `pmi_quiz_app_${name}`);
+export const mysqlTable = mysqlTableCreator((name) => name);
 
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 32 })
     .primaryKey()
     .$defaultFn(() => createId()),
-  name: varchar("name", { length: 32 }),
-  email: varchar("email", { length: 64 }).notNull(),
+  userName: varchar("userName", { length: 32 }).notNull().unique(),
+  email: varchar("email", { length: 64 }).notNull().unique(),
   password: varchar("password", { length: 64 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
   }),
-  role: mysqlEnum("role", ["ADMIN", "USER"]).default("USER"),
+  role: mysqlEnum("role", ["ADMIN", "USER"]).default("USER").notNull(),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").notNull().default(false),
   image: varchar("image", { length: 255 }),
 });
@@ -34,7 +34,7 @@ export const quizzes = mysqlTable("quiz", {
     .primaryKey()
     .$defaultFn(() => createId()),
   name: varchar("name", { length: 32 }),
-  totalMark: int("totalMarks"),
+  totalMarks: int("totalMarks"),
 });
 
 export const questions = mysqlTable("question", {
@@ -117,7 +117,7 @@ export const verificationTokens = mysqlTable(
   }),
 );
 
-export const passwordResetToken = mysqlTable(
+export const passwordResetTokens = mysqlTable(
   "passwordResetToken",
   {
     id: varchar("id", { length: 255 })
@@ -132,7 +132,7 @@ export const passwordResetToken = mysqlTable(
   }),
 );
 
-export const twoFactorToken = mysqlTable(
+export const twoFactorTokens = mysqlTable(
   "twoFactorToken",
   {
     id: varchar("id", { length: 255 })
