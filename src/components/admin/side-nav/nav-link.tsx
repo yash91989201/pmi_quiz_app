@@ -13,7 +13,7 @@ export default function NavLink({
   label: string;
 }) {
   const pathname = usePathname();
-  console.log(pathname);
+
   return (
     <Link
       href={href}

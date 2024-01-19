@@ -1,169 +1,270 @@
 "use client";
-import useQuiz from "@/hooks/use-quiz";
-import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
 import { Plus, Trash2 } from "lucide-react";
+import type { Control, SubmitHandler } from "react-hook-form";
+
+import { useFieldArray, useForm } from "react-hook-form";
+
+import { QuizFormSchema } from "@/lib/schema";
+import type { QuizFormSchemaType } from "@/lib/schema";
 
 export default function QuizForm() {
-  const {
-    quizId,
-    options,
-    questions,
-    totalMark,
-    getQuestionOptions,
-    addNewQuestion,
-    setQuestionText,
-    appendOptionToQuestion,
-  } = useQuiz();
+  const quizId = createId();
 
-  console.log(questions);
+  const defaultValues: QuizFormSchemaType = {
+    quizId,
+    quizName: "",
+    totalMark: 5,
+    questions: [
+      {
+        id: createId(),
+        questionText: "",
+        mark: 5,
+        options: [
+          {
+            optionText: "",
+            isCorrectOption: true,
+          },
+          {
+            optionText: "",
+            isCorrectOption: false,
+          },
+        ],
+      },
+    ],
+  };
+
+  const quizForm = useForm<QuizFormSchemaType>({
+    defaultValues,
+    resolver: zodResolver(QuizFormSchema),
+    shouldUseNativeValidation: true,
+  });
+
+  const { control, handleSubmit } = quizForm;
+
+  const createQuizAction: SubmitHandler<QuizFormSchemaType> = (data) => {
+    console.log(data);
+  };
+
   return (
-    <div>
-      <div className="flex flex-col gap-3">
-        {questions.map((question) => (
-          <QuestionForm
-            key={question.id}
-            id={question.id}
-            quizId={quizId}
-            questionText={question.questionText}
-            mark={question.mark}
-            options={getQuestionOptions(question.id)}
-            appendOptionToQuestion={appendOptionToQuestion}
-          />
-        ))}
-      </div>
-      <button onClick={addNewQuestion}>Add Question</button>
+    <Form {...quizForm}>
+      <form
+        className="flex w-[480px] flex-col gap-3"
+        onSubmit={handleSubmit(createQuizAction)}
+      >
+        <FormField
+          name="quizName"
+          render={({ field }) => (
+            <div className="flex flex-col gap-3">
+              <FormItem>
+                <FormControl>
+                  <Input {...field} placeholder="Quiz Name" type="text" />
+                </FormControl>
+              </FormItem>
+            </div>
+          )}
+        />
+        <FormField
+          name="totalMark"
+          render={({ field }) => (
+            <div className="flex flex-col gap-3">
+              <FormItem>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Quiz Marks"
+                    type="number"
+                    onChange={(event) =>
+                      field.onChange(Number(event.target.value))
+                    }
+                    className="[-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+                  />
+                </FormControl>
+              </FormItem>
+            </div>
+          )}
+        />
+        <QuestionsField control={control} />
+        <Button>Create Quiz</Button>
+      </form>
+    </Form>
+  );
+}
+
+function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
+  const { fields, append, remove } = useFieldArray({
+    name: "questions",
+    control: control,
+  });
+
+  const addQuestion = () => {
+    append({
+      id: createId(),
+      questionText: "",
+      mark: 5,
+      options: [
+        {
+          optionText: "",
+          isCorrectOption: true,
+        },
+        {
+          optionText: "",
+          isCorrectOption: false,
+        },
+      ],
+    });
+  };
+
+  const deleteQuestion = (index: number) => {
+    remove(index);
+  };
+
+  return (
+    <div className="flex flex-col gap-3">
+      {fields.map((question, index) => (
+        <FormField
+          key={question.id}
+          name={`questions.${index}.questionText`}
+          render={({ field }) => (
+            <div className="flex flex-col gap-3">
+              <FormItem>
+                <FormLabel className="flex items-center  justify-between">
+                  <div>
+                    <span className="text-xl font-bold text-primary">
+                      {index + 1}
+                    </span>
+                    <span>/{fields.length}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => deleteQuestion(index)}
+                    disabled={fields.length == 1}
+                    type="button"
+                  >
+                    <Trash2 />
+                  </Button>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={`Question ${index + 1}`}
+                    type="text"
+                  />
+                </FormControl>
+              </FormItem>
+              <OptionsField questionIndex={index} control={control} />
+            </div>
+          )}
+        />
+      ))}
+      <Button variant="outline" type="button" onClick={() => addQuestion()}>
+        Add Question
+      </Button>
     </div>
   );
 }
 
-type QuestionType = {
-  id: string;
-  quizId: string;
-  questionText: string;
-  mark: number;
-  options: OptionType[];
-  appendOptionToQuestion: (questionId: string) => void;
-};
-
-type OptionType = {
-  quizId: string;
-  questionId: string;
-  optionText: string;
-  isCorrectOption: boolean;
-};
-
-function QuestionForm({
-  id,
-  quizId,
-  questionText,
-  mark,
-  options,
-}: QuestionType) {
-  const questionForm = useForm<QuestionType>({
-    defaultValues: {
-      id,
-      quizId,
-      questionText,
-      mark,
-      options,
-    },
-  });
-  const { control, handleSubmit } = questionForm;
-  const { fields, remove, append } = useFieldArray({
-    name: "options",
+function OptionsField({
+  questionIndex,
+  control,
+}: {
+  questionIndex: number;
+  control: Control<QuizFormSchemaType>;
+}) {
+  const { fields, remove, append, update } = useFieldArray({
     control,
+    name: `questions.${questionIndex}.options`,
   });
 
   const addOption = () => {
     append({
-      quizId,
-      questionId: id,
       optionText: "",
       isCorrectOption: false,
     });
   };
 
-  const removeOption = (index: number) => {
+  const deleteOption = (index: number) => {
     remove(index);
   };
 
-  const submit: SubmitHandler<QuestionType> = (data) => {
-    console.log(data);
+  const updateCorrectOption = ({
+    optionId,
+  }: {
+    index: number;
+    optionId: string;
+  }) => {
+    const allOptions = fields;
+    allOptions.map((option, index) => {
+      update(index, {
+        optionText: option.optionText,
+        isCorrectOption: option.id === optionId,
+      });
+    });
   };
 
   return (
-    <Form {...questionForm}>
-      <form
-        className="flex w-[480px] flex-col gap-3"
-        onSubmit={handleSubmit(submit)}
-      >
+    <div className="grid grid-cols-2 gap-3">
+      {fields.map((option, index) => (
         <FormField
-          name="questionText"
-          control={control}
+          key={option.id}
+          name={`questions.${questionIndex}.options.${index}.optionText`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Question Text</FormLabel>
               <FormControl>
                 <div className="flex items-center gap-3">
-                  <Input {...field} placeholder="Enter question" />
+                  <div
+                    className="flex cursor-pointer items-center  justify-center rounded-full border border-primary p-0.5"
+                    role="button"
+                    onClick={() =>
+                      updateCorrectOption({
+                        index,
+                        optionId: option.id,
+                      })
+                    }
+                  >
+                    <span
+                      className={cn(
+                        "h-2 w-2 rounded-full ",
+                        option.isCorrectOption ? "bg-primary" : "bg-white",
+                      )}
+                    />
+                  </div>
+                  <Input
+                    {...field}
+                    placeholder={`Option ${index + 1}`}
+                    type="text"
+                  />
+                  <Button
+                    variant="ghost"
+                    onClick={() => deleteOption(index)}
+                    disabled={fields.length <= 2}
+                    type="button"
+                  >
+                    <Trash2 size={16} />
+                  </Button>
                 </div>
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="grid grid-cols-2 gap-3">
-          {fields.map((field, index) => (
-            <div key={field.id} className="flex items-center gap-3">
-              <FormField
-                name={`options.${index}.optionText` as const}
-                control={control}
-                render={({ field }) => (
-                  <FormItem>
-                    {/* <FormLabel>Option {index + 1}</FormLabel> */}
-                    <FormControl>
-                      <div className="flex items-center gap-3">
-                        <Input {...field} placeholder={`Option ${index + 1}`} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                variant="ghost"
-                onClick={() => removeOption(index)}
-                disabled={fields.length <= 2}
-              >
-                <Trash2 size={16} />
-              </Button>
-            </div>
-          ))}
-          {fields.length < 4 && (
-            <Button
-              className="flex items-center justify-center gap-3 border"
-              variant="outline"
-              onClick={addOption}
-              type="button"
-            >
-              <Plus />
-              <span>Add Option</span>
-            </Button>
-          )}
-        </div>
-        <button>submit</button>
-      </form>
-    </Form>
+      ))}
+      {fields.length < 4 && (
+        <Button variant="outline" type="button" onClick={() => addOption()}>
+          <Plus />
+          <span>Add Option</span>
+        </Button>
+      )}
+    </div>
   );
 }

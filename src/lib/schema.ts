@@ -63,6 +63,25 @@ const DeleteUserSchema = z.object({
   id: z.string(),
 });
 
+const OptionsSchema = z.object({
+  optionText: z.string().min(1, { message: "Option Text is required." }),
+  isCorrectOption: z.boolean(),
+});
+
+const QuestionsSchema = z.object({
+  id: z.string(),
+  questionText: z.string().min(1, { message: "Question Text is required." }),
+  mark: z.number(),
+  options: z.array(OptionsSchema),
+});
+
+const QuizFormSchema = z.object({
+  quizId: z.string(),
+  quizName: z.string().min(1, { message: "Quiz Name is required" }),
+  totalMark: z.number(),
+  questions: z.array(QuestionsSchema),
+});
+
 // NON-ACTION SCHEMA TYPES
 type UserSchemaType = z.infer<typeof UserSchema>;
 type QuizSchemaType = z.infer<typeof QuizSchema>;
@@ -76,7 +95,7 @@ type TwoFactorConfirmationSchemaType = z.infer<
   typeof TwoFactorConfirmationSchema
 >;
 
-// ACTION SCHEM
+// ACTION SCHEMA TYPES
 type LoginSchemaType = z.infer<typeof LoginSchema>;
 type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 type NewVerificationSchemaType = z.infer<typeof NewVerificationSchema>;
@@ -84,6 +103,9 @@ type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;
 type NewPasswordSchemaType = z.infer<typeof NewPasswordSchema>;
 type CreateNewUserSchemaType = z.infer<typeof CreateNewUserSchema>;
 type DeleteUserSchemaType = z.infer<typeof DeleteUserSchema>;
+type QuizFormSchemaType = z.infer<typeof QuizFormSchema>;
+type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
+type OptionsSchemaType = z.infer<typeof OptionsSchema>;
 
 export {
   // NON-ACTION SCHEMAS
@@ -104,6 +126,9 @@ export {
   NewPasswordSchema,
   CreateNewUserSchema,
   DeleteUserSchema,
+  QuizFormSchema,
+  QuestionsSchema,
+  OptionsSchema,
 };
 
 export type {
@@ -125,4 +150,7 @@ export type {
   NewPasswordSchemaType,
   CreateNewUserSchemaType,
   DeleteUserSchemaType,
+  QuizFormSchemaType,
+  QuestionsSchemaType,
+  OptionsSchemaType,
 };
