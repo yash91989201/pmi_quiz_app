@@ -8,7 +8,8 @@ import { eq } from "drizzle-orm";
 
 import authConfig from "@/config/auth.config";
 import { env } from "@/env";
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth from "next-auth";
+import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
@@ -26,8 +27,8 @@ export const {
   auth,
   signIn,
   signOut,
-  update,
 } = NextAuth({
+  session: { strategy: "jwt" },
   pages: {
     signIn: "/auth/login",
     error: "/auth/error",
@@ -37,12 +38,12 @@ export const {
       await db
         .update(users)
         .set({ emailVerified: new Date() })
-        .where(eq(users.id, user.id));
+        .where(eq(users.id, user.id!));
     },
   },
   callbacks: {
     async signIn({ user }) {
-      const existingUser = await getUserById(user.id);
+      const existingUser = await getUserById(user.id!);
 
       if (!existingUser?.emailVerified) {
         return false;
@@ -64,36 +65,42 @@ export const {
 
       return true;
     },
+
+    // @ts-expect-error: next auth session function type is not working
+    async session({ session, token }) {
+      // eslint-disable-next-line
+      if (token.sub && session.user) session.user.id = token.sub;
+      // eslint-disable-next-line
+      if (token.role && session.user) {
+        // eslint-disable-next-line
+        session.user.role = token.role as UserRole;
+        // eslint-disable-next-line
+        session.user.emailVerified = token.emailVerified;
+      }
+
+      if (session.user) {
+        // eslint-disable-next-line
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
+      return session;
+    },
+
     async jwt({ token }) {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
-      token.role = existingUser.role;
-      token.emailVerified = existingUser.emailVerified;
-      token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      const newToken = {
+        ...token,
+        ...existingUser,
+      };
 
-      return token;
-    },
-
-    async session({ session, token }) {
-      if (token.sub && session.user) session.user.id = token.sub;
-
-      if (token.role && session.user) {
-        session.user.role = token.role as UserRole;
-        session.user.emailVerified = token.emailVerified as Date;
-      }
-
-      if (session.user) {
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      return session;
+      return newToken;
     },
   },
   adapter: DrizzleAdapter(db, mysqlTable),
-  session: { strategy: "jwt" },
   secret: env.AUTH_SECRET,
   ...authConfig,
 });

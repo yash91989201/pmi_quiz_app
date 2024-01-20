@@ -4,9 +4,9 @@ import { env } from "@/env";
 
 export default {
   schema: "./src/server/db/schema.ts",
+  out: "./drizzle",
   driver: "mysql2",
   dbCredentials: {
     uri: env.DATABASE_URL,
   },
-  tablesFilter: ["pmi_quiz_app_*"],
 } satisfies Config;

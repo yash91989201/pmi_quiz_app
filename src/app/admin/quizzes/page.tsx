@@ -1,9 +1,28 @@
+import QuizTable from "@/components/admin/quizzes/quiz-table";
+import URLSearchBox from "@/components/shared/url-search-box";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-export default function QuizzesPage() {
+export default function QuizzesPage({
+  searchParams,
+}: {
+  searchParams: { query?: string; page?: string; per_page?: string };
+}) {
   return (
-    <>
-      <Link href="/admin/quizzes/create-new-quiz">New Quiz</Link>
-    </>
+    <div className="flex flex-col gap-3">
+      <h2 className="text-base  md:text-3xl">Users</h2>
+      <div className="flex gap-3 ">
+        <URLSearchBox />
+        <Link
+          href="/admin/quizzes/create-new-quiz"
+          className={cn(buttonVariants(), "w-32")}
+        >
+          New Quiz
+        </Link>
+      </div>
+
+      <QuizTable searchParams={searchParams} />
+    </div>
   );
 }

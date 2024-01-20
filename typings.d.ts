@@ -45,12 +45,16 @@ type LoginFormSuccessType = {
 };
 
 type CreateNewUserFormErrorsType = {
-  userName?: string;
+  name?: string;
   password?: string;
 };
 
 type DeleteUserFormErrorsType = {
   id?: string;
+};
+
+type CreateQuizFormErrorsType = {
+  message: "";
 };
 
 type LoginFormStatusType =
@@ -87,6 +91,11 @@ type DeleteUserFormStatusType =
   | FormInitialType<DeleteUserFormErrorsType>
   | FormSuccessType
   | FormFailType<DeleteUserFormErrorsType>;
+
+type CreateQuizFormSatusType =
+  | FormInitialType<CreateQuizFormErrorsType>
+  | FormSuccessType
+  | FormFailType<CreateQuizFormErrorsType>;
 
 type UserRole = "ADMIN" | "USER";
 

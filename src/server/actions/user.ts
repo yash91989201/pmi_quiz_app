@@ -92,7 +92,7 @@ async function login(formData: LoginSchemaType): Promise<LoginFormStatusType> {
       email: verificationToken.email,
       token: verificationToken.token,
       subject: "Verify your Email.",
-      userName: existingUser.userName,
+      userName: existingUser.name,
     });
 
     return {
@@ -248,7 +248,7 @@ async function signUp(
     };
   }
 
-  const { userName, email, password } = validatedFormData.data;
+  const { name, email, password } = validatedFormData.data;
 
   const existingUser = await db.query.users.findFirst({
     where: eq(users.email, email),
@@ -266,7 +266,7 @@ async function signUp(
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const createNewUser = await db.insert(users).values({
-    userName,
+    name,
     email,
     password: hashedPassword,
     role: numberOfAdmins === 0 ? "ADMIN" : "USER",
@@ -274,7 +274,7 @@ async function signUp(
 
   const verificationToken = await generateVerificationToken(email);
   await sendVerificationEmail({
-    userName,
+    userName: name,
     email: verificationToken.email,
     token: verificationToken.token,
     subject: "Confirm your SignUp.",
@@ -396,24 +396,25 @@ async function createNewUser(
     };
   }
 
-  const existingUser = await getUserByUserName(validatedFormData.data.userName);
+  const existingUser = await getUserByUserName(validatedFormData.data.name);
 
   if (existingUser) {
     return {
       status: "FAILED",
       errors: {
-        userName: "User with this username already exists.",
+        name: "User with this username already exists.",
       },
       message: "Unable to create user.",
     };
   }
 
-  //  create user with ROLE user
   const hashedPassword = await bcrypt.hash(validatedFormData.data.password, 12);
 
+  //  create user with ROLE user
   const newUser = await db.insert(users).values({
     ...validatedFormData.data,
     password: hashedPassword,
+    role: "USER",
   });
 
   if (newUser[0].affectedRows == 1) {
@@ -489,4 +490,5 @@ export {
   newPassword,
   // actions for ROLE == USER
   createNewUser,
+  deleteUser,
 };

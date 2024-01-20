@@ -1,0 +1,569 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "970d5329-b0d3-490e-86be-5a123fd065f2",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "options": {
+      "name": "options",
+      "columns": {
+        "optionId": {
+          "name": "optionId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "questionId": {
+          "name": "questionId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "optionText": {
+          "name": "optionText",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "isCorrectOption": {
+          "name": "isCorrectOption",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {
+        "questionId_Idx": {
+          "name": "questionId_Idx",
+          "columns": [
+            "questionId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "options_questionId_questions_questionId_fk": {
+          "name": "options_questionId_questions_questionId_fk",
+          "tableFrom": "options",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "questionId"
+          ],
+          "columnsTo": [
+            "questionId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "options_optionId": {
+          "name": "options_optionId",
+          "columns": [
+            "optionId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "passwordResetToken": {
+      "name": "passwordResetToken",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "passwordResetToken_id_token_pk": {
+          "name": "passwordResetToken_id_token_pk",
+          "columns": [
+            "id",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "passwordResetToken_email_unique": {
+          "name": "passwordResetToken_email_unique",
+          "columns": [
+            "email"
+          ]
+        },
+        "passwordResetToken_token_unique": {
+          "name": "passwordResetToken_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      }
+    },
+    "questions": {
+      "name": "questions",
+      "columns": {
+        "questionId": {
+          "name": "questionId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quizId": {
+          "name": "quizId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "questionText": {
+          "name": "questionText",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "mark": {
+          "name": "mark",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "questions_quizId_quizzes_quizId_fk": {
+          "name": "questions_quizId_quizzes_quizId_fk",
+          "tableFrom": "questions",
+          "tableTo": "quizzes",
+          "columnsFrom": [
+            "quizId"
+          ],
+          "columnsTo": [
+            "quizId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "questions_questionId": {
+          "name": "questions_questionId",
+          "columns": [
+            "questionId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "quizzes": {
+      "name": "quizzes",
+      "columns": {
+        "quizId": {
+          "name": "quizId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quizTitle": {
+          "name": "quizTitle",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "totalMarks": {
+          "name": "totalMarks",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "quizzes_quizId": {
+          "name": "quizzes_quizId",
+          "columns": [
+            "quizId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "twoFactorConfimation": {
+      "name": "twoFactorConfimation",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "twoFactorConfimation_userId_users_userId_fk": {
+          "name": "twoFactorConfimation_userId_users_userId_fk",
+          "tableFrom": "twoFactorConfimation",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "userId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "twoFactorConfimation_userId_unique": {
+          "name": "twoFactorConfimation_userId_unique",
+          "columns": [
+            "userId"
+          ]
+        }
+      }
+    },
+    "twoFactorToken": {
+      "name": "twoFactorToken",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "twoFactorToken_id_token_pk": {
+          "name": "twoFactorToken_id_token_pk",
+          "columns": [
+            "id",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "twoFactorToken_email_unique": {
+          "name": "twoFactorToken_email_unique",
+          "columns": [
+            "email"
+          ]
+        },
+        "twoFactorToken_token_unique": {
+          "name": "twoFactorToken_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      }
+    },
+    "userQuizzes": {
+      "name": "userQuizzes",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quizId": {
+          "name": "quizId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "score": {
+          "name": "score",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "enum('NOT_STARTED','IN_PROGRESS','COMPLETED')",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'NOT_STARTED'"
+        }
+      },
+      "indexes": {
+        "quizId_Idx": {
+          "name": "quizId_Idx",
+          "columns": [
+            "quizId"
+          ],
+          "isUnique": false
+        },
+        "userId_Idx": {
+          "name": "userId_Idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "userQuizzes_userId_users_userId_fk": {
+          "name": "userQuizzes_userId_users_userId_fk",
+          "tableFrom": "userQuizzes",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "userId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "userQuizzes_quizId_quizzes_quizId_fk": {
+          "name": "userQuizzes_quizId_quizzes_quizId_fk",
+          "tableFrom": "userQuizzes",
+          "tableTo": "quizzes",
+          "columnsFrom": [
+            "quizId"
+          ],
+          "columnsTo": [
+            "quizId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "id": {
+          "name": "id",
+          "columns": [
+            "quizId",
+            "userId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "users": {
+      "name": "users",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userName": {
+          "name": "userName",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "emailVerified": {
+          "name": "emailVerified",
+          "type": "timestamp(3)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "enum('ADMIN','USER')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'USER'"
+        },
+        "isTwoFactorEnabled": {
+          "name": "isTwoFactorEnabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "image": {
+          "name": "image",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "users_userId": {
+          "name": "users_userId",
+          "columns": [
+            "userId"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "users_userName_unique": {
+          "name": "users_userName_unique",
+          "columns": [
+            "userName"
+          ]
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "verificationToken": {
+      "name": "verificationToken",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "verificationToken_id_token_pk": {
+          "name": "verificationToken_id_token_pk",
+          "columns": [
+            "id",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "verificationToken_email_unique": {
+          "name": "verificationToken_email_unique",
+          "columns": [
+            "email"
+          ]
+        },
+        "verificationToken_token_unique": {
+          "name": "verificationToken_token_unique",
+          "columns": [
+            "token"
+          ]
+        }
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

@@ -38,6 +38,7 @@ import {
   UserRound,
   XCircle,
 } from "lucide-react";
+import { createId } from "@paralleldrive/cuid2";
 
 export default function CreateNewUserForm() {
   const showPasswordToggle = useToggle(false);
@@ -47,7 +48,7 @@ export default function CreateNewUserForm() {
   const createNewUserForm = useForm<CreateNewUserSchemaType>({
     shouldUseNativeValidation: true,
     defaultValues: {
-      email: "example@gmail.com",
+      email: `dummy_email_${createId()}@gmail.com`,
       password: "password",
       role: "USER",
     },
@@ -67,7 +68,7 @@ export default function CreateNewUserForm() {
         onSubmit={handleSubmit(signInAction)}
       >
         <FormField
-          name="userName"
+          name="name"
           control={control}
           render={({ field }) => (
             <FormItem>

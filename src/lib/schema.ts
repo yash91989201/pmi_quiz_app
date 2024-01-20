@@ -33,7 +33,7 @@ const LoginSchema = z.object({
 });
 
 const SignUpSchema = z.object({
-  userName: z.string().min(6, { message: "Full name is required." }),
+  name: z.string().min(6, { message: "Full name is required." }),
   email: z.string().email(),
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
@@ -53,7 +53,7 @@ const NewPasswordSchema = z.object({
 });
 
 const CreateNewUserSchema = z.object({
-  userName: z.string().min(6, { message: "Full name is required." }),
+  name: z.string().min(6, { message: "Full name is required." }),
   email: z.string().email(),
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
@@ -64,12 +64,15 @@ const DeleteUserSchema = z.object({
 });
 
 const OptionsSchema = z.object({
+  optionId: z.string(),
+  questionId: z.string(),
   optionText: z.string().min(1, { message: "Option Text is required." }),
   isCorrectOption: z.boolean(),
 });
 
 const QuestionsSchema = z.object({
-  id: z.string(),
+  questionId: z.string(),
+  quizId: z.string(),
   questionText: z.string().min(1, { message: "Question Text is required." }),
   mark: z.number(),
   options: z.array(OptionsSchema),
@@ -77,7 +80,7 @@ const QuestionsSchema = z.object({
 
 const QuizFormSchema = z.object({
   quizId: z.string(),
-  quizName: z.string().min(1, { message: "Quiz Name is required" }),
+  quizTitle: z.string().min(1, { message: "Quiz Name is required" }),
   totalMark: z.number(),
   questions: z.array(QuestionsSchema),
 });
@@ -94,6 +97,10 @@ type TwoFactorTokenSchemaType = z.infer<typeof TwoFactorTokenSchema>;
 type TwoFactorConfirmationSchemaType = z.infer<
   typeof TwoFactorConfirmationSchema
 >;
+type QuizTableSchemaType = QuizSchemaType & {
+  totalQuestions: number;
+  totalUsers: number;
+};
 
 // ACTION SCHEMA TYPES
 type LoginSchemaType = z.infer<typeof LoginSchema>;
@@ -142,6 +149,7 @@ export type {
   PasswordResetTokenSchemaType,
   TwoFactorTokenSchemaType,
   TwoFactorConfirmationSchemaType,
+  QuizTableSchemaType,
   // ACTION SCHEMA TYPES
   LoginSchemaType,
   SignUpSchemaType,

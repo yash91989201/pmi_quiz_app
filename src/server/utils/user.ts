@@ -19,7 +19,7 @@ async function getUserById(id: string) {
 
 async function getUserByUserName(userName: string) {
   const user = await db.query.users.findFirst({
-    where: eq(users.userName, userName),
+    where: eq(users.name, userName),
   });
   return user;
 }

@@ -27,7 +27,7 @@ const userRouter = createTRPCRouter({
           .findMany({
             where: and(
               eq(users.role, "USER"),
-              like(users.userName, `%${query?.toLowerCase()}%`),
+              like(users.name, `%${query?.toLowerCase()}%`),
             ),
           })
           .prepare();

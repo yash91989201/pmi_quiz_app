@@ -1,43 +1,45 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
-import { Plus, Trash2 } from "lucide-react";
-import type { Control, SubmitHandler } from "react-hook-form";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import type { SubmitHandler } from "react-hook-form";
 
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 
-import { QuizFormSchema } from "@/lib/schema";
 import type { QuizFormSchemaType } from "@/lib/schema";
+import { QuizFormSchema } from "@/lib/schema";
+import { Fragment } from "react";
+import { createQuiz } from "@/server/actions/quiz";
 
 export default function QuizForm() {
   const quizId = createId();
+  const initialQuestionId = createId();
 
   const defaultValues: QuizFormSchemaType = {
     quizId,
-    quizName: "",
+    quizTitle: "Javascript Quiz",
     totalMark: 5,
     questions: [
       {
-        id: createId(),
-        questionText: "",
+        questionId: initialQuestionId,
+        quizId,
+        questionText: "What is hoisting",
         mark: 5,
         options: [
           {
-            optionText: "",
+            optionId: createId(),
+            questionId: initialQuestionId,
+            optionText: "block scope",
             isCorrectOption: true,
           },
           {
-            optionText: "",
+            optionId: createId(),
+            questionId: initialQuestionId,
+            optionText: "global scope",
             isCorrectOption: false,
           },
         ],
@@ -51,10 +53,11 @@ export default function QuizForm() {
     shouldUseNativeValidation: true,
   });
 
-  const { control, handleSubmit } = quizForm;
+  const { handleSubmit, formState } = quizForm;
 
-  const createQuizAction: SubmitHandler<QuizFormSchemaType> = (data) => {
-    console.log(data);
+  const createQuizAction: SubmitHandler<QuizFormSchemaType> = async (data) => {
+    const actionResponse = await createQuiz(data);
+    console.log(actionResponse);
   };
 
   return (
@@ -64,7 +67,7 @@ export default function QuizForm() {
         onSubmit={handleSubmit(createQuizAction)}
       >
         <FormField
-          name="quizName"
+          name="quizTitle"
           render={({ field }) => (
             <div className="flex flex-col gap-3">
               <FormItem>
@@ -84,41 +87,58 @@ export default function QuizForm() {
                   <Input
                     {...field}
                     placeholder="Quiz Marks"
-                    type="number"
+                    type="text"
+                    pattern="[0-9\/]*"
                     onChange={(event) =>
                       field.onChange(Number(event.target.value))
                     }
-                    className="[-moz-appearance:_textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
                   />
                 </FormControl>
               </FormItem>
             </div>
           )}
         />
-        <QuestionsField control={control} />
-        <Button>Create Quiz</Button>
+        <QuestionsField />
+        <Button
+          type="submit"
+          disabled={formState.isSubmitting}
+          className="flex items-center justify-center gap-3 disabled:cursor-not-allowed"
+        >
+          <h6 className="md:text-lg">Create Quiz</h6>
+          {formState.isSubmitting && <Loader2 className="animate-spin" />}
+        </Button>
       </form>
     </Form>
   );
 }
 
-function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
+function QuestionsField() {
+  const { control, getValues } = useFormContext<QuizFormSchemaType>();
+
   const { fields, append, remove } = useFieldArray({
     name: "questions",
     control: control,
   });
 
   const addQuestion = () => {
+    const newQuestionId = createId();
+    const quizId = getValues("quizId");
+
     append({
-      id: createId(),
+      questionId: newQuestionId,
+      quizId,
       questionText: "",
       mark: 5,
       options: [
         {
+          optionId: createId(),
+          questionId: newQuestionId,
           optionText: "",
           isCorrectOption: true,
         },
         {
+          optionId: createId(),
+          questionId: newQuestionId,
           optionText: "",
           isCorrectOption: false,
         },
@@ -133,13 +153,12 @@ function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
   return (
     <div className="flex flex-col gap-3">
       {fields.map((question, index) => (
-        <FormField
-          key={question.id}
-          name={`questions.${index}.questionText`}
-          render={({ field }) => (
-            <div className="flex flex-col gap-3">
+        <Fragment key={question.id}>
+          <FormField
+            name={`questions.${index}.questionText`}
+            render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center  justify-between">
+                <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xl font-bold text-primary">
                       {index + 1}
@@ -154,7 +173,7 @@ function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
                   >
                     <Trash2 />
                   </Button>
-                </FormLabel>
+                </div>
                 <FormControl>
                   <Input
                     {...field}
@@ -163,10 +182,10 @@ function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
                   />
                 </FormControl>
               </FormItem>
-              <OptionsField questionIndex={index} control={control} />
-            </div>
-          )}
-        />
+            )}
+          />
+          <OptionsField questionIndex={index} />
+        </Fragment>
       ))}
       <Button variant="outline" type="button" onClick={() => addQuestion()}>
         Add Question
@@ -175,20 +194,19 @@ function QuestionsField({ control }: { control: Control<QuizFormSchemaType> }) {
   );
 }
 
-function OptionsField({
-  questionIndex,
-  control,
-}: {
-  questionIndex: number;
-  control: Control<QuizFormSchemaType>;
-}) {
+function OptionsField({ questionIndex }: { questionIndex: number }) {
+  const { control, getValues } = useFormContext<QuizFormSchemaType>();
   const { fields, remove, append, update } = useFieldArray({
     control,
     name: `questions.${questionIndex}.options`,
   });
 
   const addOption = () => {
+    const questionId = getValues(`questions.${questionIndex}`).questionId;
+
     append({
+      optionId: createId(),
+      questionId,
       optionText: "",
       isCorrectOption: false,
     });
@@ -198,18 +216,15 @@ function OptionsField({
     remove(index);
   };
 
-  const updateCorrectOption = ({
-    optionId,
-  }: {
-    index: number;
-    optionId: string;
-  }) => {
-    const allOptions = fields;
-    allOptions.map((option, index) => {
-      update(index, {
-        optionText: option.optionText,
-        isCorrectOption: option.id === optionId,
-      });
+  const updateCorrectOption = (index: number) => {
+    const allOptions = getValues(`questions.${questionIndex}.options`);
+    const updatedOptions = allOptions.map((option, optionIndex) => ({
+      ...option,
+      isCorrectOption: optionIndex === index,
+    }));
+
+    updatedOptions.forEach((option, index) => {
+      update(index, option);
     });
   };
 
@@ -226,12 +241,7 @@ function OptionsField({
                   <div
                     className="flex cursor-pointer items-center  justify-center rounded-full border border-primary p-0.5"
                     role="button"
-                    onClick={() =>
-                      updateCorrectOption({
-                        index,
-                        optionId: option.id,
-                      })
-                    }
+                    onClick={() => updateCorrectOption(index)}
                   >
                     <span
                       className={cn(
@@ -248,7 +258,7 @@ function OptionsField({
                   <Button
                     variant="ghost"
                     onClick={() => deleteOption(index)}
-                    disabled={fields.length <= 2}
+                    disabled={fields.length <= 2 || option.isCorrectOption}
                     type="button"
                   >
                     <Trash2 size={16} />

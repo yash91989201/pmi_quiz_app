@@ -62,7 +62,7 @@ export default function SignUpForm() {
           onSubmit={handleSubmit(signInAction)}
         >
           <FormField
-            name="userName"
+            name="name"
             control={control}
             render={({ field }) => (
               <FormItem>
