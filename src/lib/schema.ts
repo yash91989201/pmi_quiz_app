@@ -57,6 +57,7 @@ const CreateNewUserSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
+  quizzes: z.array(z.string()),
 });
 
 const DeleteUserSchema = z.object({

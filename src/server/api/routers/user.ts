@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { users } from "@/server/db/schema";
-import { and, eq, like } from "drizzle-orm";
+import { userQuizzes, users } from "@/server/db/schema";
+import { and, eq, like, sql } from "drizzle-orm";
 import z from "zod";
 
 const userRouter = createTRPCRouter({
@@ -17,10 +17,29 @@ const userRouter = createTRPCRouter({
       const { query, page = 0, per_page = 0 } = input;
 
       if (query.length === 0) {
-        usersQuery = ctx.db.query.users
-          .findMany({
-            where: eq(users.role, "USER"),
+        usersQuery = ctx.db
+          .select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            emailVerified: users.emailVerified,
+            role: users.role,
+            isTwoFactorEnabled: users.isTwoFactorEnabled,
+            image: users.image,
+            quizzesAdded: sql<number>`COUNT(${userQuizzes.userQuizId}) AS quizzesAdded`,
           })
+          .from(users)
+          .leftJoin(userQuizzes, eq(users.id, userQuizzes.userId))
+          .groupBy(
+            users.id,
+            users.name,
+            users.email,
+            users.emailVerified,
+            users.role,
+            users.isTwoFactorEnabled,
+            users.image,
+          )
+          .where(eq(users.role, "USER"))
           .prepare();
       } else {
         usersQuery = ctx.db.query.users

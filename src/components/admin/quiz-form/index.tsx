@@ -5,19 +5,23 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createId } from "@paralleldrive/cuid2";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Loader2, Plus, Trash2, XCircle } from "lucide-react";
 import type { SubmitHandler } from "react-hook-form";
 
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 
 import type { QuizFormSchemaType } from "@/lib/schema";
 import { QuizFormSchema } from "@/lib/schema";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { createQuiz } from "@/server/actions/quiz";
+import { useRouter } from "next/navigation";
 
 export default function QuizForm() {
   const quizId = createId();
   const initialQuestionId = createId();
+  const [actionResponse, setActionResponse] =
+    useState<CreateQuizFormSatusType>();
+  const router = useRouter();
 
   const defaultValues: QuizFormSchemaType = {
     quizId,
@@ -53,11 +57,18 @@ export default function QuizForm() {
     shouldUseNativeValidation: true,
   });
 
-  const { handleSubmit, formState } = quizForm;
+  const { handleSubmit, formState, reset } = quizForm;
 
   const createQuizAction: SubmitHandler<QuizFormSchemaType> = async (data) => {
     const actionResponse = await createQuiz(data);
-    console.log(actionResponse);
+    setActionResponse(actionResponse);
+    if (actionResponse.status === "SUCCESS") {
+      setTimeout(() => {
+        router.replace("/admin/quizzes");
+      }, 1500);
+    } else {
+      reset();
+    }
   };
 
   return (
@@ -99,6 +110,19 @@ export default function QuizForm() {
           )}
         />
         <QuestionsField />
+        {actionResponse?.status === "SUCCESS" && (
+          <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
+            <CheckCircle2 />
+            <p>{actionResponse.message}</p>
+          </div>
+        )}
+
+        {actionResponse?.status === "FAILED" && (
+          <div className="flex items-center justify-start gap-3 rounded-md bg-red-100 p-3 text-sm text-red-600 [&>svg]:size-4">
+            <XCircle />
+            <p>{actionResponse.message}</p>
+          </div>
+        )}
         <Button
           type="submit"
           disabled={formState.isSubmitting}

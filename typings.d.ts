@@ -54,7 +54,7 @@ type DeleteUserFormErrorsType = {
 };
 
 type CreateQuizFormErrorsType = {
-  message: "";
+  message: string;
 };
 
 type LoginFormStatusType =

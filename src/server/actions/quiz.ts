@@ -3,10 +3,11 @@ import { QuizFormSchema } from "@/lib/schema";
 import type { OptionSchemaType, QuizFormSchemaType } from "@/lib/schema";
 import { db } from "@/server/db";
 import { options, questions, quizzes } from "@/server/db/schema";
+import { revalidatePath } from "next/cache";
 
 async function createQuiz(
   formData: QuizFormSchemaType,
-): Promise<CreateNewUserFormStatusType> {
+): Promise<CreateQuizFormSatusType> {
   const validatedFormData = QuizFormSchema.safeParse(formData);
 
   if (!validatedFormData.success) {
@@ -43,6 +44,7 @@ async function createQuiz(
   await db.insert(questions).values(allQuestions);
   await db.insert(options).values(allOptions);
 
+  revalidatePath("/admin/quizzes");
   return {
     status: "SUCCESS",
     message: "Quiz created.",

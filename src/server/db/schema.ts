@@ -1,6 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
 import {
-  index,
   int,
   mysqlTableCreator,
   primaryKey,
@@ -33,8 +32,8 @@ export const quizzes = mysqlTable("quiz", {
   quizId: varchar("quizId", { length: 32 })
     .primaryKey()
     .$defaultFn(() => createId()),
-  quizTitle: varchar("quizTitle", { length: 32 }),
-  totalMark: int("totalMarks"),
+  quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
+  totalMark: int("totalMarks").notNull(),
 });
 
 export const questions = mysqlTable("question", {
@@ -50,27 +49,21 @@ export const questions = mysqlTable("question", {
   mark: int("mark"),
 });
 
-export const options = mysqlTable(
-  "option",
-  {
-    optionId: varchar("optionId", { length: 32 }).primaryKey(),
-    questionId: varchar("questionId", { length: 32 })
-      .notNull()
-      .references(() => questions.questionId, {
-        onDelete: "cascade",
-      }),
-    optionText: varchar("optionText", { length: 255 }),
-    isCorrectOption: boolean("isCorrectOption").default(false),
-  },
-  (table) => {
-    return {
-      questionIdIdx: index("questionId_Idx").on(table.questionId),
-    };
-  },
-);
+export const options = mysqlTable("option", {
+  optionId: varchar("optionId", { length: 32 }).primaryKey(),
+  questionId: varchar("questionId", { length: 32 })
+    .notNull()
+    .references(() => questions.questionId, {
+      onDelete: "cascade",
+    }),
+  optionText: varchar("optionText", { length: 255 }),
+  isCorrectOption: boolean("isCorrectOption").default(false),
+});
 
-export const userQuizzes = mysqlTable("userQuizze", {
-  userQuizId: varchar("userId", { length: 32 }).primaryKey(),
+export const userQuizzes = mysqlTable("userQuizzes", {
+  userQuizId: varchar("userQuizId", { length: 32 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
   userId: varchar("userId", { length: 32 })
     .notNull()
     .references(() => users.id, {
@@ -81,7 +74,7 @@ export const userQuizzes = mysqlTable("userQuizze", {
     .references(() => quizzes.quizId, {
       onDelete: "cascade",
     }),
-  score: int("score"),
+  score: int("score").default(0),
   status: mysqlEnum("status", [
     "NOT_STARTED",
     "IN_PROGRESS",

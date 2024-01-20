@@ -408,16 +408,35 @@ async function createNewUser(
     };
   }
 
-  const hashedPassword = await bcrypt.hash(validatedFormData.data.password, 12);
+  const { email, name, password, quizzes } = validatedFormData.data;
+  const hashedPassword = await bcrypt.hash(password, 12);
 
   //  create user with ROLE user
   const newUser = await db.insert(users).values({
-    ...validatedFormData.data,
+    email,
+    name,
     password: hashedPassword,
     role: "USER",
   });
 
-  if (newUser[0].affectedRows == 1) {
+  // user the quizIds to create new record in userQuiz table
+  const createdUser = await getUserByEmail(email);
+  if (!createdUser) {
+    return {
+      status: "FAILED",
+      message: "Unable to create user, please try again.",
+    };
+  }
+  const quizzesSelectedForUser = quizzes.map((quiz) => ({
+    quizId: quiz,
+    userId: createdUser?.id,
+  }));
+
+  const newUserQuizzes = await db
+    .insert(userQuizzes)
+    .values(quizzesSelectedForUser);
+
+  if (newUser[0].affectedRows == 1 && newUserQuizzes[0].affectedRows >= 1) {
     return {
       status: "SUCCESS",
       message: "User Created Successfully.",

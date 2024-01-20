@@ -6,11 +6,21 @@ import { cn, formatDate } from "@/lib/utils";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
-    accessorKey: "userName",
+    accessorKey: "name",
     header: "Username",
+    cell: ({ row }) => (
+      <Link
+        href={`/admin/users/${row.original.id}`}
+        className={cn(buttonVariants({ variant: "link" }), "p-0 text-gray-700")}
+      >
+        {row.original.name}
+      </Link>
+    ),
   },
 
   {
@@ -52,6 +62,10 @@ const userTableColumns: ColumnDef<UserSchemaType>[] = [
       );
     },
   },
+  {
+    accessorKey: "quizzesAdded",
+    header: "Quizzes Added",
+  },
 ];
 
 const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
@@ -72,5 +86,7 @@ const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
     header: "Total Users",
   },
 ];
+
+// const userQuizzesTableColumns=[]
 
 export { userTableColumns, quizzesTableColumns };

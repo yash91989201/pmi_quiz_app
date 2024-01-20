@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
 import { createNewUser } from "@/server/actions/user";
@@ -39,9 +39,23 @@ import {
   XCircle,
 } from "lucide-react";
 import { createId } from "@paralleldrive/cuid2";
+import { api } from "@/trpc/react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
 
 export default function CreateNewUserForm() {
   const showPasswordToggle = useToggle(false);
+  const { data, isLoading } = api.quiz.getAll.useQuery({});
+  const router = useRouter();
+
+  const availableQuizzes =
+    data?.quizzes.map((quiz) => ({
+      quizId: quiz.quizId,
+      quizTitle: quiz.quizTitle,
+    })) ?? [];
+
+  const quizIds = availableQuizzes.map((quiz) => quiz.quizTitle);
+
   const [actionResponse, setActionResponse] =
     useState<CreateNewUserFormStatusType>();
 
@@ -51,14 +65,21 @@ export default function CreateNewUserForm() {
       email: `dummy_email_${createId()}@gmail.com`,
       password: "password",
       role: "USER",
+      quizzes: quizIds,
     },
+
     resolver: zodResolver(CreateNewUserSchema),
   });
-  const { control, handleSubmit, formState } = createNewUserForm;
+  const { control, handleSubmit, formState, reset } = createNewUserForm;
 
-  const signInAction: SubmitHandler<SignUpSchemaType> = async (data) => {
+  const signInAction: SubmitHandler<CreateNewUserSchemaType> = async (data) => {
     const actionResponse = await createNewUser(data);
     setActionResponse(actionResponse);
+    if (actionResponse.status === "SUCCESS") {
+      router.replace("/admin/users");
+    } else {
+      reset();
+    }
   };
 
   return (
@@ -132,6 +153,12 @@ export default function CreateNewUserForm() {
           )}
         />
 
+        {isLoading ? (
+          <AvailableQuizzesLoading />
+        ) : (
+          <AvailableQuizzesField availableQuizzes={availableQuizzes} />
+        )}
+
         {actionResponse?.status === "SUCCESS" && (
           <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
             <CheckCircle2 />
@@ -156,5 +183,81 @@ export default function CreateNewUserForm() {
         </Button>
       </form>
     </Form>
+  );
+}
+
+function AvailableQuizzesField({
+  availableQuizzes,
+}: {
+  availableQuizzes: {
+    quizId: string;
+    quizTitle: string;
+  }[];
+}) {
+  const { control } = useFormContext<CreateNewUserSchemaType>();
+
+  return (
+    <>
+      {availableQuizzes.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          <p className="text-lg font-medium">Add Quiz for New User</p>
+          <FormField
+            control={control}
+            name="quizzes"
+            render={() => (
+              <FormItem>
+                {availableQuizzes.map((quiz) => (
+                  <FormField
+                    key={quiz.quizId}
+                    control={control}
+                    name="quizzes"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={quiz.quizId}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(quiz.quizId)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([
+                                      ...field.value,
+                                      quiz.quizId,
+                                    ])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== quiz.quizId,
+                                      ),
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {quiz.quizTitle}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      ) : (
+        <p>No quizzes available.</p>
+      )}
+    </>
+  );
+}
+
+function AvailableQuizzesLoading() {
+  return (
+    <div>
+      <p>Loading available Quizzes.</p>
+    </div>
   );
 }
