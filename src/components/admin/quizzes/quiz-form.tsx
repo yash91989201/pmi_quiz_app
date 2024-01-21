@@ -1,24 +1,42 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createId } from "@paralleldrive/cuid2";
-import { CheckCircle2, Loader2, Plus, Trash2, XCircle } from "lucide-react";
-import type { SubmitHandler } from "react-hook-form";
-
-import { useFieldArray, useForm, useFormContext } from "react-hook-form";
-
-import type { QuizFormSchemaType } from "@/lib/schema";
-import { QuizFormSchema } from "@/lib/schema";
 import { Fragment, useState } from "react";
-import { createQuiz } from "@/server/actions/quiz";
 import { useRouter } from "next/navigation";
+import { createId } from "@paralleldrive/cuid2";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm, useFormContext } from "react-hook-form";
+// ACTIONS
+import { createQuiz } from "@/server/actions/quiz";
+// UTILS
+import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
+// SCHEMAS
+import { QuizFormSchema } from "@/lib/schema";
+// TYPES
+import type { SubmitHandler } from "react-hook-form";
+import type { QuizFormSchemaType } from "@/lib/schema";
+// CUSTOM COMPONENTS
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+// ICONS
+import { CheckCircle2, Loader2, Plus, Trash2, XCircle } from "lucide-react";
 
 export default function QuizForm() {
   const quizId = createId();
   const initialQuestionId = createId();
+  const { data, isLoading } = api.user.getUsersId.useQuery();
+
+  const availableUsers = data ?? [];
+  const usersId = availableUsers?.map((user) => user.id) ?? [];
+
   const [actionResponse, setActionResponse] =
     useState<CreateQuizFormSatusType>();
   const router = useRouter();
@@ -27,6 +45,7 @@ export default function QuizForm() {
     quizId,
     quizTitle: "Javascript Quiz",
     totalMark: 5,
+    usersId,
     questions: [
       {
         questionId: initialQuestionId,
@@ -57,7 +76,7 @@ export default function QuizForm() {
     shouldUseNativeValidation: true,
   });
 
-  const { handleSubmit, formState, reset } = quizForm;
+  const { handleSubmit, formState, reset, watch } = quizForm;
 
   const createQuizAction: SubmitHandler<QuizFormSchemaType> = async (data) => {
     const actionResponse = await createQuiz(data);
@@ -70,6 +89,10 @@ export default function QuizForm() {
       reset();
     }
   };
+
+  const totalMarks = watch("questions")
+    .map((question) => question.mark)
+    .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
   return (
     <Form {...quizForm}>
@@ -89,27 +112,19 @@ export default function QuizForm() {
             </div>
           )}
         />
-        <FormField
-          name="totalMark"
-          render={({ field }) => (
-            <div className="flex flex-col gap-3">
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Quiz Marks"
-                    type="text"
-                    pattern="[0-9\/]*"
-                    onChange={(event) =>
-                      field.onChange(Number(event.target.value))
-                    }
-                  />
-                </FormControl>
-              </FormItem>
-            </div>
-          )}
-        />
+
+        <div className="flex gap-2">
+          <span>Total Marks: </span>
+          <span>{totalMarks}</span>
+        </div>
         <QuestionsField />
+
+        {isLoading ? (
+          <AvailableUsersLoading />
+        ) : (
+          <AvailableUsersField availableUsers={availableUsers} />
+        )}
+
         {actionResponse?.status === "SUCCESS" && (
           <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
             <CheckCircle2 />
@@ -178,36 +193,56 @@ function QuestionsField() {
     <div className="flex flex-col gap-3">
       {fields.map((question, index) => (
         <Fragment key={question.id}>
-          <FormField
-            name={`questions.${index}.questionText`}
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-xl font-bold text-primary">
-                      {index + 1}
-                    </span>
-                    <span>/{fields.length}</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    onClick={() => deleteQuestion(index)}
-                    disabled={fields.length == 1}
-                    type="button"
-                  >
-                    <Trash2 />
-                  </Button>
-                </div>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder={`Question ${index + 1}`}
-                    type="text"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <div>
+            <span className="text-xl font-bold text-primary">{index + 1}</span>
+            <span>/{fields.length}</span>
+          </div>
+          <div className="flex gap-3">
+            <FormField
+              name={`questions.${index}.questionText`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder={`Question ${index + 1}`}
+                      type="text"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              name={`questions.${index}.mark`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Mark"
+                      pattern="[0-9\/]*"
+                      minLength={1}
+                      onChange={(event) =>
+                        field.onChange(Number(event.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              variant="ghost"
+              onClick={() => deleteQuestion(index)}
+              disabled={fields.length == 1}
+              type="button"
+            >
+              <Trash2 />
+            </Button>
+          </div>
+
           <OptionsField questionIndex={index} />
         </Fragment>
       ))}
@@ -299,6 +334,79 @@ function OptionsField({ questionIndex }: { questionIndex: number }) {
           <span>Add Option</span>
         </Button>
       )}
+    </div>
+  );
+}
+
+function AvailableUsersField({
+  availableUsers,
+}: {
+  availableUsers: {
+    id: string;
+    name: string;
+  }[];
+}) {
+  const { control } = useFormContext<QuizFormSchemaType>();
+
+  return (
+    <>
+      {availableUsers.length > 0 ? (
+        <div className="flex flex-col gap-3">
+          <p className="text-lg font-medium">Add Users to this quiz.</p>
+          <FormField
+            control={control}
+            name="usersId"
+            render={() => (
+              <FormItem>
+                {availableUsers.map((user) => (
+                  <FormField
+                    key={user.id}
+                    control={control}
+                    name="usersId"
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={user.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value?.includes(user.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...field.value, user.id])
+                                  : field.onChange(
+                                      field.value?.filter(
+                                        (value) => value !== user.id,
+                                      ),
+                                    );
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {user.name}
+                          </FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      ) : (
+        <p>No quizzes available.</p>
+      )}
+    </>
+  );
+}
+
+function AvailableUsersLoading() {
+  return (
+    <div>
+      <p>Loading available Quizzes.</p>
     </div>
   );
 }

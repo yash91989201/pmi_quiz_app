@@ -1,10 +1,14 @@
-import PaginationWtihEllepsis from "@/components/shared/pagination-with-ellepsis";
-import RowsPerPage from "@/components/shared/rows-per-page";
-import DataTable from "@/components/ui/data-table";
-import { quizzesTableColumns } from "@/config/data-table-column-defs";
-import type { QuizTableSchemaType } from "@/lib/schema";
-import { api } from "@/trpc/server";
 import { redirect } from "next/navigation";
+// UTILS
+import { api } from "@/trpc/server";
+// TYPES
+import type { QuizTableSchemaType } from "@/lib/schema";
+// CUSTOM COMPONENTS
+import DataTable from "@/components/ui/data-table";
+import RowsPerPage from "@/components/shared/rows-per-page";
+import PaginationWtihEllepsis from "@/components/shared/pagination-with-ellepsis";
+// CONSTANTS
+import { quizzesTableColumns } from "@/config/data-table-column-defs";
 
 export default async function QuizTable({
   searchParams,

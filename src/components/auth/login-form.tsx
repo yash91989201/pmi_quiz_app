@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
@@ -36,9 +35,6 @@ import {
 } from "lucide-react";
 
 export default function LoginForm() {
-  const searchParams = useSearchParams();
-  const urlErrorMsg = searchParams.get("error");
-
   const showPasswordToggle = useToggle(false);
   const twoFactorAuthenticationField = useToggle(false);
 
@@ -174,13 +170,6 @@ export default function LoginForm() {
             <div className="flex items-center justify-start gap-3 rounded-md bg-red-100 p-3 text-sm text-red-600 [&>svg]:size-4">
               <XCircle />
               <p>{actionResponse.message}</p>
-            </div>
-          )}
-
-          {urlErrorMsg === "OAuthAccountNotLinked" && (
-            <div className="flex items-center justify-start gap-3 rounded-md bg-red-100 p-3 text-sm text-red-600 [&>svg]:size-4">
-              <XCircle />
-              <p>Email already in use with different provider.</p>
             </div>
           )}
 

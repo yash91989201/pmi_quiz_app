@@ -1,16 +1,20 @@
 "use client";
 import { useState } from "react";
-import { useFieldArray, useForm, useFormContext } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { createId } from "@paralleldrive/cuid2";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useFormContext } from "react-hook-form";
 // ACTIONS
 import { createNewUser } from "@/server/actions/user";
 // CUSTOM HOOKS
 import useToggle from "@/hooks/use-toggle";
+// UTILS
+import { api } from "@/trpc/react";
 // SCHEMAS
 import { CreateNewUserSchema } from "@/lib/schema";
 // TYPES
 import type { SubmitHandler } from "react-hook-form";
-import type { CreateNewUserSchemaType, SignUpSchemaType } from "@/lib/schema";
+import type { CreateNewUserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import {
   Form,
@@ -28,6 +32,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 // ICONS
 import {
   CheckCircle2,
@@ -38,23 +43,14 @@ import {
   UserRound,
   XCircle,
 } from "lucide-react";
-import { createId } from "@paralleldrive/cuid2";
-import { api } from "@/trpc/react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useRouter } from "next/navigation";
 
 export default function CreateNewUserForm() {
   const showPasswordToggle = useToggle(false);
-  const { data, isLoading } = api.quiz.getAll.useQuery({});
+  const { data: quizzesData, isLoading } = api.quiz.getQuizzes.useQuery();
   const router = useRouter();
 
-  const availableQuizzes =
-    data?.quizzes.map((quiz) => ({
-      quizId: quiz.quizId,
-      quizTitle: quiz.quizTitle,
-    })) ?? [];
-
-  const quizIds = availableQuizzes.map((quiz) => quiz.quizTitle);
+  const availableQuizzes = quizzesData ?? [];
+  const quizzesId = availableQuizzes.map((quiz) => quiz.quizId);
 
   const [actionResponse, setActionResponse] =
     useState<CreateNewUserFormStatusType>();
@@ -65,7 +61,7 @@ export default function CreateNewUserForm() {
       email: `dummy_email_${createId()}@gmail.com`,
       password: "password",
       role: "USER",
-      quizzes: quizIds,
+      quizzesId,
     },
 
     resolver: zodResolver(CreateNewUserSchema),
@@ -203,14 +199,14 @@ function AvailableQuizzesField({
           <p className="text-lg font-medium">Add Quiz for New User</p>
           <FormField
             control={control}
-            name="quizzes"
+            name="quizzesId"
             render={() => (
               <FormItem>
                 {availableQuizzes.map((quiz) => (
                   <FormField
                     key={quiz.quizId}
                     control={control}
-                    name="quizzes"
+                    name="quizzesId"
                     render={({ field }) => {
                       return (
                         <FormItem

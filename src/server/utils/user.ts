@@ -1,7 +1,8 @@
-import { db } from "@/server/db";
-import { users } from "@/server/db/schema";
-// import { auth } from "@/server/utils/auth";
 import { eq } from "drizzle-orm";
+// UTILS
+import { db } from "@/server/db";
+// SCHEMAS
+import { users } from "@/server/db/schema";
 
 async function getUserByEmail(email: string) {
   const user = await db.query.users.findFirst({
@@ -23,11 +24,6 @@ async function getUserByUserName(userName: string) {
   });
   return user;
 }
-
-// async function currentUser() {
-//   const session = await auth();
-//   return session?.user;
-// }
 
 const adminCount = async () => {
   const adminList = await db.query.users.findMany({

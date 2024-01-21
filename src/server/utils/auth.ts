@@ -1,14 +1,16 @@
+import NextAuth from "next-auth";
+import { eq } from "drizzle-orm";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-//
+// ACTIONS
+// CUSTOM HOOKS
+// UTILS
+import { env } from "@/env";
 import { db } from "@/server/db";
+import authConfig from "@/config/auth.config";
+import { getUserById } from "@/server/utils/user";
 import { mysqlTable, twoFactorConfimation, users } from "@/server/db/schema";
 import { getTwoFactorConfirmationByUserId } from "@/server/utils/token";
-import { getUserById } from "@/server/utils/user";
-import { eq } from "drizzle-orm";
-
-import authConfig from "@/config/auth.config";
-import { env } from "@/env";
-import NextAuth from "next-auth";
+// TYPES
 import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {

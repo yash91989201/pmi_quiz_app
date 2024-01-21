@@ -1,13 +1,15 @@
+import crypto from "crypto";
+import { eq } from "drizzle-orm";
+import { createId } from "@paralleldrive/cuid2";
+// UTILS
 import { db } from "@/server/db";
+// SCHEMAS
 import {
   passwordResetTokens,
   twoFactorConfimation,
   twoFactorTokens,
   verificationTokens,
 } from "@/server/db/schema";
-import { createId } from "@paralleldrive/cuid2";
-import crypto from "crypto";
-import { eq } from "drizzle-orm";
 
 async function generateVerificationToken(email: string) {
   const token = createId();

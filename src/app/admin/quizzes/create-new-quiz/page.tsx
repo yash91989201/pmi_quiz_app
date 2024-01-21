@@ -1,4 +1,5 @@
-import QuizForm from "@/components/admin/quiz-form";
+// CUSTOM COMPONENTS
+import QuizForm from "@/components/admin/quizzes/quiz-form";
 
 export default function CreateNewQuiz() {
   return (

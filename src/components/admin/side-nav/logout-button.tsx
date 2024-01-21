@@ -1,13 +1,14 @@
 "use client";
+import { useFormStatus } from "react-dom";
+// CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/server/actions/user";
 // ICONS
 import { Loader2, Power } from "lucide-react";
-import { useFormStatus } from "react-dom";
 
 export default function LogoutButton() {
   return (
-    <form action={logoutUser} className="w-full">
+    <form action={logoutUser}>
       <LogoutButtonWithStatus />
     </form>
   );
@@ -18,7 +19,7 @@ function LogoutButtonWithStatus() {
 
   return (
     <Button
-      className="justify-between text-lg [&>svg]:size-4"
+      className="w-full justify-between text-lg [&>svg]:size-4"
       variant="outline"
     >
       <span>Logout</span>

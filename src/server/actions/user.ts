@@ -1,37 +1,31 @@
 "use server";
-import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { AuthError } from "next-auth";
+import { and, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 // UTILS
-import { db } from "@/server/db";
-import { signIn, signOut } from "@/server/utils/auth";
+import {
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+  sendTwoFactorTokenEmail,
+} from "@/server/utils/mail";
 import {
   adminCount,
   getUserByEmail,
   getUserByUserName,
 } from "@/server/utils/user";
 import {
-  generatePasswordResetToken,
-  generateVerificationToken,
-  getPasswordResetTokenByToken,
-  getVerificationTokenByToken,
   generateTwoFactorToken,
   getTwoFactorTokenByEmail,
+  generateVerificationToken,
+  generatePasswordResetToken,
+  getVerificationTokenByToken,
+  getPasswordResetTokenByToken,
   getTwoFactorConfirmationByUserId,
 } from "@/server/utils/token";
-import {
-  sendPasswordResetEmail,
-  sendVerificationEmail,
-  sendTwoFactorTokenEmail,
-} from "@/server/utils/mail";
+import { db } from "@/server/db";
+import { signIn, signOut } from "@/server/utils/auth";
 // SCHEMAS
-import {
-  verificationTokens,
-  users,
-  twoFactorTokens,
-  twoFactorConfimation,
-  userQuizzes,
-} from "@/server/db/schema";
 import {
   CreateNewUserSchema,
   DeleteUserSchema,
@@ -40,6 +34,13 @@ import {
   ResetPasswordSchema,
   SignUpSchema,
 } from "@/lib/schema";
+import {
+  verificationTokens,
+  users,
+  twoFactorTokens,
+  twoFactorConfimation,
+  userQuizzes,
+} from "@/server/db/schema";
 // TYPES
 import type {
   NewVerificationSchemaType,
@@ -408,7 +409,7 @@ async function createNewUser(
     };
   }
 
-  const { email, name, password, quizzes } = validatedFormData.data;
+  const { email, name, password, quizzesId } = validatedFormData.data;
   const hashedPassword = await bcrypt.hash(password, 12);
 
   //  create user with ROLE user
@@ -427,16 +428,29 @@ async function createNewUser(
       message: "Unable to create user, please try again.",
     };
   }
-  const quizzesSelectedForUser = quizzes.map((quiz) => ({
-    quizId: quiz,
-    userId: createdUser?.id,
-  }));
 
-  const newUserQuizzes = await db
-    .insert(userQuizzes)
-    .values(quizzesSelectedForUser);
+  if (quizzesId.length > 0) {
+    const quizzesSelectedForUser = quizzesId.map((quiz) => ({
+      quizId: quiz,
+      userId: createdUser?.id,
+    }));
 
-  if (newUser[0].affectedRows == 1 && newUserQuizzes[0].affectedRows >= 1) {
+    const newUserQuizzes = await db
+      .insert(userQuizzes)
+      .values(quizzesSelectedForUser);
+
+    revalidatePath("/admin/quizzes");
+    if (newUser[0].affectedRows == 1 && newUserQuizzes[0].affectedRows >= 1) {
+      return {
+        status: "SUCCESS",
+        message: "User Created and quizzes added successfully.",
+      };
+    }
+  }
+
+  revalidatePath("/admin/users");
+
+  if (newUser[0].affectedRows == 1) {
     return {
       status: "SUCCESS",
       message: "User Created Successfully.",

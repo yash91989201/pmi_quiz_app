@@ -1,8 +1,10 @@
+import Link from "next/link";
+// UTILS
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+// CUSTOM COMPONENTS
 import UserTable from "@/components/admin/user/user-table";
 import URLSearchBox from "@/components/shared/url-search-box";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 export default function UsersPage({
   searchParams,

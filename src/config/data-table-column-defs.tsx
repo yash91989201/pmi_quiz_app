@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 // UTILS
 import { cn, formatDate } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 // TYPES
 import type { ColumnDef } from "@tanstack/react-table";
-
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
+// CUSTOM COMPONENTS
+import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
 
 const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -63,8 +64,8 @@ const userTableColumns: ColumnDef<UserSchemaType>[] = [
     },
   },
   {
-    accessorKey: "quizzesAdded",
-    header: "Quizzes Added",
+    accessorKey: "totalQuizzes",
+    header: "Total Quizzes",
   },
 ];
 
@@ -84,6 +85,15 @@ const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "totalUsers",
     header: "Total Users",
+  },
+  {
+    accessorKey: "Actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div>
+        <DeleteQuizModal quizId={row.original.quizId} />
+      </div>
+    ),
   },
 ];
 

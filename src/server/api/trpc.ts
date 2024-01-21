@@ -7,12 +7,12 @@
  * need to use are documented accordingly near the end.
  */
 
-import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-
-import { auth } from "@/server/utils/auth";
+import { initTRPC, TRPCError } from "@trpc/server";
+// UTILS
 import { db } from "@/server/db";
+import { auth } from "@/server/utils/auth";
 
 /**
  * 1. CONTEXT

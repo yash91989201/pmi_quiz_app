@@ -1,6 +1,6 @@
 import * as z from "zod";
 import { createSelectSchema } from "drizzle-zod";
-// DB SCHEMAS
+// SCHEMAS
 import {
   passwordResetTokens,
   questions,
@@ -57,7 +57,7 @@ const CreateNewUserSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
-  quizzes: z.array(z.string()),
+  quizzesId: z.array(z.string()).default([]),
 });
 
 const DeleteUserSchema = z.object({
@@ -75,7 +75,7 @@ const QuestionsSchema = z.object({
   questionId: z.string(),
   quizId: z.string(),
   questionText: z.string().min(1, { message: "Question Text is required." }),
-  mark: z.number(),
+  mark: z.number().min(1, { message: "Min. mark is 1" }),
   options: z.array(OptionsSchema),
 });
 
@@ -83,7 +83,12 @@ const QuizFormSchema = z.object({
   quizId: z.string(),
   quizTitle: z.string().min(1, { message: "Quiz Name is required" }),
   totalMark: z.number(),
+  usersId: z.array(z.string()).default([]),
   questions: z.array(QuestionsSchema),
+});
+
+const DeleteQuizFormSchema = z.object({
+  quizId: z.string(),
 });
 
 // NON-ACTION SCHEMA TYPES
@@ -112,6 +117,7 @@ type NewPasswordSchemaType = z.infer<typeof NewPasswordSchema>;
 type CreateNewUserSchemaType = z.infer<typeof CreateNewUserSchema>;
 type DeleteUserSchemaType = z.infer<typeof DeleteUserSchema>;
 type QuizFormSchemaType = z.infer<typeof QuizFormSchema>;
+type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
 
@@ -135,6 +141,7 @@ export {
   CreateNewUserSchema,
   DeleteUserSchema,
   QuizFormSchema,
+  DeleteQuizFormSchema,
   QuestionsSchema,
   OptionsSchema,
 };
@@ -160,6 +167,7 @@ export type {
   CreateNewUserSchemaType,
   DeleteUserSchemaType,
   QuizFormSchemaType,
+  DeleteQuizFormSchemaType,
   QuestionsSchemaType,
   OptionsSchemaType,
 };

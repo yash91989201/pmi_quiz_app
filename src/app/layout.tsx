@@ -1,8 +1,7 @@
 import "@/styles/globals.css";
-
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
-
+// UTILS
 import { TRPCReactProvider } from "@/trpc/react";
 
 const inter = Inter({

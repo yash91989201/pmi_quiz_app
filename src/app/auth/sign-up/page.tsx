@@ -1,3 +1,4 @@
+// CUSTOM COMPONENTS
 import SignUpForm from "@/components/auth/signup-form";
 
 export default function SignUpPage() {

@@ -41,15 +41,23 @@ export const DEFAULT_USER_REDIRECT = "/quiz";
  */
 export const NAV_LINKS = [
   {
+    label: "Home",
+    href: "/admin",
+    matchExact: true,
+  },
+  {
     label: "Users",
     href: "/admin/users",
+    matchExact: false,
   },
   {
     label: "Quizzes",
     href: "/admin/quizzes",
+    matchExact: false,
   },
   {
     label: "Settings",
     href: "/admin/settings",
+    matchExact: false,
   },
 ] as const;

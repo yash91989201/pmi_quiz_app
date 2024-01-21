@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "970d5329-b0d3-490e-86be-5a123fd065f2",
+  "id": "bb5d0730-0a1b-45f8-9d42-96dc281f2960",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "options": {
-      "name": "options",
+    "option": {
+      "name": "option",
       "columns": {
         "optionId": {
           "name": "optionId",
@@ -37,20 +37,12 @@
           "default": false
         }
       },
-      "indexes": {
-        "questionId_Idx": {
-          "name": "questionId_Idx",
-          "columns": [
-            "questionId"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "options_questionId_questions_questionId_fk": {
-          "name": "options_questionId_questions_questionId_fk",
-          "tableFrom": "options",
-          "tableTo": "questions",
+        "option_questionId_question_questionId_fk": {
+          "name": "option_questionId_question_questionId_fk",
+          "tableFrom": "option",
+          "tableTo": "question",
           "columnsFrom": [
             "questionId"
           ],
@@ -62,8 +54,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "options_optionId": {
-          "name": "options_optionId",
+        "option_optionId": {
+          "name": "option_optionId",
           "columns": [
             "optionId"
           ]
@@ -129,8 +121,8 @@
         }
       }
     },
-    "questions": {
-      "name": "questions",
+    "question": {
+      "name": "question",
       "columns": {
         "questionId": {
           "name": "questionId",
@@ -163,10 +155,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "questions_quizId_quizzes_quizId_fk": {
-          "name": "questions_quizId_quizzes_quizId_fk",
-          "tableFrom": "questions",
-          "tableTo": "quizzes",
+        "question_quizId_quiz_quizId_fk": {
+          "name": "question_quizId_quiz_quizId_fk",
+          "tableFrom": "question",
+          "tableTo": "quiz",
           "columnsFrom": [
             "quizId"
           ],
@@ -178,8 +170,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "questions_questionId": {
-          "name": "questions_questionId",
+        "question_questionId": {
+          "name": "question_questionId",
           "columns": [
             "questionId"
           ]
@@ -187,8 +179,8 @@
       },
       "uniqueConstraints": {}
     },
-    "quizzes": {
-      "name": "quizzes",
+    "quiz": {
+      "name": "quiz",
       "columns": {
         "quizId": {
           "name": "quizId",
@@ -201,22 +193,22 @@
           "name": "quizTitle",
           "type": "varchar(32)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "totalMarks": {
           "name": "totalMarks",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "quizzes_quizId": {
-          "name": "quizzes_quizId",
+        "quiz_quizId": {
+          "name": "quiz_quizId",
           "columns": [
             "quizId"
           ]
@@ -244,15 +236,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "twoFactorConfimation_userId_users_userId_fk": {
-          "name": "twoFactorConfimation_userId_users_userId_fk",
+        "twoFactorConfimation_userId_user_id_fk": {
+          "name": "twoFactorConfimation_userId_user_id_fk",
           "tableFrom": "twoFactorConfimation",
-          "tableTo": "users",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
           "columnsTo": [
-            "userId"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -329,6 +321,13 @@
     "userQuizzes": {
       "name": "userQuizzes",
       "columns": {
+        "userQuizId": {
+          "name": "userQuizId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "userId": {
           "name": "userId",
           "type": "varchar(32)",
@@ -348,7 +347,8 @@
           "type": "int",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": 0
         },
         "status": {
           "name": "status",
@@ -359,40 +359,25 @@
           "default": "'NOT_STARTED'"
         }
       },
-      "indexes": {
-        "quizId_Idx": {
-          "name": "quizId_Idx",
-          "columns": [
-            "quizId"
-          ],
-          "isUnique": false
-        },
-        "userId_Idx": {
-          "name": "userId_Idx",
-          "columns": [
-            "userId"
-          ],
-          "isUnique": false
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "userQuizzes_userId_users_userId_fk": {
-          "name": "userQuizzes_userId_users_userId_fk",
+        "userQuizzes_userId_user_id_fk": {
+          "name": "userQuizzes_userId_user_id_fk",
           "tableFrom": "userQuizzes",
-          "tableTo": "users",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
           "columnsTo": [
-            "userId"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "userQuizzes_quizId_quizzes_quizId_fk": {
-          "name": "userQuizzes_quizId_quizzes_quizId_fk",
+        "userQuizzes_quizId_quiz_quizId_fk": {
+          "name": "userQuizzes_quizId_quiz_quizId_fk",
           "tableFrom": "userQuizzes",
-          "tableTo": "quizzes",
+          "tableTo": "quiz",
           "columnsFrom": [
             "quizId"
           ],
@@ -404,28 +389,27 @@
         }
       },
       "compositePrimaryKeys": {
-        "id": {
-          "name": "id",
+        "userQuizzes_userQuizId": {
+          "name": "userQuizzes_userQuizId",
           "columns": [
-            "quizId",
-            "userId"
+            "userQuizId"
           ]
         }
       },
       "uniqueConstraints": {}
     },
-    "users": {
-      "name": "users",
+    "user": {
+      "name": "user",
       "columns": {
-        "userId": {
-          "name": "userId",
+        "id": {
+          "name": "id",
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "userName": {
-          "name": "userName",
+        "name": {
+          "name": "name",
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true,
@@ -479,22 +463,22 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "users_userId": {
-          "name": "users_userId",
+        "user_id": {
+          "name": "user_id",
           "columns": [
-            "userId"
+            "id"
           ]
         }
       },
       "uniqueConstraints": {
-        "users_userName_unique": {
-          "name": "users_userName_unique",
+        "user_name_unique": {
+          "name": "user_name_unique",
           "columns": [
-            "userName"
+            "name"
           ]
         },
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "columns": [
             "email"
           ]

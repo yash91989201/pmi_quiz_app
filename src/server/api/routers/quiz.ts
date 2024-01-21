@@ -1,7 +1,9 @@
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { questions, quizzes, userQuizzes } from "@/server/db/schema";
-import { eq, like, sql } from "drizzle-orm";
 import z from "zod";
+import { eq, like, sql } from "drizzle-orm";
+// UTILS
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+// SCHEMAS
+import { questions, quizzes, userQuizzes } from "@/server/db/schema";
 
 const quizRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -73,6 +75,15 @@ const quizRouter = createTRPCRouter({
         total_page: 0,
       };
     }),
+
+  getQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.quizzes.findMany({
+      columns: {
+        quizId: true,
+        quizTitle: true,
+      },
+    });
+  }),
 });
 
 export default quizRouter;

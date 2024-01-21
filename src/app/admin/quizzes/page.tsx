@@ -1,8 +1,10 @@
-import QuizTable from "@/components/admin/quizzes/quiz-table";
-import URLSearchBox from "@/components/shared/url-search-box";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
+// UTILS
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+// CUSTOM COMPONENTS
+import URLSearchBox from "@/components/shared/url-search-box";
+import QuizTable from "@/components/admin/quizzes/quiz-table";
 
 export default function QuizzesPage({
   searchParams,

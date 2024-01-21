@@ -1,5 +1,7 @@
 import { Resend } from "resend";
+// UTILS
 import { env } from "@/env";
+// CUSTOM COMPONENTS
 import VerificationEmail from "@/components/emails/verfication-form";
 import PasswordResetEmail from "@/components/emails/password-reset-email";
 import TwoFactorAuthEmail from "@/components/emails/two-factor-auth-email";

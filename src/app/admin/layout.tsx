@@ -1,5 +1,7 @@
-import SideNav from "@/components/admin/side-nav/side-nav";
+// TYPES
 import type { ReactNode } from "react";
+// CUSTOM COMPONENTS
+import SideNav from "@/components/admin/side-nav/side-nav";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

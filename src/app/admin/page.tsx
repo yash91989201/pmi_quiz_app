@@ -1,3 +1,4 @@
+// UTILS
 import { auth } from "@/server/utils/auth";
 
 export default async function AdminPage() {
