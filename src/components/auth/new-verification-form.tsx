@@ -29,9 +29,14 @@ export default function NewVerificationForm() {
       .then((actionResponse) => {
         setActionResponse(actionResponse);
         if (actionResponse.status === "SUCCESS") {
+          const verificationSuccessRedirect =
+            actionResponse.role === "ADMIN"
+              ? "/auth/admin/login"
+              : "/auth/login";
+
           setTimeout(() => {
-            router.replace("/auth/login");
-          }, 2000);
+            router.replace(verificationSuccessRedirect);
+          }, 1500);
         }
       })
       .catch(() => {

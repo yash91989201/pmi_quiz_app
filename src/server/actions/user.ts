@@ -373,7 +373,11 @@ async function newVerification(
     .where(eq(verificationTokens.id, existingToken.id));
 
   if (updateUserQuery[0].affectedRows === 1) {
-    return { status: "SUCCESS", message: "SignUp Confirmed." };
+    return {
+      status: "SUCCESS",
+      message: "SignUp Confirmed.",
+      role: existingUser.role,
+    };
   }
 
   return {

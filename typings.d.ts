@@ -55,6 +55,12 @@ type AdminLoginFormSuccessType = {
   authType: "PASSWORD" | "PASSWORD_WITH_2FA";
 };
 
+type VerificationFormSuccessType = {
+  status: "SUCCESS";
+  message: string;
+  role: UserRole;
+};
+
 type CreateNewUserFormErrorsType = {
   name?: string;
   password?: string;
@@ -89,7 +95,7 @@ type SignUpFormStatusType =
 
 type NewVerificationStatusType =
   | FormInitialType<NewVerificationErrorsType>
-  | FormSuccessType
+  | VerificationFormSuccessType
   | FormFailType<NewVerificationErrorsType>;
 
 type ResetPasswordStatusType =
