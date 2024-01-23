@@ -1,47 +1,30 @@
-import {
-  DEFAULT_ADMIN_REDIRECT,
-  DEFAULT_USER_REDIRECT,
-  apiAuthPrefix,
-  authRoutes,
-  publicRoutes,
-} from "@/config/routes";
-import authConfig from "@/config/auth.config";
 import NextAuth from "next-auth";
+// UTILS
+import { authConfig } from "@/config/auth.config";
+// CONSTANTS
+import { apiAuthPrefix, authRoutes, publicRoutes } from "@/config/routes";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  const { nextUrl } = req;
+  const { nextUrl, auth } = req;
 
-  const isLoggedIn = !!req.auth;
-  const user = req.auth?.user;
+  const isLoggedIn = !!auth;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const notAuthenticatedRedirect = nextUrl.pathname.startsWith("/admin")
+    ? "/auth/admin/login"
+    : "/auth/login";
 
   if (isApiAuthRoute) return null;
 
   if (isAuthRoute) {
-    if (isLoggedIn) {
-      switch (user?.role) {
-        case "ADMIN": {
-          return Response.redirect(new URL(DEFAULT_ADMIN_REDIRECT, nextUrl));
-        }
-        case "USER": {
-          return Response.redirect(new URL(DEFAULT_USER_REDIRECT, nextUrl));
-        }
-        default: {
-          return null;
-        }
-      }
-    }
     return null;
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    const url = new URL("/auth/login", req.url);
-    url.searchParams.set("callbackUrl", nextUrl.href);
-    return Response.redirect(url);
+    return Response.redirect(new URL(notAuthenticatedRedirect, req.url));
   }
 
   return null;

@@ -1,9 +1,12 @@
 import { clsx } from "clsx";
 import dynamic from "next/dynamic";
 import { twMerge } from "tailwind-merge";
+import { createId } from "@paralleldrive/cuid2";
 // TYPES
 import type { ClassValue } from "clsx";
 import type { FunctionComponent } from "react";
+// CONSTANTS
+import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -68,4 +71,20 @@ function formatDate(date: Date): string {
   return formattedDate;
 }
 
-export { cn, renderOnClient, paginationWithEllepsis, formatAmount, formatDate };
+/**
+ * This function will create a dummy email
+ * prefixed with DUMMY_EMAIL_PREFIX
+ */
+function generateRandomDummyEmail() {
+  const randomId = createId();
+  return `${DUMMY_EMAIL_PREFIX}${randomId}@gmail.com`;
+}
+
+export {
+  cn,
+  renderOnClient,
+  paginationWithEllepsis,
+  formatAmount,
+  formatDate,
+  generateRandomDummyEmail,
+};

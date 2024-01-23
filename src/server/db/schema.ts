@@ -1,4 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
+import { relations } from "drizzle-orm";
 import {
   int,
   mysqlTableCreator,
@@ -45,9 +46,13 @@ export const questions = mysqlTable("question", {
     .references(() => quizzes.quizId, {
       onDelete: "cascade",
     }),
-  questionText: text("questionText"),
-  mark: int("mark"),
+  questionText: text("questionText").notNull(),
+  mark: int("mark").notNull(),
 });
+
+export const questionRelations = relations(questions, ({ many }) => ({
+  options: many(options),
+}));
 
 export const options = mysqlTable("option", {
   optionId: varchar("optionId", { length: 32 }).primaryKey(),
@@ -56,9 +61,16 @@ export const options = mysqlTable("option", {
     .references(() => questions.questionId, {
       onDelete: "cascade",
     }),
-  optionText: varchar("optionText", { length: 255 }),
-  isCorrectOption: boolean("isCorrectOption").default(false),
+  optionText: varchar("optionText", { length: 255 }).notNull(),
+  isCorrectOption: boolean("isCorrectOption").default(false).notNull(),
 });
+
+export const optionRelations = relations(options, ({ one }) => ({
+  questions: one(questions, {
+    fields: [options.questionId],
+    references: [questions.questionId],
+  }),
+}));
 
 export const userQuizzes = mysqlTable("userQuizzes", {
   userQuizId: varchar("userQuizId", { length: 32 })
@@ -74,12 +86,10 @@ export const userQuizzes = mysqlTable("userQuizzes", {
     .references(() => quizzes.quizId, {
       onDelete: "cascade",
     }),
-  score: int("score").default(0),
-  status: mysqlEnum("status", [
-    "NOT_STARTED",
-    "IN_PROGRESS",
-    "COMPLETED",
-  ]).default("NOT_STARTED"),
+  score: int("score").default(0).notNull(),
+  status: mysqlEnum("status", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"])
+    .default("NOT_STARTED")
+    .notNull(),
 });
 
 export const verificationTokens = mysqlTable(

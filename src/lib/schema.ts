@@ -25,11 +25,24 @@ const TwoFactorTokenSchema = createSelectSchema(twoFactorTokens);
 const TwoFactorConfirmationSchema = createSelectSchema(twoFactorConfimation);
 
 // ACTION SCHEMAS
-const LoginSchema = z.object({
+const AdminLoginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   twoFactorCode: z.string().optional(),
-  role: z.enum(["USER", "ADMIN"]).default("USER"),
+  role: z.literal("ADMIN"),
+});
+
+const UserLoginSchema = z.object({
+  name: z.string(),
+  email: z.string().email().optional(),
+  password: z.string(),
+  twoFactorCode: z.string().optional(),
+  role: z.literal("USER"),
+});
+
+const AuthorizeLoginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
 });
 
 const SignUpSchema = z.object({
@@ -97,6 +110,7 @@ type QuizSchemaType = z.infer<typeof QuizSchema>;
 type QuestionSchemaType = z.infer<typeof QuestionSchema>;
 type OptionSchemaType = z.infer<typeof OptionSchema>;
 type UserQuizSchemaType = z.infer<typeof UserQuizSchema>;
+type UserQuizStatusType = UserQuizSchemaType["status"];
 type VerficationTokenSchemaType = z.infer<typeof VerficationTokenSchema>;
 type PasswordResetTokenSchemaType = z.infer<typeof PasswordResetTokenSchema>;
 type TwoFactorTokenSchemaType = z.infer<typeof TwoFactorTokenSchema>;
@@ -109,7 +123,8 @@ type QuizTableSchemaType = QuizSchemaType & {
 };
 
 // ACTION SCHEMA TYPES
-type LoginSchemaType = z.infer<typeof LoginSchema>;
+type AdminLoginSchemaType = z.infer<typeof AdminLoginSchema>;
+type UserLoginSchemaType = z.infer<typeof UserLoginSchema>;
 type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 type NewVerificationSchemaType = z.infer<typeof NewVerificationSchema>;
 type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;
@@ -133,7 +148,9 @@ export {
   TwoFactorTokenSchema,
   TwoFactorConfirmationSchema,
   // ACTION SCHEMAS
-  LoginSchema,
+  AdminLoginSchema,
+  UserLoginSchema,
+  AuthorizeLoginSchema,
   SignUpSchema,
   NewVerificationSchema,
   ResetPasswordSchema,
@@ -153,13 +170,15 @@ export type {
   QuestionSchemaType,
   OptionSchemaType,
   UserQuizSchemaType,
+  UserQuizStatusType,
   VerficationTokenSchemaType,
   PasswordResetTokenSchemaType,
   TwoFactorTokenSchemaType,
   TwoFactorConfirmationSchemaType,
   QuizTableSchemaType,
   // ACTION SCHEMA TYPES
-  LoginSchemaType,
+  AdminLoginSchemaType,
+  UserLoginSchemaType,
   SignUpSchemaType,
   NewVerificationSchemaType,
   ResetPasswordSchemaType,

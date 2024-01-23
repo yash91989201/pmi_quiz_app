@@ -12,6 +12,7 @@ export const publicRoutes = ["/", "/auth/new-verification"];
  */
 export const authRoutes = [
   "/auth/login",
+  "/auth/admin/login",
   "/auth/sign-up",
   "/auth/error",
   "/auth/reset",
@@ -34,7 +35,13 @@ export const DEFAULT_ADMIN_REDIRECT = "/admin";
  * The default redirect path after logging in as USER role
  * @type {string}
  */
-export const DEFAULT_USER_REDIRECT = "/quiz";
+export const DEFAULT_USER_REDIRECT = "/quizzes";
+/**
+ * Redirect user to update their email and password
+ * after logging in for first time
+ * @type {string}
+ */
+export const USER_UPDATE_REDIRECT = "/profile/update";
 
 /**
  * Links available under admin dashboard

@@ -34,11 +34,18 @@ export default function AuthCardWrapper({
         </div>
       </CardHeader>
       <CardContent>{children}</CardContent>
-      <CardFooter className="flex flex-col gap-3">
-        <Button variant="link" className="w-full font-normal" size="sm" asChild>
-          <Link href={backButtonHref}>{backButtonLabel}</Link>
-        </Button>
-      </CardFooter>
+      {backButtonLabel && backButtonHref && (
+        <CardFooter className="flex flex-col gap-3">
+          <Button
+            variant="link"
+            className="w-full font-normal"
+            size="sm"
+            asChild
+          >
+            <Link href={backButtonHref}>{backButtonLabel}</Link>
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 }

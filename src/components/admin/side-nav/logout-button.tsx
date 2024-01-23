@@ -23,7 +23,7 @@ function LogoutButtonWithStatus() {
       variant="outline"
     >
       <span>Logout</span>
-      {formStatus.pending ? <Loader2 /> : <Power />}
+      {formStatus.pending ? <Loader2 className="animate-spin" /> : <Power />}
     </Button>
   );
 }

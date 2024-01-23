@@ -76,10 +76,17 @@ export default function QuizForm() {
     shouldUseNativeValidation: true,
   });
 
-  const { handleSubmit, formState, reset, watch } = quizForm;
+  const { handleSubmit, formState, reset, watch, getValues } = quizForm;
 
   const createQuizAction: SubmitHandler<QuizFormSchemaType> = async (data) => {
-    const actionResponse = await createQuiz(data);
+    const totalMark = getValues("questions")
+      .map((question) => question.mark)
+      .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+    const actionResponse = await createQuiz({
+      ...data,
+      totalMark,
+    });
     setActionResponse(actionResponse);
     if (actionResponse.status === "SUCCESS") {
       setTimeout(() => {
@@ -90,7 +97,7 @@ export default function QuizForm() {
     }
   };
 
-  const totalMarks = watch("questions")
+  const totalMark = watch("questions")
     .map((question) => question.mark)
     .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -115,7 +122,7 @@ export default function QuizForm() {
 
         <div className="flex gap-2">
           <span>Total Marks: </span>
-          <span>{totalMarks}</span>
+          <span>{totalMark}</span>
         </div>
         <QuestionsField />
 
@@ -348,6 +355,10 @@ function AvailableUsersField({
 }) {
   const { control } = useFormContext<QuizFormSchemaType>();
 
+  // TODO: create select all functionality
+  // const selectAll=()=>{}
+  // const isAllSelected=()=>{}
+
   return (
     <>
       {availableUsers.length > 0 ? (
@@ -406,7 +417,7 @@ function AvailableUsersField({
 function AvailableUsersLoading() {
   return (
     <div>
-      <p>Loading available Quizzes.</p>
+      <p>Loading available Users.</p>
     </div>
   );
 }

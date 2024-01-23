@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
-import { login } from "@/server/actions/user";
+import { adminLogin } from "@/server/actions/user";
 // CUSTOM HOOKS
 import useToggle from "@/hooks/use-toggle";
 // SCHEMAS
-import { LoginSchema } from "@/lib/schema";
+import { AdminLoginSchema } from "@/lib/schema";
 // TYPES
 import type { SubmitHandler } from "react-hook-form";
-import type { LoginSchemaType } from "@/lib/schema";
+import type { AdminLoginSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import {
   Form,
@@ -34,27 +34,29 @@ import {
   XCircle,
 } from "lucide-react";
 
-export default function LoginForm() {
+export default function AdminLoginForm() {
   const showPasswordToggle = useToggle(false);
   const twoFactorAuthenticationField = useToggle(false);
 
-  const [actionResponse, setActionResponse] = useState<LoginFormStatusType>();
+  const [actionResponse, setActionResponse] =
+    useState<AdminLoginFormStatusType>();
 
-  const loginForm = useForm<LoginSchemaType>({
+  const loginForm = useForm<AdminLoginSchemaType>({
     shouldUseNativeValidation: true,
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(AdminLoginSchema),
     defaultValues: {
       email: "",
       password: "",
       twoFactorCode: "",
+      role: "ADMIN",
     },
   });
   const { control, handleSubmit, formState } = loginForm;
 
-  const loginWithCredentialsAction: SubmitHandler<LoginSchemaType> = async (
+  const adminLoginAction: SubmitHandler<AdminLoginSchemaType> = async (
     data,
   ) => {
-    const actionResponse = await login(data);
+    const actionResponse = await adminLogin(data);
     if (actionResponse) {
       switch (actionResponse.status) {
         case "SUCCESS": {
@@ -73,15 +75,14 @@ export default function LoginForm() {
 
   return (
     <AuthCardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
-      backButtonHref="/auth/sign-up"
-      showSocial
+      headerLabel="Admin Login"
+      backButtonLabel="No Admin Account?"
+      backButtonHref="/auth/admin/sign-up"
     >
       <Form {...loginForm}>
         <form
           className="flex flex-col gap-3"
-          onSubmit={handleSubmit(loginWithCredentialsAction)}
+          onSubmit={handleSubmit(adminLoginAction)}
         >
           {!twoFactorAuthenticationField.isShowing ? (
             <>

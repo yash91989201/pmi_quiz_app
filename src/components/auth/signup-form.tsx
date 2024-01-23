@@ -34,6 +34,10 @@ import {
   XCircle,
 } from "lucide-react";
 
+/**
+ * SignUpForm is only available to admin users
+ * new users with ROLE=USER will be created by admins
+ */
 export default function SignUpForm() {
   const showPasswordToggle = useToggle(false);
   const [actionResponse, setActionResponse] = useState<SignUpFormStatusType>();
@@ -51,10 +55,9 @@ export default function SignUpForm() {
 
   return (
     <AuthCardWrapper
-      headerLabel="Create an account"
+      headerLabel="New Admin Account"
       backButtonLabel="Already have an account?"
-      backButtonHref="/auth/login"
-      showSocial
+      backButtonHref="/auth/admin/login"
     >
       <Form {...signUpForm}>
         <form

@@ -9,6 +9,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
+import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
 const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -29,7 +30,7 @@ const userTableColumns: ColumnDef<UserSchemaType>[] = [
     header: "Email",
     cell: ({ row }) => {
       const email = row.original.email;
-      const isDummyEmail = email.startsWith("dummy_email");
+      const isDummyEmail = email.startsWith(DUMMY_EMAIL_PREFIX);
 
       return (
         <p

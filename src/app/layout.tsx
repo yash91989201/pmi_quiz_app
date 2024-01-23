@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 // UTILS
 import { TRPCReactProvider } from "@/trpc/react";
+// CUSTOM COMPONENT
+import AuthSessionProvider from "@/components/shared/auth-session-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider cookies={cookies().toString()}>
-          {children}
-        </TRPCReactProvider>
+        <AuthSessionProvider>
+          <TRPCReactProvider cookies={cookies().toString()}>
+            {children}
+          </TRPCReactProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

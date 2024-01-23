@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createId } from "@paralleldrive/cuid2";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormContext } from "react-hook-form";
 // ACTIONS
@@ -43,22 +42,26 @@ import {
   UserRound,
   XCircle,
 } from "lucide-react";
+import { generateRandomDummyEmail } from "@/lib/utils";
 
 export default function CreateNewUserForm() {
-  const showPasswordToggle = useToggle(false);
-  const { data: quizzesData, isLoading } = api.quiz.getQuizzes.useQuery();
   const router = useRouter();
-
-  const availableQuizzes = quizzesData ?? [];
-  const quizzesId = availableQuizzes.map((quiz) => quiz.quizId);
 
   const [actionResponse, setActionResponse] =
     useState<CreateNewUserFormStatusType>();
 
+  const showPasswordToggle = useToggle(false);
+
+  const { data, isLoading } = api.quiz.getQuizzes.useQuery();
+  const availableQuizzes = data ?? [];
+  const quizzesId = availableQuizzes.map((quiz) => quiz.quizId);
+
+  const dummyEmail = generateRandomDummyEmail();
+
   const createNewUserForm = useForm<CreateNewUserSchemaType>({
     shouldUseNativeValidation: true,
     defaultValues: {
-      email: `dummy_email_${createId()}@gmail.com`,
+      email: dummyEmail,
       password: "password",
       role: "USER",
       quizzesId,

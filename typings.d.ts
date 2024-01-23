@@ -15,7 +15,12 @@ type FormFailType<ErrorsType> = {
   message: string;
 };
 
-type LoginFormErrorsType = {
+type AdminLoginFormErrorsType = {
+  email?: string;
+  password?: string;
+};
+
+type UserLoginFormErrorsType = {
   email?: string;
   password?: string;
 };
@@ -38,7 +43,13 @@ type NewPasswordErrorsType = {
   email?: string;
 };
 
-type LoginFormSuccessType = {
+type UserLoginFormSuccessType = {
+  status: "SUCCESS";
+  message: string;
+  authType: "PASSWORD" | "PASSWORD_WITH_2FA";
+};
+
+type AdminLoginFormSuccessType = {
   status: "SUCCESS";
   message: string;
   authType: "PASSWORD" | "PASSWORD_WITH_2FA";
@@ -61,10 +72,15 @@ type DeleteQuizFormErrorsType = {
   message: string;
 };
 
-type LoginFormStatusType =
-  | FormInitialType<LoginFormErrorsType>
-  | LoginFormSuccessType
-  | FormFailType<LoginFormErrorsType>;
+type AdminLoginFormStatusType =
+  | FormInitialType<AdminLoginFormErrorsType>
+  | AdminLoginFormSuccessType
+  | FormFailType<AdminLoginFormErrorsType>;
+
+type UserLoginFormStatusType =
+  | FormInitialType<UserLoginFormErrorsType>
+  | UserLoginFormSuccessType
+  | FormFailType<UserLoginFormErrorsType>;
 
 type SignUpFormStatusType =
   | FormInitialType<SignUpFormErrorsType>
@@ -108,10 +124,11 @@ type DeleteQuizFormStatusType =
 
 type UserRole = "ADMIN" | "USER";
 
+type UserQuizStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+
 type AuthCardWrapperProps = {
   children: React.ReactNode;
   headerLabel: string;
-  backButtonLabel: string;
-  backButtonHref: string;
-  showSocial?: boolean;
+  backButtonLabel?: string;
+  backButtonHref?: string;
 };

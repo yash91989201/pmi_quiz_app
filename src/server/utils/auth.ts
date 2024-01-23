@@ -6,20 +6,22 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 // UTILS
 import { env } from "@/env";
 import { db } from "@/server/db";
-import authConfig from "@/config/auth.config";
+import { authConfig } from "@/config/auth.config";
 import { getUserById } from "@/server/utils/user";
 import { mysqlTable, twoFactorConfimation, users } from "@/server/db/schema";
 import { getTwoFactorConfirmationByUserId } from "@/server/utils/token";
 // TYPES
 import type { DefaultSession } from "next-auth";
+// CONSTANTS
+import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      role: UserRole;
       emailVerified: Date | null;
       isTwoFactorEnabled: boolean;
-      role: UserRole;
     } & DefaultSession["user"];
   }
 }
@@ -47,7 +49,10 @@ export const {
     async signIn({ user }) {
       const existingUser = await getUserById(user.id!);
 
-      if (!existingUser?.emailVerified) {
+      if (
+        !existingUser?.emailVerified &&
+        !existingUser?.email.startsWith(DUMMY_EMAIL_PREFIX)
+      ) {
         return false;
       }
 
@@ -67,27 +72,6 @@ export const {
 
       return true;
     },
-
-    // @ts-expect-error: next auth session function type is not working
-    async session({ session, token }) {
-      // eslint-disable-next-line
-      if (token.sub && session.user) session.user.id = token.sub;
-      // eslint-disable-next-line
-      if (token.role && session.user) {
-        // eslint-disable-next-line
-        session.user.role = token.role as UserRole;
-        // eslint-disable-next-line
-        session.user.emailVerified = token.emailVerified;
-      }
-
-      if (session.user) {
-        // eslint-disable-next-line
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
-      }
-
-      return session;
-    },
-
     async jwt({ token }) {
       if (!token.sub) return token;
 
@@ -101,8 +85,40 @@ export const {
 
       return newToken;
     },
+
+    // @ts-expect-error: next auth session function type is not working
+    async session({ session, token }) {
+      // eslint-disable-next-line
+      if (token.sub && session.user) session.user.id = token.sub;
+
+      // eslint-disable-next-line
+      if (token.role && session.user) {
+        // eslint-disable-next-line
+        session.user.id = token.id as string;
+        // eslint-disable-next-line
+        session.user.role = token.role as UserRole;
+        // eslint-disable-next-line
+        session.user.emailVerified = token.emailVerified as Date | null;
+        // eslint-disable-next-line
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      }
+
+      return session;
+    },
   },
   adapter: DrizzleAdapter(db, mysqlTable),
   secret: env.AUTH_SECRET,
   ...authConfig,
 });
+
+export const currentUser = async () => {
+  const session = await auth();
+
+  return session?.user;
+};
+
+export const currentRole = async () => {
+  const session = await auth();
+
+  return session?.user?.role;
+};

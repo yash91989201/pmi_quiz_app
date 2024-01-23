@@ -32,6 +32,7 @@ async function createQuiz(
     totalMark,
     usersId,
   } = validatedFormData.data;
+
   const quizData = {
     quizId,
     quizTitle,
@@ -117,13 +118,22 @@ async function deleteQuiz(
     };
   }
 
-  await db.delete(quizzes).where(eq(quizzes.quizId, quizId));
+  const deleteQuizQuery = await db
+    .delete(quizzes)
+    .where(eq(quizzes.quizId, quizId));
   await db.delete(userQuizzes).where(eq(userQuizzes.quizId, quizId));
 
   revalidatePath("/admin/quizzes");
+
+  if (deleteQuizQuery[0].affectedRows >= 1) {
+    return {
+      status: "SUCCESS",
+      message: "Quiz deleted successfully.",
+    };
+  }
   return {
-    status: "SUCCESS",
-    message: "Quiz deleted successfully.",
+    status: "FAILED",
+    message: "Unable to delete quiz. Try later.",
   };
 }
 

@@ -1,10 +1,10 @@
 // CUSTOM COMPONENTS
-import LoginForm from "@/components/auth/login-form";
+import UserLoginForm from "@/components/auth/user-login-form";
 
-export default function LoginPage() {
+export default function UserLoginPage() {
   return (
     <>
-      <LoginForm />
+      <UserLoginForm />
     </>
   );
 }

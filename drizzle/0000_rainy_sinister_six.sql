@@ -1,8 +1,8 @@
 CREATE TABLE `option` (
 	`optionId` varchar(32) NOT NULL,
 	`questionId` varchar(32) NOT NULL,
-	`optionText` varchar(255),
-	`isCorrectOption` boolean DEFAULT false,
+	`optionText` varchar(255) NOT NULL,
+	`isCorrectOption` boolean NOT NULL DEFAULT false,
 	CONSTRAINT `option_optionId` PRIMARY KEY(`optionId`)
 );
 --> statement-breakpoint
@@ -19,8 +19,8 @@ CREATE TABLE `passwordResetToken` (
 CREATE TABLE `question` (
 	`questionId` varchar(32) NOT NULL,
 	`quizId` varchar(32) NOT NULL,
-	`questionText` text,
-	`mark` int,
+	`questionText` text NOT NULL,
+	`mark` int NOT NULL,
 	CONSTRAINT `question_questionId` PRIMARY KEY(`questionId`)
 );
 --> statement-breakpoint
@@ -51,8 +51,8 @@ CREATE TABLE `userQuizzes` (
 	`userQuizId` varchar(32) NOT NULL,
 	`userId` varchar(32) NOT NULL,
 	`quizId` varchar(32) NOT NULL,
-	`score` int DEFAULT 0,
-	`status` enum('NOT_STARTED','IN_PROGRESS','COMPLETED') DEFAULT 'NOT_STARTED',
+	`score` int NOT NULL DEFAULT 0,
+	`status` enum('NOT_STARTED','IN_PROGRESS','COMPLETED') NOT NULL DEFAULT 'NOT_STARTED',
 	CONSTRAINT `userQuizzes_userQuizId` PRIMARY KEY(`userQuizId`)
 );
 --> statement-breakpoint

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "bb5d0730-0a1b-45f8-9d42-96dc281f2960",
+  "id": "c1b31d1f-9270-4361-b199-c4f08f1c94a3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "option": {
@@ -25,14 +25,14 @@
           "name": "optionText",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "isCorrectOption": {
           "name": "isCorrectOption",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": false
         }
@@ -142,14 +142,14 @@
           "name": "questionText",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "mark": {
           "name": "mark",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
@@ -346,7 +346,7 @@
           "name": "score",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": 0
         },
@@ -354,7 +354,7 @@
           "name": "status",
           "type": "enum('NOT_STARTED','IN_PROGRESS','COMPLETED')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false,
           "default": "'NOT_STARTED'"
         }

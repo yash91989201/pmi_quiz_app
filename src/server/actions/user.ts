@@ -27,12 +27,13 @@ import { db } from "@/server/db";
 import { signIn, signOut } from "@/server/utils/auth";
 // SCHEMAS
 import {
+  AdminLoginSchema,
   CreateNewUserSchema,
   DeleteUserSchema,
-  LoginSchema,
   NewPasswordSchema,
   ResetPasswordSchema,
   SignUpSchema,
+  UserLoginSchema,
 } from "@/lib/schema";
 import {
   verificationTokens,
@@ -44,21 +45,30 @@ import {
 // TYPES
 import type {
   NewVerificationSchemaType,
-  LoginSchemaType,
   SignUpSchemaType,
   ResetPasswordSchemaType,
   NewPasswordSchemaType,
   CreateNewUserSchemaType,
   DeleteUserSchemaType,
+  AdminLoginSchemaType,
+  UserLoginSchemaType,
+  UserSchemaType,
 } from "@/lib/schema";
 // CONSTANTS
-import { DEFAULT_ADMIN_REDIRECT } from "@/config/routes";
+import {
+  DEFAULT_ADMIN_REDIRECT,
+  DEFAULT_USER_REDIRECT,
+  USER_UPDATE_REDIRECT,
+} from "@/config/routes";
+import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
-async function login(formData: LoginSchemaType): Promise<LoginFormStatusType> {
-  const validatedFormData = LoginSchema.safeParse(formData);
+async function adminLogin(
+  formData: AdminLoginSchemaType,
+): Promise<AdminLoginFormStatusType> {
+  const validatedFormData = AdminLoginSchema.safeParse(formData);
 
   if (!validatedFormData.success) {
-    let formFieldErrors: LoginFormErrorsType = {};
+    let formFieldErrors: AdminLoginFormErrorsType = {};
 
     validatedFormData.error.errors.map((error) => {
       formFieldErrors = {
@@ -182,6 +192,151 @@ async function login(formData: LoginSchemaType): Promise<LoginFormStatusType> {
   }
 }
 
+async function userLogin(
+  formData: UserLoginSchemaType,
+): Promise<UserLoginFormStatusType> {
+  const validatedFormData = UserLoginSchema.safeParse(formData);
+
+  if (!validatedFormData.success) {
+    let formFieldErrors: UserLoginFormErrorsType = {};
+
+    validatedFormData.error.errors.map((error) => {
+      formFieldErrors = {
+        ...formFieldErrors,
+        [`${error.path[0]}`]: error.message,
+      };
+    });
+
+    return {
+      status: "FAILED",
+      errors: formFieldErrors,
+      message: "Invalid data given.",
+    };
+  }
+
+  let existingUser: UserSchemaType | undefined;
+  const { email, password, twoFactorCode, name } = validatedFormData.data;
+
+  if (email) existingUser = await getUserByEmail(email);
+  existingUser = await getUserByUserName(name);
+
+  if (!existingUser?.email || !existingUser?.password || !existingUser.name) {
+    return {
+      status: "FAILED",
+      message: "User does not exist.",
+    };
+  }
+
+  if (existingUser.role === "ADMIN") {
+    return { status: "FAILED", message: "You are not authorized!" };
+  }
+
+  if (
+    existingUser.emailVerified === null &&
+    !existingUser.email.startsWith(DUMMY_EMAIL_PREFIX)
+  ) {
+    const verificationToken = await generateVerificationToken(
+      existingUser.email,
+    );
+
+    await sendVerificationEmail({
+      email: verificationToken.email,
+      token: verificationToken.token,
+      subject: "Verify your Email.",
+      userName: existingUser.name,
+    });
+
+    return {
+      status: "SUCCESS",
+      message: "Confirmation Email Sent.",
+      authType: "PASSWORD",
+    };
+  }
+
+  if (existingUser.isTwoFactorEnabled && existingUser.email) {
+    if (twoFactorCode) {
+      const twoFactorTokenFromEmail = await getTwoFactorTokenByEmail(
+        existingUser.email,
+      );
+      if (!twoFactorTokenFromEmail) {
+        return { status: "FAILED", message: "Invalid Code!" };
+      }
+      if (twoFactorTokenFromEmail.token !== twoFactorCode) {
+        return { status: "FAILED", message: "Invalid Code!" };
+      }
+      const is2FACodeExpired =
+        new Date(twoFactorTokenFromEmail.expires) < new Date();
+      if (is2FACodeExpired) {
+        return { status: "FAILED", message: "2FA Code Expired. Login Again!" };
+      }
+      await db
+        .delete(twoFactorTokens)
+        .where(eq(twoFactorTokens.id, twoFactorTokenFromEmail.id));
+
+      const existingConfirmation = await getTwoFactorConfirmationByUserId(
+        existingUser.id,
+      );
+
+      if (existingConfirmation) {
+        await db
+          .delete(twoFactorConfimation)
+          .where(eq(twoFactorConfimation.id, existingConfirmation.id));
+      }
+
+      await db.insert(twoFactorConfimation).values({
+        userId: existingUser.id,
+      });
+    } else {
+      const twoFAToken = await generateTwoFactorToken(existingUser.email);
+      await sendTwoFactorTokenEmail({
+        email: twoFAToken.email,
+        token: twoFAToken.token,
+      });
+      return {
+        status: "SUCCESS",
+        message: "2FA code sent to your email",
+        authType: "PASSWORD_WITH_2FA",
+      };
+    }
+  }
+
+  try {
+    const redirectTo = email?.startsWith(DUMMY_EMAIL_PREFIX)
+      ? USER_UPDATE_REDIRECT
+      : DEFAULT_USER_REDIRECT;
+
+    await signIn("credentials", {
+      email: existingUser.email,
+      password,
+      redirectTo,
+    });
+
+    return {
+      status: "SUCCESS",
+      message: "SignIn Successful.",
+      authType: "PASSWORD",
+    };
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin": {
+          return {
+            status: "FAILED",
+            message: "Invalid Credentials",
+          };
+        }
+        default: {
+          return {
+            status: "FAILED",
+            message: "Unable to SignIn.",
+          };
+        }
+      }
+    }
+    throw error;
+  }
+}
+
 async function newVerification(
   formData: NewVerificationSchemaType,
 ): Promise<NewVerificationStatusType> {
@@ -233,7 +388,7 @@ async function signUp(
   const validatedFormData = SignUpSchema.safeParse(formData);
 
   if (!validatedFormData.success) {
-    let formFieldErrors: LoginFormErrorsType = {};
+    let formFieldErrors: SignUpFormErrorsType = {};
 
     validatedFormData.error.errors.map((error) => {
       formFieldErrors = {
@@ -359,7 +514,6 @@ async function newPassword(
   }
 
   const newPassword = await bcrypt.hash(password, 12);
-  console.log(newPassword);
 
   await db
     .update(users)
@@ -515,7 +669,8 @@ async function deleteUser(
 }
 
 export {
-  login,
+  adminLogin,
+  userLogin,
   newVerification,
   signUp,
   logoutUser,

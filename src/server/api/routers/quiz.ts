@@ -1,5 +1,5 @@
-import z from "zod";
 import { eq, like, sql } from "drizzle-orm";
+import z from "zod";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
@@ -84,6 +84,71 @@ const quizRouter = createTRPCRouter({
       },
     });
   }),
+
+  getUserQuizzes: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db
+        .select({
+          userQuizId: userQuizzes.userQuizId,
+          userId: userQuizzes.userId,
+          quizId: userQuizzes.quizId,
+          score: userQuizzes.score,
+          status: userQuizzes.status,
+          quizTitle: quizzes.quizTitle,
+          totalMark: quizzes.totalMark,
+        })
+        .from(userQuizzes)
+        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+        .groupBy(
+          userQuizzes.userQuizId,
+          userQuizzes.userId,
+          userQuizzes.quizId,
+          userQuizzes.score,
+          userQuizzes.status,
+        )
+        .where(eq(userQuizzes.userId, input.userId));
+    }),
+
+  getUserQuiz: protectedProcedure
+    .input(z.object({ userQuizId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db
+        .select({
+          userQuizId: userQuizzes.userQuizId,
+          userId: userQuizzes.userId,
+          quizId: userQuizzes.quizId,
+          score: userQuizzes.score,
+          status: userQuizzes.status,
+          quizTitle: quizzes.quizTitle,
+          totalMark: quizzes.totalMark,
+        })
+        .from(userQuizzes)
+        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+        .groupBy(
+          userQuizzes.userQuizId,
+          userQuizzes.userId,
+          userQuizzes.quizId,
+          userQuizzes.score,
+          userQuizzes.status,
+        )
+        .where(eq(userQuizzes.userQuizId, input.userQuizId));
+    }),
+
+  getQuizQuestionsAndOptions: protectedProcedure
+    .input(z.object({ quizId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.questions.findMany({
+        where: eq(questions.quizId, input.quizId),
+        with: {
+          options: {
+            columns: {
+              isCorrectOption: false,
+            },
+          },
+        },
+      });
+    }),
 });
 
 export default quizRouter;
