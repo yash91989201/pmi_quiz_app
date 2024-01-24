@@ -16,9 +16,9 @@ export default async function AdminLayout({
   if (userRole === "USER") redirect("/quizzes");
 
   return (
-    <main className="flex min-h-screen flex-col lg:flex-row">
+    <main className="flex h-screen flex-col overflow-hidden lg:flex-row">
       <SideNav />
-      <section className="flex-1 overflow-auto p-3 lg:h-screen">
+      <section className="flex-1 overflow-y-auto p-3 lg:max-h-screen">
         {children}
       </section>
     </main>

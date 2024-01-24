@@ -23,9 +23,9 @@ const quizRouter = createTRPCRouter({
           .select({
             quizId: quizzes.quizId,
             quizTitle: quizzes.quizTitle,
-            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
-            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS usersAdded`,
             totalMark: quizzes.totalMark,
+            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
+            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS totalUsers`,
           })
           .from(quizzes)
           .leftJoin(questions, eq(quizzes.quizId, questions.quizId))
@@ -37,9 +37,9 @@ const quizRouter = createTRPCRouter({
           .select({
             quizId: quizzes.quizId,
             quizTitle: quizzes.quizTitle,
-            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
-            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS usersAdded`,
             totalMark: quizzes.totalMark,
+            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
+            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS totalUsers`,
           })
           .from(quizzes)
           .leftJoin(questions, eq(quizzes.quizId, questions.quizId))
@@ -85,61 +85,38 @@ const quizRouter = createTRPCRouter({
     });
   }),
 
-  getUserQuizzes: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db
-        .select({
-          userQuizId: userQuizzes.userQuizId,
-          userId: userQuizzes.userId,
-          quizId: userQuizzes.quizId,
-          score: userQuizzes.score,
-          status: userQuizzes.status,
-          quizTitle: quizzes.quizTitle,
-          totalMark: quizzes.totalMark,
-        })
-        .from(userQuizzes)
-        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
-        .groupBy(
-          userQuizzes.userQuizId,
-          userQuizzes.userId,
-          userQuizzes.quizId,
-          userQuizzes.score,
-          userQuizzes.status,
-        )
-        .where(eq(userQuizzes.userId, input.userId));
-    }),
+  getUserQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db
+      .select({
+        userQuizId: userQuizzes.userQuizId,
+        userId: userQuizzes.userId,
+        quizId: userQuizzes.quizId,
+        score: userQuizzes.score,
+        status: userQuizzes.status,
+        quizTitle: quizzes.quizTitle,
+        totalMark: quizzes.totalMark,
+      })
+      .from(userQuizzes)
+      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+      .groupBy(
+        userQuizzes.userQuizId,
+        userQuizzes.userId,
+        userQuizzes.quizId,
+        userQuizzes.score,
+        userQuizzes.status,
+      )
+      .where(eq(userQuizzes.userId, ctx.session.user.id));
+  }),
 
-  getUserQuiz: protectedProcedure
+  getUserQuizData: protectedProcedure
     .input(z.object({ userQuizId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db
-        .select({
-          userQuizId: userQuizzes.userQuizId,
-          userId: userQuizzes.userId,
-          quizId: userQuizzes.quizId,
-          score: userQuizzes.score,
-          status: userQuizzes.status,
-          quizTitle: quizzes.quizTitle,
-          totalMark: quizzes.totalMark,
-        })
-        .from(userQuizzes)
-        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
-        .groupBy(
-          userQuizzes.userQuizId,
-          userQuizzes.userId,
-          userQuizzes.quizId,
-          userQuizzes.score,
-          userQuizzes.status,
-        )
-        .where(eq(userQuizzes.userQuizId, input.userQuizId));
-    }),
+    .query(async ({ ctx, input }) => {
+      const userQuiz = (await ctx.db.query.userQuizzes.findFirst({
+        where: eq(userQuizzes.userQuizId, input.userQuizId),
+      }))!;
 
-  getQuizQuestionsAndOptions: protectedProcedure
-    .input(z.object({ quizId: z.string() }))
-    .query(({ ctx, input }) => {
-      return ctx.db.query.questions.findMany({
-        where: eq(questions.quizId, input.quizId),
+      const userQuestions = await ctx.db.query.questions.findMany({
+        where: eq(questions.quizId, userQuiz.quizId),
         with: {
           options: {
             columns: {
@@ -148,6 +125,23 @@ const quizRouter = createTRPCRouter({
           },
         },
       });
+
+      const questionsData = userQuestions.map((question) => {
+        return {
+          ...question,
+          options: question.options.map((option) => ({
+            ...option,
+            isSelected: false,
+          })),
+        };
+      });
+      return {
+        quizId: userQuiz.quizId,
+        userQuizId: userQuiz.userQuizId,
+        quizTitle: userQuiz.quizTitle,
+        totalMark: userQuiz.totalMark,
+        questions: questionsData,
+      };
     }),
 });
 

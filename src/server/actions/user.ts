@@ -588,10 +588,20 @@ async function createNewUser(
   }
 
   if (quizzesId.length > 0) {
-    const quizzesSelectedForUser = quizzesId.map((quiz) => ({
-      quizId: quiz,
-      userId: createdUser?.id,
-    }));
+    const allQuizzes = await db.query.quizzes.findMany();
+
+    const quizzesSelectedForUser = quizzesId.map((quizId) => {
+      const { quizTitle, totalMark } = allQuizzes.find(
+        (quiz) => quiz.quizId === quizId,
+      )!;
+
+      return {
+        userId: createdUser?.id,
+        quizId,
+        quizTitle,
+        totalMark,
+      };
+    });
 
     const newUserQuizzes = await db
       .insert(userQuizzes)
@@ -657,6 +667,7 @@ async function deleteUser(
       .delete(users)
       .where(eq(users.id, validatedFormData.data.id));
 
+    revalidatePath("/admin/users");
     if (deleteUserQuery[0].affectedRows === 1) {
       return { status: "SUCCESS", message: "User deleted successfully." };
     }

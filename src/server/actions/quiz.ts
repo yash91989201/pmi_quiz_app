@@ -4,13 +4,18 @@ import { and, eq } from "drizzle-orm";
 // UTILS
 import { db } from "@/server/db";
 // SCHEMAS
-import { DeleteQuizFormSchema, QuizFormSchema } from "@/lib/schema";
+import {
+  DeleteQuizFormSchema,
+  QuizFormSchema,
+  UserQuizFormSchema,
+} from "@/lib/schema";
 import { options, questions, quizzes, userQuizzes } from "@/server/db/schema";
 // TYPES
 import type {
   DeleteQuizFormSchemaType,
   OptionSchemaType,
   QuizFormSchemaType,
+  UserQuizFormSchemaType,
 } from "@/lib/schema";
 
 async function createQuiz(
@@ -58,6 +63,8 @@ async function createQuiz(
     const quizzesSelectedForUser = usersId.map((userId) => ({
       userId,
       quizId,
+      quizTitle,
+      totalMark,
     }));
 
     const newUserQuizzes = await db
@@ -137,4 +144,91 @@ async function deleteQuiz(
   };
 }
 
-export { createQuiz, deleteQuiz };
+async function submitQuiz(
+  formData: UserQuizFormSchemaType,
+): Promise<UserQuizFormStatusType> {
+  const validatedFormData = UserQuizFormSchema.safeParse(formData);
+  if (!validatedFormData.success) {
+    return {
+      status: "FAILED",
+      message: "Unable to submit quiz try later",
+    };
+  }
+
+  const {
+    quizId,
+    questions: answerToCheck,
+    userQuizId,
+  } = validatedFormData.data;
+
+  const quizQuestions = await db.query.questions.findMany({
+    where: eq(questions.quizId, quizId),
+    with: {
+      options: true,
+    },
+  });
+
+  // const totalMark = answerToCheck.reduce(
+  //   (total, currentValue, currentIndex) => {
+  //     //  if correct option is true in answertocheck add mark in total
+  //     const optionSelectedByUser = currentValue.options.find(
+  //       (option) => option.isSelected,
+  //     );
+  //     if (optionSelectedByUser === undefined) return total;
+
+  //     const currentQuestionToCheck = quizQuestions.find(
+  //       (quizQuestion) => quizQuestion.questionId === currentValue.questionId,
+  //     )!;
+  //     const currentQuestionOption = currentQuestionToCheck.options.find(
+  //       (option) => option.isCorrectOption,
+  //     )!;
+  //     if (optionSelectedByUser.optionId === currentQuestionOption.optionId)
+  //       return total + currentQuestionToCheck.mark;
+
+  //     return total;
+  //   },
+  //   0,
+  // );
+
+  const score = answerToCheck.reduce((total, currentValue) => {
+    const optionSelectedByUser = currentValue.options.find(
+      (option) => option.isSelected,
+    );
+
+    if (!optionSelectedByUser) return total;
+
+    const currentQuestionToCheck = quizQuestions.find(
+      (quizQuestion) => quizQuestion.questionId === currentValue.questionId,
+    );
+
+    if (!currentQuestionToCheck) return total;
+
+    const currentQuestionOption = currentQuestionToCheck.options.find(
+      (option) => option.isCorrectOption,
+    );
+
+    if (!currentQuestionOption) return total;
+
+    if (optionSelectedByUser.optionId === currentQuestionOption.optionId) {
+      return total + currentQuestionToCheck.mark;
+    }
+
+    return total;
+  }, 0);
+
+  await db
+    .update(userQuizzes)
+    .set({
+      score,
+      status: "COMPLETED",
+    })
+    .where(eq(userQuizzes.userQuizId, userQuizId));
+
+  revalidatePath("/quizzes");
+  return {
+    status: "SUCCESS",
+    message: `You scored ${score}`,
+  };
+}
+
+export { createQuiz, deleteQuiz, submitQuiz };

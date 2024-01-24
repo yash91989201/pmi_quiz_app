@@ -1,6 +1,7 @@
 "use client";
 
 import LogoutButton from "@/components/admin/side-nav/logout-button";
+import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import type { UserQuizStatusType } from "@/lib/schema";
 import { api } from "@/trpc/react";
@@ -27,9 +28,9 @@ export default function QuizzesPage() {
   const user = useCurrentUser();
   if (!user) redirect("/auth/login");
 
-  const { data } = api.quiz.getUserQuizzes.useQuery({ userId: user.id });
+  const { data } = api.quiz.getUserQuizzes.useQuery();
   const userQuizzes: UserQuizType[] = data ?? [];
-  console.log(data);
+
   return (
     <>
       <div className="space-y-3">
@@ -53,7 +54,9 @@ function QuizCard({ userQuiz }: { userQuiz: UserQuizType }) {
       <p>{userQuiz.score}</p>
       <p>{STATUS_TEXT[userQuiz.status]}</p>
       <p>{userQuiz.totalMark}</p>
-      <Link href={`/quizzes/${userQuiz.quizId}`}>Start Quiz</Link>
+      <Button variant="ghost" disabled={userQuiz.status !== "NOT_STARTED"}>
+        <Link href={`/quizzes/${userQuiz.userQuizId}`}>Start Quiz</Link>
+      </Button>
     </div>
   );
 }

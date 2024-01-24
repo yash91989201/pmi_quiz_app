@@ -10,4 +10,8 @@ const poolConnection = mysql.createPool({
   database: "pmi_quiz_db",
 });
 
-export const db = drizzle(poolConnection, { schema, mode: "default" });
+export const db = drizzle(poolConnection, {
+  schema,
+  mode: "default",
+  // logger: true,
+});

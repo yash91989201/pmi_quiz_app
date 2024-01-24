@@ -86,6 +86,8 @@ export const userQuizzes = mysqlTable("userQuizzes", {
     .references(() => quizzes.quizId, {
       onDelete: "cascade",
     }),
+  quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
+  totalMark: int("totalMarks").notNull(),
   score: int("score").default(0).notNull(),
   status: mysqlEnum("status", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"])
     .default("NOT_STARTED")

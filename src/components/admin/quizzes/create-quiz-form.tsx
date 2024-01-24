@@ -29,7 +29,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 // ICONS
 import { CheckCircle2, Loader2, Plus, Trash2, XCircle } from "lucide-react";
 
-export default function QuizForm() {
+export default function CreateQuizForm() {
   const quizId = createId();
   const initialQuestionId = createId();
   const { data, isLoading } = api.user.getUsersId.useQuery();
@@ -89,11 +89,10 @@ export default function QuizForm() {
     });
     setActionResponse(actionResponse);
     if (actionResponse.status === "SUCCESS") {
+      reset();
       setTimeout(() => {
         router.replace("/admin/quizzes");
       }, 1500);
-    } else {
-      reset();
     }
   };
 
@@ -104,7 +103,7 @@ export default function QuizForm() {
   return (
     <Form {...quizForm}>
       <form
-        className="flex w-[480px] flex-col gap-3"
+        className="flex w-[640px] flex-col gap-3"
         onSubmit={handleSubmit(createQuizAction)}
       >
         <FormField
@@ -295,7 +294,7 @@ function OptionsField({ questionIndex }: { questionIndex: number }) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="space-y-2">
       {fields.map((option, index) => (
         <FormField
           key={option.id}

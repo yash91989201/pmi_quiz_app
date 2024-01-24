@@ -100,6 +100,27 @@ const QuizFormSchema = z.object({
   questions: z.array(QuestionsSchema),
 });
 
+const UserOptionsSchema = z.object({
+  optionId: z.string(),
+  questionId: z.string(),
+  optionText: z.string().min(1, { message: "Option Text is required." }),
+  isSelected: z.boolean(),
+});
+
+const UserQuestionsSchema = z.object({
+  questionId: z.string(),
+  quizId: z.string(),
+  questionText: z.string(),
+  mark: z.number(),
+  options: z.array(UserOptionsSchema),
+});
+
+const UserQuizFormSchema = z.object({
+  quizId: z.string(),
+  userQuizId: z.string(),
+  questions: z.array(UserQuestionsSchema),
+});
+
 const DeleteQuizFormSchema = z.object({
   quizId: z.string(),
 });
@@ -132,6 +153,7 @@ type NewPasswordSchemaType = z.infer<typeof NewPasswordSchema>;
 type CreateNewUserSchemaType = z.infer<typeof CreateNewUserSchema>;
 type DeleteUserSchemaType = z.infer<typeof DeleteUserSchema>;
 type QuizFormSchemaType = z.infer<typeof QuizFormSchema>;
+type UserQuizFormSchemaType = z.infer<typeof UserQuizFormSchema>;
 type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
@@ -158,6 +180,7 @@ export {
   CreateNewUserSchema,
   DeleteUserSchema,
   QuizFormSchema,
+  UserQuizFormSchema,
   DeleteQuizFormSchema,
   QuestionsSchema,
   OptionsSchema,
@@ -189,4 +212,5 @@ export type {
   DeleteQuizFormSchemaType,
   QuestionsSchemaType,
   OptionsSchemaType,
+  UserQuizFormSchemaType,
 };

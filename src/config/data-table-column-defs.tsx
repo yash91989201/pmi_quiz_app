@@ -10,6 +10,7 @@ import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
 import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
+import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
 
 const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -67,6 +68,15 @@ const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
     accessorKey: "totalQuizzes",
     header: "Total Quizzes",
+  },
+  {
+    accessorKey: "Actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div>
+        <DeleteUserModal id={row.original.id} />
+      </div>
+    ),
   },
 ];
 

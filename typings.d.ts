@@ -78,6 +78,10 @@ type DeleteQuizFormErrorsType = {
   message: string;
 };
 
+type UserQuizFormFailType = {
+  message: string;
+};
+
 type AdminLoginFormStatusType =
   | FormInitialType<AdminLoginFormErrorsType>
   | AdminLoginFormSuccessType
@@ -127,6 +131,11 @@ type DeleteQuizFormStatusType =
   | FormInitialType<DeleteQuizFormErrorsType>
   | FormSuccessType
   | FormFailType<DeleteQuizFormErrorsType>;
+
+type UserQuizFormStatusType =
+  | FormInitialType<UserQuizFormFailType>
+  | FormSuccessType
+  | FormFailType<UserQuizFormFailType>;
 
 type UserRole = "ADMIN" | "USER";
 
