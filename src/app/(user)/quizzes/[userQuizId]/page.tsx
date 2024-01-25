@@ -19,7 +19,7 @@ export default async function Page({
         <p>{userQuizData.totalMark}</p>
       </div>
       <div className="space-y-3">
-        {userQuizData?.questions.length > 0 && (
+        {userQuizData.questions.length > 0 && (
           <UserQuizForm
             quizId={userQuizData.quizId}
             userQuizId={userQuizData.userQuizId}

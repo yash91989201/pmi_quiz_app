@@ -13,5 +13,5 @@ const poolConnection = mysql.createPool({
 export const db = drizzle(poolConnection, {
   schema,
   mode: "default",
-  // logger: true,
+  logger: true,
 });

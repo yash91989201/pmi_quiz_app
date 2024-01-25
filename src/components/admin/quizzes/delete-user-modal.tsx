@@ -45,7 +45,7 @@ export function DeleteUserModal({ id }: { id: string }) {
     setTimeout(() => {
       setActionResponse(actionResponse);
       deleteQuizModal.close();
-    }, 3000);
+    }, 2000);
   };
 
   return (

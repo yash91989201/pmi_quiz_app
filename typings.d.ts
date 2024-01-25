@@ -61,6 +61,12 @@ type VerificationFormSuccessType = {
   role: UserRole;
 };
 
+type NewPasswordFormSuccessType = {
+  status: "SUCCESS";
+  message: string;
+  role: UserRole;
+};
+
 type CreateNewUserFormErrorsType = {
   name?: string;
   password?: string;
@@ -109,7 +115,7 @@ type ResetPasswordStatusType =
 
 type NewPasswordStatusType =
   | FormInitialType<NewPasswordErrorsType>
-  | FormSuccessType
+  | NewPasswordFormSuccessType
   | FormFailType<NewPasswordErrorsType>;
 
 type CreateNewUserFormStatusType =

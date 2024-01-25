@@ -1,5 +1,5 @@
-import { eq, like, sql } from "drizzle-orm";
 import z from "zod";
+import { count, countDistinct, eq, like } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
@@ -24,8 +24,8 @@ const quizRouter = createTRPCRouter({
             quizId: quizzes.quizId,
             quizTitle: quizzes.quizTitle,
             totalMark: quizzes.totalMark,
-            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
-            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS totalUsers`,
+            totalQuestions: count(questions.questionId),
+            totalUsers: countDistinct(userQuizzes.quizId),
           })
           .from(quizzes)
           .leftJoin(questions, eq(quizzes.quizId, questions.quizId))
@@ -38,13 +38,13 @@ const quizRouter = createTRPCRouter({
             quizId: quizzes.quizId,
             quizTitle: quizzes.quizTitle,
             totalMark: quizzes.totalMark,
-            totalQuestions: sql<number>`COUNT(${questions.questionId}) AS totalQuestions`,
-            totalUsers: sql<number>`COUNT(${userQuizzes.userQuizId}) AS totalUsers`,
+            totalQuestions: count(questions.questionId),
+            totalUsers: countDistinct(userQuizzes.quizId),
           })
           .from(quizzes)
           .leftJoin(questions, eq(quizzes.quizId, questions.quizId))
           .leftJoin(userQuizzes, eq(quizzes.quizId, userQuizzes.quizId))
-          .where(like(quizzes.quizTitle, `%${query?.toLowerCase()}%`))
+          .where(like(quizzes.quizTitle, `%${query.toLowerCase()}%`))
           .groupBy(quizzes.quizId, quizzes.quizTitle, quizzes.totalMark)
           .prepare();
       }

@@ -54,7 +54,6 @@ export default function CreateNewUserForm() {
 
   const { data, isLoading } = api.quiz.getQuizzes.useQuery();
   const availableQuizzes = data ?? [];
-  const quizzesId = availableQuizzes.map((quiz) => quiz.quizId);
 
   const dummyEmail = generateRandomDummyEmail();
 
@@ -64,9 +63,8 @@ export default function CreateNewUserForm() {
       email: dummyEmail,
       password: "password",
       role: "USER",
-      quizzesId,
+      quizzesId: [],
     },
-
     resolver: zodResolver(CreateNewUserSchema),
   });
   const { control, handleSubmit, formState, reset } = createNewUserForm;

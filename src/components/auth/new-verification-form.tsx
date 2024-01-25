@@ -36,7 +36,7 @@ export default function NewVerificationForm() {
 
           setTimeout(() => {
             router.replace(verificationSuccessRedirect);
-          }, 1500);
+          }, 2000);
         }
       })
       .catch(() => {
@@ -52,11 +52,7 @@ export default function NewVerificationForm() {
   }, [newVerificationAction]);
 
   return (
-    <AuthCardWrapper
-      headerLabel="Confirming your verification"
-      backButtonLabel="Back to login"
-      backButtonHref="/auth/login"
-    >
+    <AuthCardWrapper headerLabel="Confirming your verification">
       <div className="my-3 flex items-center justify-center space-x-3 text-gray-700 [&>svg]:size-8">
         {actionResponse?.status === "UNINITIALIZED" && (
           <Loader2 className="animate-spin" />

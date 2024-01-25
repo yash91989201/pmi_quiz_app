@@ -158,7 +158,7 @@ export default function AdminLoginForm() {
             asChild
             variant="link"
           >
-            <Link href="/auth/reset">Forgot Password?</Link>
+            <Link href="/auth/reset-password">Forgot Password?</Link>
           </Button>
           {actionResponse?.status === "SUCCESS" && (
             <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">

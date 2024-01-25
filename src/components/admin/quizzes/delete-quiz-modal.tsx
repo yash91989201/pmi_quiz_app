@@ -49,7 +49,7 @@ export function DeleteQuizModal({ quizId }: { quizId: string }) {
         errors: { message: "" },
       });
       deleteQuizModal.close();
-    }, 3000);
+    }, 2000);
   };
 
   return (

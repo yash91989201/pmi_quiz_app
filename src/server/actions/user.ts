@@ -425,31 +425,33 @@ async function signUp(
   const numberOfAdmins = await adminCount();
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const createNewUser = await db.insert(users).values({
-    name,
-    email,
-    password: hashedPassword,
-    role: numberOfAdmins === 0 ? "ADMIN" : "USER",
-  });
+  if (numberOfAdmins === 0) {
+    const createNewUser = await db.insert(users).values({
+      name,
+      email,
+      password: hashedPassword,
+      role: numberOfAdmins === 0 ? "ADMIN" : "USER",
+    });
 
-  const verificationToken = await generateVerificationToken(email);
-  await sendVerificationEmail({
-    userName: name,
-    email: verificationToken.email,
-    token: verificationToken.token,
-    subject: "Confirm your SignUp.",
-  });
+    const verificationToken = await generateVerificationToken(email);
+    await sendVerificationEmail({
+      userName: name,
+      email: verificationToken.email,
+      token: verificationToken.token,
+      subject: "Confirm your SignUp.",
+    });
 
-  if (createNewUser[0].affectedRows === 1) {
-    return {
-      status: "SUCCESS",
-      message: "Confirmation Email Sent.",
-    };
+    if (createNewUser[0].affectedRows === 1) {
+      return {
+        status: "SUCCESS",
+        message: "Confirmation Email Sent.",
+      };
+    }
   }
 
   return {
     status: "FAILED",
-    message: "Error Occured! Try again.",
+    message: "Admin user already exists.",
   };
 }
 
@@ -465,6 +467,7 @@ async function resetPassword(
   }
 
   const existingUser = await getUserByEmail(validatedFormData.data.email);
+
   if (!existingUser) {
     return {
       status: "FAILED",
@@ -479,7 +482,10 @@ async function resetPassword(
     token: resetToken.token,
   });
 
-  return { status: "SUCCESS", message: "Check your inbox for reset mail." };
+  return {
+    status: "SUCCESS",
+    message: "Check your inbox for reset mail.",
+  };
 }
 
 async function newPassword(
@@ -505,7 +511,7 @@ async function newPassword(
   const isResetTokenExpired = new Date(existingToken.expires) < new Date();
 
   if (isResetTokenExpired) {
-    return { status: "FAILED", message: "Token has expired" };
+    return { status: "FAILED", message: "Token has expired." };
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
@@ -513,20 +519,27 @@ async function newPassword(
   if (!existingUser) {
     return {
       status: "FAILED",
-      message: "User doesnot exists",
+      message: "User doesnot exists.",
     };
   }
 
   const newPassword = await bcrypt.hash(password, 12);
 
-  await db
+  const newPasswordQuery = await db
     .update(users)
     .set({
       password: newPassword,
     })
-    .where(eq(users.id, existingToken.id));
+    .where(eq(users.id, existingUser.id));
 
-  return { status: "SUCCESS", message: "Password reset done." };
+  if (newPasswordQuery[0].affectedRows > 0) {
+    return {
+      status: "SUCCESS",
+      message: "Password reset done.",
+      role: existingUser.role,
+    };
+  }
+  return { status: "FAILED", message: "Unable to reset password, try again." };
 }
 
 async function logoutUser() {

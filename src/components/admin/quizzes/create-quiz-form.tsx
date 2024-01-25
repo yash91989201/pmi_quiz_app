@@ -33,9 +33,7 @@ export default function CreateQuizForm() {
   const quizId = createId();
   const initialQuestionId = createId();
   const { data, isLoading } = api.user.getUsersId.useQuery();
-
   const availableUsers = data ?? [];
-  const usersId = availableUsers?.map((user) => user.id) ?? [];
 
   const [actionResponse, setActionResponse] =
     useState<CreateQuizFormSatusType>();
@@ -45,12 +43,12 @@ export default function CreateQuizForm() {
     quizId,
     quizTitle: "Javascript Quiz",
     totalMark: 5,
-    usersId,
+    usersId: [],
     questions: [
       {
         questionId: initialQuestionId,
         quizId,
-        questionText: "What is hoisting",
+        questionText: "What is hoisting ?",
         mark: 5,
         options: [
           {
@@ -213,6 +211,7 @@ function QuestionsField() {
                       {...field}
                       placeholder={`Question ${index + 1}`}
                       type="text"
+                      className="flex-1"
                     />
                   </FormControl>
                 </FormItem>
@@ -245,7 +244,7 @@ function QuestionsField() {
               disabled={fields.length == 1}
               type="button"
             >
-              <Trash2 />
+              <Trash2 size={16} />
             </Button>
           </div>
 

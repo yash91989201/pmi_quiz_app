@@ -43,33 +43,28 @@ async function createQuiz(
     quizTitle,
     totalMark,
   };
-  const allQuestions = quizQuestions.map((question) => ({
-    questionId: question.questionId,
-    quizId: question.quizId,
-    questionText: question.questionText,
-    mark: question.mark,
+
+  const allQuestions = quizQuestions.map(({ options: _o, ...question }) => ({
+    ...question,
   }));
 
-  let allOptions: OptionSchemaType[] = [];
-  quizQuestions.map((question) => {
-    allOptions = [...allOptions, ...question.options];
-  });
+  const allOptions: OptionSchemaType[] = quizQuestions.flatMap(
+    (question) => question.options,
+  );
 
   const newQuiz = await db.insert(quizzes).values(quizData);
   await db.insert(questions).values(allQuestions);
   await db.insert(options).values(allOptions);
 
   if (usersId.length > 0) {
-    const quizzesSelectedForUser = usersId.map((userId) => ({
+    const selectedUserQuizzes = usersId.map((userId) => ({
       userId,
-      quizId,
-      quizTitle,
-      totalMark,
+      ...quizData,
     }));
 
     const newUserQuizzes = await db
       .insert(userQuizzes)
-      .values(quizzesSelectedForUser);
+      .values(selectedUserQuizzes);
 
     revalidatePath("/admin/quizzes");
 
@@ -128,10 +123,10 @@ async function deleteQuiz(
   const deleteQuizQuery = await db
     .delete(quizzes)
     .where(eq(quizzes.quizId, quizId));
+
   await db.delete(userQuizzes).where(eq(userQuizzes.quizId, quizId));
 
   revalidatePath("/admin/quizzes");
-
   if (deleteQuizQuery[0].affectedRows >= 1) {
     return {
       status: "SUCCESS",
@@ -140,7 +135,7 @@ async function deleteQuiz(
   }
   return {
     status: "FAILED",
-    message: "Unable to delete quiz. Try later.",
+    message: JSON.stringify(deleteQuizQuery),
   };
 }
 
@@ -167,28 +162,6 @@ async function submitQuiz(
       options: true,
     },
   });
-
-  // const totalMark = answerToCheck.reduce(
-  //   (total, currentValue, currentIndex) => {
-  //     //  if correct option is true in answertocheck add mark in total
-  //     const optionSelectedByUser = currentValue.options.find(
-  //       (option) => option.isSelected,
-  //     );
-  //     if (optionSelectedByUser === undefined) return total;
-
-  //     const currentQuestionToCheck = quizQuestions.find(
-  //       (quizQuestion) => quizQuestion.questionId === currentValue.questionId,
-  //     )!;
-  //     const currentQuestionOption = currentQuestionToCheck.options.find(
-  //       (option) => option.isCorrectOption,
-  //     )!;
-  //     if (optionSelectedByUser.optionId === currentQuestionOption.optionId)
-  //       return total + currentQuestionToCheck.mark;
-
-  //     return total;
-  //   },
-  //   0,
-  // );
 
   const score = answerToCheck.reduce((total, currentValue) => {
     const optionSelectedByUser = currentValue.options.find(
