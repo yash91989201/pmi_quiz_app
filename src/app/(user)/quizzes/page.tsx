@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 // CUSTOM HOOKS
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -8,10 +7,10 @@ import { api } from "@/trpc/react";
 // TYPES
 import type { UserQuizStatusType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/admin/side-nav/logout-button";
+import { userQuizzesTableColumnsForUser } from "@/config/data-table-column-defs";
 // CONSTANTS
-import { STATUS_TEXT } from "@/config/constants";
+import DataTable from "@/components/ui/data-table";
 
 type UserQuizType = {
   userQuizId: string;
@@ -34,28 +33,12 @@ export default function QuizzesPage() {
     <>
       <div className="space-y-3">
         <h3 className="text-xl font-medium">Available Quizzes</h3>
-        <div className="flex flex-col gap-1">
-          {userQuizzes.length > 0 &&
-            userQuizzes.map((userQuiz) => (
-              <QuizCard key={userQuiz.userQuizId} userQuiz={userQuiz} />
-            ))}
-        </div>
+        <DataTable
+          columns={userQuizzesTableColumnsForUser}
+          data={userQuizzes}
+        />
       </div>
       <LogoutButton />
     </>
-  );
-}
-
-function QuizCard({ userQuiz }: { userQuiz: UserQuizType }) {
-  return (
-    <div className="flex w-full gap-3 bg-primary/10 p-3 ">
-      <p>{userQuiz.quizTitle}</p>
-      <p>{userQuiz.score}</p>
-      <p>{STATUS_TEXT[userQuiz.status]}</p>
-      <p>{userQuiz.totalMark}</p>
-      <Button variant="ghost" disabled={userQuiz.status !== "NOT_STARTED"}>
-        <Link href={`/quizzes/${userQuiz.userQuizId}`}>Start Quiz</Link>
-      </Button>
-    </div>
   );
 }

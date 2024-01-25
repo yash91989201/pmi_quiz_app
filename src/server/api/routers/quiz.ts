@@ -3,7 +3,7 @@ import { count, countDistinct, eq, like } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
-import { questions, quizzes, userQuizzes } from "@/server/db/schema";
+import { questions, quizzes, userQuizzes, users } from "@/server/db/schema";
 
 const quizRouter = createTRPCRouter({
   /**
@@ -103,18 +103,32 @@ const quizRouter = createTRPCRouter({
   getUserQuizzes: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(({ ctx, input }) => {
+      return ctx.db.query.userQuizzes.findMany({
+        where: eq(userQuizzes.userId, input.userId),
+      });
+    }),
+
+  /**
+   * Returns  user quizzes for a specific quiz id
+   * used to show quiz results for a specific quiz
+   * only for use in ADMIN side.
+   */
+  getUsersQuizzes: protectedProcedure
+    .input(z.object({ quizId: z.string() }))
+    .query(({ ctx, input }) => {
       return ctx.db
         .select({
           userQuizId: userQuizzes.userQuizId,
           userId: userQuizzes.userId,
           quizId: userQuizzes.quizId,
+          name: users.name,
           score: userQuizzes.score,
           status: userQuizzes.status,
-          quizTitle: quizzes.quizTitle,
-          totalMark: quizzes.totalMark,
+          quizTitle: userQuizzes.quizTitle,
+          totalMark: userQuizzes.totalMark,
         })
         .from(userQuizzes)
-        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+        .leftJoin(users, eq(userQuizzes.userId, users.id))
         .groupBy(
           userQuizzes.userQuizId,
           userQuizzes.userId,
@@ -122,7 +136,7 @@ const quizRouter = createTRPCRouter({
           userQuizzes.score,
           userQuizzes.status,
         )
-        .where(eq(userQuizzes.userId, input.userId));
+        .where(eq(userQuizzes.quizId, input.quizId));
     }),
 });
 

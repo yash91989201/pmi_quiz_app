@@ -12,6 +12,7 @@ import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
 import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
+import { Badge } from "@/components/ui/badge";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -33,16 +34,12 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
     cell: ({ row }) => {
       const email = row.original.email;
       const isDummyEmail = email.startsWith(DUMMY_EMAIL_PREFIX);
+      const fieldText = isDummyEmail ? "Not Added" : email;
 
       return (
-        <p
-          className={cn(
-            "w-fit rounded-full px-4 py-0.5",
-            isDummyEmail && "bg-red-100 text-red-500",
-          )}
-        >
-          {isDummyEmail ? "Not Added" : email}
-        </p>
+        <Badge variant={isDummyEmail ? "destructive" : "outline"}>
+          {fieldText}
+        </Badge>
       );
     },
   },
@@ -51,18 +48,11 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
     header: "Email Verified",
     cell: ({ row }) => {
       const emailVerified = row.original.emailVerified;
-
+      const fieldText = !!emailVerified ? formatDate(emailVerified) : "No";
       return (
-        <p
-          className={cn(
-            "w-fit rounded-full px-4 py-0.5",
-            !!emailVerified
-              ? "bg-green-100 text-green-500"
-              : "bg-red-100 text-red-500",
-          )}
-        >
-          {!!emailVerified ? formatDate(emailVerified) : "No"}
-        </p>
+        <Badge variant={!!emailVerified ? "outline" : "destructive"}>
+          {fieldText}
+        </Badge>
       );
     },
   },
@@ -85,6 +75,14 @@ export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
     header: "Quiz Title",
+    cell: ({ row }) => (
+      <Link
+        href={`/admin/quizzes/${row.original.quizId}`}
+        className={cn(buttonVariants({ variant: "link" }), "p-0 text-gray-700")}
+      >
+        {row.original.quizTitle}
+      </Link>
+    ),
   },
   {
     accessorKey: "totalQuestions",
@@ -99,7 +97,7 @@ export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
     header: "Total Users",
   },
   {
-    accessorKey: "Actions",
+    accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => (
       <div>
@@ -119,11 +117,81 @@ type UserQuizzesTableSchemaType = {
   totalMark: number | null;
 };
 
-export const userQuizzesTableColumns: ColumnDef<UserQuizzesTableSchemaType>[] =
+export const userQuizzesTableColumnsForAdmin: ColumnDef<UserQuizzesTableSchemaType>[] =
   [
     {
       accessorKey: "quizTitle",
       header: "Quiz",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
+    },
+    {
+      accessorKey: "score",
+      header: "Score",
+    },
+    {
+      accessorKey: "totalMark",
+      header: "Total Mark",
+    },
+  ];
+
+export const userQuizzesTableColumnsForUser: ColumnDef<UserQuizzesTableSchemaType>[] =
+  [
+    {
+      accessorKey: "quizTitle",
+      header: "Quiz",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
+    },
+    {
+      accessorKey: "score",
+      header: "Score",
+    },
+    {
+      accessorKey: "totalMark",
+      header: "Total Mark",
+    },
+    {
+      accessorKey: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <Link
+          href={`/quizzes/${row.original.userQuizId}`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            " text-gray-700",
+            row.original.status === "COMPLETED" &&
+              "pointer-events-none text-gray-500",
+          )}
+        >
+          Start Quiz
+        </Link>
+      ),
+    },
+  ];
+
+type UsersQuizzesTableSchemaType = {
+  userQuizId: string;
+  userId: string;
+  quizId: string;
+  name: string | null;
+  score: number;
+  status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  quizTitle: string | null;
+  totalMark: number | null;
+};
+
+export const usersQuizzesTableColumns: ColumnDef<UsersQuizzesTableSchemaType>[] =
+  [
+    {
+      accessorKey: "name",
+      header: "Username",
     },
     {
       accessorKey: "status",
