@@ -1,8 +1,10 @@
 "use client";
+import "@/styles/tiptap.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
+import parse from "html-react-parser";
 // ACTIONS
 import { submitQuiz } from "@/server/actions/quiz";
 // SCHEMAS
@@ -23,6 +25,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // ICONS
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type QuestionType = {
   quizId: string;
@@ -99,7 +102,7 @@ export default function UserQuizForm({
         <Button
           type="submit"
           disabled={formState.isSubmitting}
-          className="flex items-center justify-center gap-3 disabled:cursor-not-allowed"
+          className="flex w-fit items-center justify-center gap-3 self-end disabled:cursor-not-allowed"
         >
           <h6 className="md:text-lg">Submit</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}
@@ -121,18 +124,16 @@ function QuestionsField() {
     <div className="flex flex-col gap-3">
       {fields.map((question, index) => (
         <Fragment key={question.id}>
-          <div>
-            <span className="text-xl font-bold text-primary">{index + 1}</span>
-            <span>/{fields.length}</span>
+          <div className="flex justify-between">
+            <p>
+              <span className="text-xl font-bold text-primary">
+                {index + 1}
+              </span>
+              /{fields.length}
+            </p>
+            <Badge variant="outline">Mark:&nbsp;{question.mark}</Badge>
           </div>
-          <div className="flex gap-3">
-            <p>{question.questionText}</p>
-
-            <div>
-              <p>Mark:&nbsp;{question.mark}</p>
-            </div>
-          </div>
-
+          <section className="tiptap">{parse(question.questionText)}</section>
           <OptionsField questionIndex={index} />
         </Fragment>
       ))}
