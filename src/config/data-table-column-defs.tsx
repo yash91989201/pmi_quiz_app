@@ -9,10 +9,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
-import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
+// CONSTANTS
+import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
 
-const userTableColumns: ColumnDef<UserSchemaType>[] = [
+export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
     accessorKey: "name",
     header: "Username",
@@ -80,7 +81,7 @@ const userTableColumns: ColumnDef<UserSchemaType>[] = [
   },
 ];
 
-const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
+export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
     header: "Quiz Title",
@@ -108,6 +109,33 @@ const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   },
 ];
 
-// const userQuizzesTableColumns=[]
+type UserQuizzesTableSchemaType = {
+  userQuizId: string;
+  userId: string;
+  quizId: string;
+  score: number;
+  status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+  quizTitle: string | null;
+  totalMark: number | null;
+};
 
-export { userTableColumns, quizzesTableColumns };
+export const userQuizzesTableColumns: ColumnDef<UserQuizzesTableSchemaType>[] =
+  [
+    {
+      accessorKey: "quizTitle",
+      header: "Quiz",
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
+    },
+    {
+      accessorKey: "score",
+      header: "Score",
+    },
+    {
+      accessorKey: "totalMark",
+      header: "Total Mark",
+    },
+  ];

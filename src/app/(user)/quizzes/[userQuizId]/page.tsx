@@ -8,7 +8,7 @@ export default async function Page({
 }: {
   params: { userQuizId: string };
 }) {
-  const userQuizData = await api.quiz.getUserQuizData.query({
+  const userQuizData = await api.user.getQuizData.query({
     userQuizId: params.userQuizId,
   });
 

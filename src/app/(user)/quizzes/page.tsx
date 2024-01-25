@@ -1,12 +1,17 @@
 "use client";
-
-import LogoutButton from "@/components/admin/side-nav/logout-button";
-import { Button } from "@/components/ui/button";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import type { UserQuizStatusType } from "@/lib/schema";
-import { api } from "@/trpc/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+// CUSTOM HOOKS
+import { useCurrentUser } from "@/hooks/use-current-user";
+// UTILS
+import { api } from "@/trpc/react";
+// TYPES
+import type { UserQuizStatusType } from "@/lib/schema";
+// CUSTOM COMPONENTS
+import { Button } from "@/components/ui/button";
+import LogoutButton from "@/components/admin/side-nav/logout-button";
+// CONSTANTS
+import { STATUS_TEXT } from "@/config/constants";
 
 type UserQuizType = {
   userQuizId: string;
@@ -18,17 +23,11 @@ type UserQuizType = {
   status: UserQuizStatusType;
 };
 
-const STATUS_TEXT = {
-  NOT_STARTED: "Not Started",
-  IN_PROGRESS: "In Progress",
-  COMPLETED: "Completed",
-} as const;
-
 export default function QuizzesPage() {
   const user = useCurrentUser();
   if (!user) redirect("/auth/login");
 
-  const { data } = api.quiz.getUserQuizzes.useQuery();
+  const { data } = api.user.getQuizzes.useQuery();
   const userQuizzes: UserQuizType[] = data ?? [];
 
   return (

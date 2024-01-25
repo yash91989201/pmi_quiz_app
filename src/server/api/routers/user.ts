@@ -3,9 +3,14 @@ import { and, eq, like, sql } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
-import { userQuizzes, users } from "@/server/db/schema";
+import { questions, quizzes, userQuizzes, users } from "@/server/db/schema";
 
 const userRouter = createTRPCRouter({
+  /**
+   * Returns all the users data
+   * to show data in table
+   * only for use in ADMIN side.
+   */
   getAll: protectedProcedure
     .input(
       z.object({
@@ -80,7 +85,11 @@ const userRouter = createTRPCRouter({
         total_page: 0,
       };
     }),
-  // get users wil role USER
+  /**
+   * Returns all the id's of user with role=USER
+   * used for adding users to quiz
+   * used in ADMIN side
+   */
   getUsersId: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.users.findMany({
       where: eq(users.role, "USER"),
@@ -90,6 +99,75 @@ const userRouter = createTRPCRouter({
       },
     });
   }),
+
+  /**
+   * Returns all the quizzes for a specific user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in USER side.
+   */
+  getQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db
+      .select({
+        userQuizId: userQuizzes.userQuizId,
+        userId: userQuizzes.userId,
+        quizId: userQuizzes.quizId,
+        score: userQuizzes.score,
+        status: userQuizzes.status,
+        quizTitle: quizzes.quizTitle,
+        totalMark: quizzes.totalMark,
+      })
+      .from(userQuizzes)
+      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+      .groupBy(
+        userQuizzes.userQuizId,
+        userQuizzes.userId,
+        userQuizzes.quizId,
+        userQuizzes.score,
+        userQuizzes.status,
+      )
+      .where(eq(userQuizzes.userId, ctx.session.user.id));
+  }),
+
+  /**
+   * Returns all the quiz data like questions and options
+   * used for starting a quiz for a given user
+   * only for use in USER side.
+   */
+  getQuizData: protectedProcedure
+    .input(z.object({ userQuizId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userQuiz = (await ctx.db.query.userQuizzes.findFirst({
+        where: eq(userQuizzes.userQuizId, input.userQuizId),
+      }))!;
+
+      const userQuestions = await ctx.db.query.questions.findMany({
+        where: eq(questions.quizId, userQuiz.quizId),
+        with: {
+          options: {
+            columns: {
+              isCorrectOption: false,
+            },
+          },
+        },
+      });
+
+      const questionsData = userQuestions.map((question) => {
+        return {
+          ...question,
+          options: question.options.map((option) => ({
+            ...option,
+            isSelected: false,
+          })),
+        };
+      });
+      return {
+        quizId: userQuiz.quizId,
+        userQuizId: userQuiz.userQuizId,
+        quizTitle: userQuiz.quizTitle,
+        totalMark: userQuiz.totalMark,
+        questions: questionsData,
+      };
+    }),
 });
 
 export default userRouter;

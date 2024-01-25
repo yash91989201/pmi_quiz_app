@@ -6,6 +6,11 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { questions, quizzes, userQuizzes } from "@/server/db/schema";
 
 const quizRouter = createTRPCRouter({
+  /**
+   * Returns all the quizzes created
+   * used for display in quiz table
+   * only for use in ADMIN side.
+   */
   getAll: protectedProcedure
     .input(
       z.object({
@@ -76,6 +81,11 @@ const quizRouter = createTRPCRouter({
       };
     }),
 
+  /**
+   * Returns all the quizzes
+   * to be used to add quiz to a user
+   * only for use in ADMIN side.
+   */
   getQuizzes: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.quizzes.findMany({
       columns: {
@@ -85,63 +95,34 @@ const quizRouter = createTRPCRouter({
     });
   }),
 
-  getUserQuizzes: protectedProcedure.query(({ ctx }) => {
-    return ctx.db
-      .select({
-        userQuizId: userQuizzes.userQuizId,
-        userId: userQuizzes.userId,
-        quizId: userQuizzes.quizId,
-        score: userQuizzes.score,
-        status: userQuizzes.status,
-        quizTitle: quizzes.quizTitle,
-        totalMark: quizzes.totalMark,
-      })
-      .from(userQuizzes)
-      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
-      .groupBy(
-        userQuizzes.userQuizId,
-        userQuizzes.userId,
-        userQuizzes.quizId,
-        userQuizzes.score,
-        userQuizzes.status,
-      )
-      .where(eq(userQuizzes.userId, ctx.session.user.id));
-  }),
-
-  getUserQuizData: protectedProcedure
-    .input(z.object({ userQuizId: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const userQuiz = (await ctx.db.query.userQuizzes.findFirst({
-        where: eq(userQuizzes.userQuizId, input.userQuizId),
-      }))!;
-
-      const userQuestions = await ctx.db.query.questions.findMany({
-        where: eq(questions.quizId, userQuiz.quizId),
-        with: {
-          options: {
-            columns: {
-              isCorrectOption: false,
-            },
-          },
-        },
-      });
-
-      const questionsData = userQuestions.map((question) => {
-        return {
-          ...question,
-          options: question.options.map((option) => ({
-            ...option,
-            isSelected: false,
-          })),
-        };
-      });
-      return {
-        quizId: userQuiz.quizId,
-        userQuizId: userQuiz.userQuizId,
-        quizTitle: userQuiz.quizTitle,
-        totalMark: userQuiz.totalMark,
-        questions: questionsData,
-      };
+  /**
+   * Returns all the quizzes for a specific user id
+   * used to show quiz results for a specific user
+   * only for use in ADMIN side.
+   */
+  getUserQuizzes: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db
+        .select({
+          userQuizId: userQuizzes.userQuizId,
+          userId: userQuizzes.userId,
+          quizId: userQuizzes.quizId,
+          score: userQuizzes.score,
+          status: userQuizzes.status,
+          quizTitle: quizzes.quizTitle,
+          totalMark: quizzes.totalMark,
+        })
+        .from(userQuizzes)
+        .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+        .groupBy(
+          userQuizzes.userQuizId,
+          userQuizzes.userId,
+          userQuizzes.quizId,
+          userQuizzes.score,
+          userQuizzes.status,
+        )
+        .where(eq(userQuizzes.userId, input.userId));
     }),
 });
 
