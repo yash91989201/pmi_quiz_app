@@ -71,7 +71,7 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   },
 ];
 
-export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
+export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
     header: "Quiz Title",
@@ -86,7 +86,7 @@ export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   },
   {
     accessorKey: "totalQuestions",
-    header: "Total Questions",
+    header: "Questions",
   },
   {
     accessorKey: "totalMark",
@@ -94,7 +94,7 @@ export const quizzesTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   },
   {
     accessorKey: "totalUsers",
-    header: "Total Users",
+    header: "Users",
   },
   {
     accessorKey: "actions",

@@ -3,7 +3,6 @@ import { api } from "@/trpc/server";
 import { getUserById } from "@/server/utils/user";
 // CUSTOM COMPONENTS
 import DataTable from "@/components/ui/data-table";
-// CONSTANTS
 import { userQuizzesTableColumnsForAdmin } from "@/config/data-table-column-defs";
 
 export default async function Page({ params }: { params: { userId: string } }) {

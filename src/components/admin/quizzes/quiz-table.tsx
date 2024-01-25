@@ -6,9 +6,8 @@ import type { QuizTableSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import DataTable from "@/components/ui/data-table";
 import RowsPerPage from "@/components/shared/rows-per-page";
+import { quizTableColumns } from "@/config/data-table-column-defs";
 import PaginationWtihEllepsis from "@/components/shared/pagination-with-ellepsis";
-// CONSTANTS
-import { quizzesTableColumns } from "@/config/data-table-column-defs";
 
 export default async function QuizTable({
   searchParams,
@@ -32,7 +31,7 @@ export default async function QuizTable({
   return (
     <>
       <DataTable
-        columns={quizzesTableColumns}
+        columns={quizTableColumns}
         data={quizzes as QuizTableSchemaType[]}
       />
 

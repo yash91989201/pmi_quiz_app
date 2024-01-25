@@ -13,7 +13,7 @@ import {
 
 export const mysqlTable = mysqlTableCreator((name) => name);
 
-export const users = mysqlTable("user", {
+export const users = mysqlTable("users", {
   id: varchar("id", { length: 32 })
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -29,15 +29,15 @@ export const users = mysqlTable("user", {
   image: varchar("image", { length: 255 }),
 });
 
-export const quizzes = mysqlTable("quiz", {
+export const quizzes = mysqlTable("quizzes", {
   quizId: varchar("quizId", { length: 32 })
     .primaryKey()
     .$defaultFn(() => createId()),
   quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
-  totalMark: int("totalMarks").notNull(),
+  totalMark: int("totalMark").notNull(),
 });
 
-export const questions = mysqlTable("question", {
+export const questions = mysqlTable("questions", {
   questionId: varchar("questionId", { length: 32 })
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -54,7 +54,7 @@ export const questionRelations = relations(questions, ({ many }) => ({
   options: many(options),
 }));
 
-export const options = mysqlTable("option", {
+export const options = mysqlTable("options", {
   optionId: varchar("optionId", { length: 32 }).primaryKey(),
   questionId: varchar("questionId", { length: 32 })
     .notNull()
@@ -87,7 +87,7 @@ export const userQuizzes = mysqlTable("userQuizzes", {
       onDelete: "cascade",
     }),
   quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
-  totalMark: int("totalMarks").notNull(),
+  totalMark: int("totalMark").notNull(),
   score: int("score").default(0).notNull(),
   status: mysqlEnum("status", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"])
     .default("NOT_STARTED")
@@ -95,7 +95,7 @@ export const userQuizzes = mysqlTable("userQuizzes", {
 });
 
 export const verificationTokens = mysqlTable(
-  "verificationToken",
+  "verificationTokens",
   {
     id: varchar("id", { length: 255 })
       .notNull()
@@ -110,7 +110,7 @@ export const verificationTokens = mysqlTable(
 );
 
 export const passwordResetTokens = mysqlTable(
-  "passwordResetToken",
+  "passwordResetTokens",
   {
     id: varchar("id", { length: 255 })
       .notNull()
@@ -125,7 +125,7 @@ export const passwordResetTokens = mysqlTable(
 );
 
 export const twoFactorTokens = mysqlTable(
-  "twoFactorToken",
+  "twoFactorTokens",
   {
     id: varchar("id", { length: 255 })
       .notNull()

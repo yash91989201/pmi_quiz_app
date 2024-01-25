@@ -2,7 +2,6 @@
 import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
 import DataTable from "@/components/ui/data-table";
-// CONSTANTS
 import { usersQuizzesTableColumns } from "@/config/data-table-column-defs";
 
 export default async function Page({ params }: { params: { quizId: string } }) {

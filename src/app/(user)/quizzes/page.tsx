@@ -7,10 +7,9 @@ import { api } from "@/trpc/react";
 // TYPES
 import type { UserQuizStatusType } from "@/lib/schema";
 // CUSTOM COMPONENTS
+import DataTable from "@/components/ui/data-table";
 import LogoutButton from "@/components/admin/side-nav/logout-button";
 import { userQuizzesTableColumnsForUser } from "@/config/data-table-column-defs";
-// CONSTANTS
-import DataTable from "@/components/ui/data-table";
 
 type UserQuizType = {
   userQuizId: string;

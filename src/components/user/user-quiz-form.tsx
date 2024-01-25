@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Fragment, useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 // ACTIONS
+import { submitQuiz } from "@/server/actions/quiz";
 // SCHEMAS
 import { UserQuizFormSchema } from "@/lib/schema";
 // TYPES
@@ -22,7 +23,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // ICONS
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { submitQuiz } from "@/server/actions/quiz";
 
 type QuestionType = {
   quizId: string;
