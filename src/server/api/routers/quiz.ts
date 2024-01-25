@@ -80,7 +80,6 @@ const quizRouter = createTRPCRouter({
         total_page: 0,
       };
     }),
-
   /**
    * Returns all the quizzes
    * to be used to add quiz to a user
@@ -94,7 +93,6 @@ const quizRouter = createTRPCRouter({
       },
     });
   }),
-
   /**
    * Returns all the quizzes for a specific user id
    * used to show quiz results for a specific user
@@ -107,7 +105,6 @@ const quizRouter = createTRPCRouter({
         where: eq(userQuizzes.userId, input.userId),
       });
     }),
-
   /**
    * Returns  user quizzes for a specific quiz id
    * used to show quiz results for a specific quiz
@@ -137,6 +134,27 @@ const quizRouter = createTRPCRouter({
           userQuizzes.status,
         )
         .where(eq(userQuizzes.quizId, input.quizId));
+    }),
+  /**
+   * Returns  all the data for single quiz
+   * used to update quiz
+   * only for use in ADMIN side.
+   */
+  getQuizData: protectedProcedure
+    .input(z.object({ quizid: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const quizData = (await ctx.db.query.quizzes.findFirst({
+        where: eq(quizzes.quizId, input.quizid),
+      }))!;
+
+      const questionsData = await ctx.db.query.questions.findMany({
+        where: eq(questions.quizId, input.quizid),
+        with: {
+          options: true,
+        },
+      });
+
+      return { ...quizData, questions: questionsData };
     }),
 });
 

@@ -26,6 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import TipTap from "@/components/admin/quizzes/TipTap";
 // ICONS
 import { CheckCircle2, Loader2, Plus, Trash2, XCircle } from "lucide-react";
 
@@ -101,7 +102,7 @@ export default function CreateQuizForm() {
   return (
     <Form {...quizForm}>
       <form
-        className="flex w-[640px] flex-col gap-3"
+        className="flex max-w-[1024] flex-col gap-3"
         onSubmit={handleSubmit(createQuizAction)}
       >
         <FormField
@@ -145,7 +146,7 @@ export default function CreateQuizForm() {
         <Button
           type="submit"
           disabled={formState.isSubmitting}
-          className="flex items-center justify-center gap-3 disabled:cursor-not-allowed"
+          className="flex w-fit items-center justify-center gap-3 self-end disabled:cursor-not-allowed"
         >
           <h6 className="md:text-lg">Create Quiz</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}
@@ -201,57 +202,66 @@ function QuestionsField() {
             <span className="text-xl font-bold text-primary">{index + 1}</span>
             <span>/{fields.length}</span>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3">
             <FormField
               name={`questions.${index}.questionText`}
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={`Question ${index + 1}`}
-                      type="text"
-                      className="flex-1"
+                    <TipTap
+                      text={field.value as string}
+                      onChange={field.onChange}
                     />
                   </FormControl>
                 </FormItem>
               )}
             />
 
-            <FormField
-              name={`questions.${index}.mark`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Mark"
-                      pattern="[0-9\/]*"
-                      minLength={1}
-                      onChange={(event) =>
-                        field.onChange(Number(event.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex justify-between">
+              <FormField
+                name={`questions.${index}.mark`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center gap-3">
+                        <p>Mark</p>
+                        <Input
+                          {...field}
+                          placeholder="Mark"
+                          pattern="[0-9\/]*"
+                          minLength={1}
+                          className="w-fit"
+                          onChange={(event) =>
+                            field.onChange(Number(event.target.value))
+                          }
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button
-              variant="ghost"
-              onClick={() => deleteQuestion(index)}
-              disabled={fields.length == 1}
-              type="button"
-            >
-              <Trash2 size={16} />
-            </Button>
+              <Button
+                variant="ghost"
+                onClick={() => deleteQuestion(index)}
+                disabled={fields.length == 1}
+                type="button"
+              >
+                <Trash2 size={16} />
+              </Button>
+            </div>
           </div>
 
           <OptionsField questionIndex={index} />
         </Fragment>
       ))}
-      <Button variant="outline" type="button" onClick={() => addQuestion()}>
+      <Button
+        variant="outline"
+        type="button"
+        className="w-fit"
+        onClick={() => addQuestion()}
+      >
         Add Question
       </Button>
     </div>
@@ -334,8 +344,13 @@ function OptionsField({ questionIndex }: { questionIndex: number }) {
         />
       ))}
       {fields.length < 4 && (
-        <Button variant="outline" type="button" onClick={() => addOption()}>
-          <Plus />
+        <Button
+          variant="outline"
+          type="button"
+          className="gap-2"
+          onClick={() => addOption()}
+        >
+          <Plus size={16} />
           <span>Add Option</span>
         </Button>
       )}
@@ -406,7 +421,7 @@ function AvailableUsersField({
           />
         </div>
       ) : (
-        <p>No quizzes available.</p>
+        <p>No users available.</p>
       )}
     </>
   );
