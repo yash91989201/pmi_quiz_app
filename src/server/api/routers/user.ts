@@ -90,13 +90,9 @@ const userRouter = createTRPCRouter({
    * used for adding users to quiz
    * used in ADMIN side
    */
-  getUsersId: protectedProcedure.query(({ ctx }) => {
+  getAllUsers: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.users.findMany({
       where: eq(users.role, "USER"),
-      columns: {
-        id: true,
-        name: true,
-      },
     });
   }),
 

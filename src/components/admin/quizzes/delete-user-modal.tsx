@@ -52,6 +52,7 @@ export function DeleteUserModal({ id }: { id: string }) {
     <Dialog open={deleteQuizModal.isOpen} onOpenChange={deleteQuizModal.toggle}>
       <DialogTrigger asChild>
         <Button
+          title="Delete User"
           className="hover:bg-red-100 hover:text-red-500 [&>svg]:size-4"
           variant="ghost"
         >

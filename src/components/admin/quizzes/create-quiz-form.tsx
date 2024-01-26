@@ -25,7 +25,7 @@ import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 export default function CreateQuizForm() {
   const quizId = createId();
   const initialQuestionId = createId();
-  const { data, isLoading } = api.user.getUsersId.useQuery();
+  const { data, isLoading } = api.user.getAllUsers.useQuery();
   const availableUsers = data ?? [];
 
   const [actionResponse, setActionResponse] = useState<QuizFormStatusType>();

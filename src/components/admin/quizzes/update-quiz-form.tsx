@@ -27,7 +27,7 @@ export default function UpdateQuizForm({
 }: {
   defaultValues: QuizFormSchemaType;
 }) {
-  const { data, isLoading } = api.user.getUsersId.useQuery();
+  const { data, isLoading } = api.user.getAllUsers.useQuery();
   const availableUsers = data ?? [];
 
   const [actionResponse, setActionResponse] =

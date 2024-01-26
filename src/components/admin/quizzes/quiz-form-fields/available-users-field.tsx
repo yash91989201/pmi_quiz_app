@@ -1,7 +1,7 @@
 "use client";
 import { useFormContext } from "react-hook-form";
 // TYPES
-import type { QuizFormSchemaType } from "@/lib/schema";
+import type { QuizFormSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import {
   FormControl,
@@ -16,10 +16,7 @@ export default function AvailableUsersField({
   availableUsers,
   isLoading,
 }: {
-  availableUsers: {
-    id: string;
-    name: string;
-  }[];
+  availableUsers: UserSchemaType[];
   isLoading: boolean;
 }) {
   const { control } = useFormContext<QuizFormSchemaType>();

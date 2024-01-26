@@ -12,13 +12,13 @@ export default function UsersPage({
   searchParams: { query?: string; page?: string; per_page?: string };
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-base  md:text-3xl">Users</h2>
-      <div className="flex gap-3 ">
+    <div className="flex flex-col gap-6">
+      <h2 className="text-base  md:text-3xl">All Users</h2>
+      <div className="flex gap-3">
         <URLSearchBox />
         <Link
-          href="/admin/users/create-new-user"
-          className={cn(buttonVariants({ className: "w-24" }))}
+          href="/admin/quizzes/create-new-user"
+          className={cn(buttonVariants(), "h-full w-36 md:text-lg")}
         >
           New User
         </Link>

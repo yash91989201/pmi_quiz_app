@@ -13,20 +13,12 @@ import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
 import { Badge } from "@/components/ui/badge";
-import { Edit2 } from "lucide-react";
+import { Edit2, Eye, FileCheck2 } from "lucide-react";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
     accessorKey: "name",
     header: "Username",
-    cell: ({ row }) => (
-      <Link
-        href={`/admin/users/${row.original.id}`}
-        className={cn(buttonVariants({ variant: "link" }), "p-0 text-gray-700")}
-      >
-        {row.original.name}
-      </Link>
-    ),
   },
 
   {
@@ -65,7 +57,27 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
     accessorKey: "Actions",
     header: "Actions",
     cell: ({ row }) => (
-      <div>
+      <div className="space-x-3">
+        <Link
+          title="View User Info"
+          href={`/admin/users/${row.original.id}`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "h-fit p-3 text-gray-700 hover:bg-amber-100 hover:text-amber-500 [&>svg]:size-4",
+          )}
+        >
+          <Eye />
+        </Link>
+        <Link
+          title="Edit User Info"
+          href={`/admin/users/${row.original.id}/edit-user`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "h-fit p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4",
+          )}
+        >
+          <Edit2 />
+        </Link>
         <DeleteUserModal id={row.original.id} />
       </div>
     ),
@@ -76,14 +88,6 @@ export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
     header: "Quiz Title",
-    cell: ({ row }) => (
-      <Link
-        href={`/admin/quizzes/${row.original.quizId}`}
-        className={cn(buttonVariants({ variant: "link" }), "p-0 text-gray-700")}
-      >
-        {row.original.quizTitle}
-      </Link>
-    ),
   },
   {
     accessorKey: "totalQuestions",
@@ -101,17 +105,38 @@ export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <div className="space-x-2">
-        <DeleteQuizModal quizId={row.original.quizId} />
+      <div className="space-x-3">
         <Link
+          title="View Quiz Info"
+          href={`/admin/quizzes/${row.original.quizId}`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "h-fit p-3 text-gray-700 hover:bg-amber-100 hover:text-amber-500 [&>svg]:size-4",
+          )}
+        >
+          <Eye />
+        </Link>
+        <Link
+          title="View Quiz Result"
+          href={`/admin/quizzes/${row.original.quizId}/quiz-result`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "h-fit p-3 text-gray-700 hover:bg-green-100 hover:text-green-500 [&>svg]:size-4",
+          )}
+        >
+          <FileCheck2 />
+        </Link>
+        <Link
+          title="Edit Quiz"
           href={`/admin/quizzes/${row.original.quizId}/edit-quiz`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
-            "hover:bg-amber-100 hover:text-amber-500",
+            "h-fit p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4",
           )}
         >
-          <Edit2 size={16} />
+          <Edit2 />
         </Link>
+        <DeleteQuizModal quizId={row.original.quizId} />
       </div>
     ),
   },

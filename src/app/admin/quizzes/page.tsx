@@ -12,13 +12,13 @@ export default function QuizzesPage({
   searchParams: { query?: string; page?: string; per_page?: string };
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-base  md:text-3xl">Users</h2>
-      <div className="flex gap-3 ">
+    <div className="flex flex-col gap-6">
+      <h2 className="text-base  md:text-3xl">All Quizzes</h2>
+      <div className="flex gap-3">
         <URLSearchBox />
         <Link
           href="/admin/quizzes/create-new-quiz"
-          className={cn(buttonVariants(), "w-32")}
+          className={cn(buttonVariants(), "h-full w-36 md:text-lg")}
         >
           New Quiz
         </Link>
