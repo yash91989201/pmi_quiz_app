@@ -9,5 +9,10 @@ export default async function EditQuizPage({
 }) {
   const quizData = await api.quiz.getQuizData.query({ quizId: params.quizId });
 
-  return <UpdateQuizForm defaultValues={quizData} />;
+  return (
+    <>
+      <h3 className="text-base  md:text-xl">Edit Quiz</h3>
+      <UpdateQuizForm defaultValues={quizData} />
+    </>
+  );
 }

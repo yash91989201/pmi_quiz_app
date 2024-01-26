@@ -1,21 +1,22 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 // ACTIONS
-import { createNewUser } from "@/server/actions/user";
+import { updateUser } from "@/server/actions/user";
 // CUSTOM HOOKS
 import useToggle from "@/hooks/use-toggle";
 // UTILS
 import { api } from "@/trpc/react";
-import { generateRandomDummyEmail } from "@/lib/utils";
 // SCHEMAS
-import { CreateUserFormSchema } from "@/lib/schema";
+import { UpdateUserFormSchema } from "@/lib/schema";
 // TYPES
+import type { UpdateUserFormSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
-import type { CreateUserFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
+import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -24,59 +25,69 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
 // ICONS
 import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Info,
   Loader2,
+  Mail,
+  RotateCcw,
   UserRound,
   XCircle,
 } from "lucide-react";
+import { editActionToast } from "@/lib/utils";
 
-export default function CreateNewUserForm() {
+type UpdateUserFormProps = {
+  defaultValues: {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    quizzesId: string[];
+  };
+};
+
+export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
   const router = useRouter();
 
-  const [actionResponse, setActionResponse] = useState<UserFormStatusType>();
+  const [actionResponse, setActionResponse] =
+    useState<UpdateUserFormStatusType>();
 
   const showPasswordToggle = useToggle(false);
 
   const { data, isLoading } = api.quiz.getQuizzes.useQuery();
   const availableQuizzes = data ?? [];
 
-  const dummyEmail = generateRandomDummyEmail();
-
-  const createNewUserForm = useForm<CreateUserFormSchemaType>({
+  const createNewUserForm = useForm<UpdateUserFormSchemaType>({
     shouldUseNativeValidation: true,
-    defaultValues: {
-      email: dummyEmail,
-      password: "password",
-      role: "USER",
-      quizzesId: [],
-    },
-    resolver: zodResolver(CreateUserFormSchema),
+    defaultValues,
+    resolver: zodResolver(UpdateUserFormSchema),
   });
   const { control, handleSubmit, formState, reset } = createNewUserForm;
 
-  const signInAction: SubmitHandler<CreateUserFormSchemaType> = async (
+  const signInAction: SubmitHandler<UpdateUserFormSchemaType> = async (
     data,
   ) => {
-    const actionResponse = await createNewUser(data);
+    const actionResponse = await updateUser(data);
     setActionResponse(actionResponse);
     if (actionResponse.status === "SUCCESS") {
       router.replace("/admin/users");
     } else {
       reset();
+    }
+
+    if (actionResponse.status === "SUCCESS") {
+      const userActions = actionResponse.user;
+      const userQuizzesActions = actionResponse.quizzes;
+
+      editActionToast(userActions?.update);
+      editActionToast(userQuizzesActions?.insert);
+      editActionToast(userQuizzesActions?.delete);
+      setTimeout(() => {
+        router.replace("/admin/users");
+      }, 4000);
     }
   };
 
@@ -85,6 +96,7 @@ export default function CreateNewUserForm() {
       <form
         className="flex flex-col gap-3"
         onSubmit={handleSubmit(signInAction)}
+        onReset={() => reset()}
       >
         <FormField
           name="name"
@@ -104,26 +116,29 @@ export default function CreateNewUserForm() {
         />
 
         <FormField
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <div className="flex items-center gap-3">
+                  <Input {...field} placeholder="Enter email" />
+                  <Mail />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
           name="password"
           control={control}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex items-center gap-3">
-                <span>Password</span>
-                <TooltipProvider>
-                  <Tooltip delayDuration={100}>
-                    <TooltipTrigger>
-                      <Info size={14} />
-                    </TooltipTrigger>
-                    <TooltipContent align="start">
-                      <p className="max-w-56">
-                        Password is set to &apos;password&apos; by default.
-                        After logging in for the first time users will need to
-                        change it.
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                Password
               </FormLabel>
               <FormControl>
                 <div className="flex items-center gap-3 [&>svg]:size-5 md:[&>svg]:size-6">
@@ -154,7 +169,7 @@ export default function CreateNewUserForm() {
         <AvailableQuizzesField
           isLoading={isLoading}
           availableQuizzes={availableQuizzes}
-          fieldHeading="Add quizzes for user."
+          fieldHeading="Add/Remove quizzes from user."
         />
 
         {actionResponse?.status === "SUCCESS" && (
@@ -171,14 +186,25 @@ export default function CreateNewUserForm() {
           </div>
         )}
 
-        <Button
-          type="submit"
-          disabled={formState.isSubmitting}
-          className="flex w-fit items-center justify-center gap-3 disabled:cursor-not-allowed"
-        >
-          <h6 className="md:text-lg">Create New User</h6>
-          {formState.isSubmitting && <Loader2 className="animate-spin" />}
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            type="submit"
+            disabled={formState.isSubmitting}
+            className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
+          >
+            <h6 className="md:text-lg">Update Quiz</h6>
+            {formState.isSubmitting && <Loader2 className="animate-spin" />}
+          </Button>
+          <Button
+            type="reset"
+            variant="outline"
+            disabled={formState.isSubmitting}
+            className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
+          >
+            <h6 className="md:text-lg">Reset</h6>
+            <RotateCcw size={16} />
+          </Button>
+        </div>
       </form>
     </Form>
   );

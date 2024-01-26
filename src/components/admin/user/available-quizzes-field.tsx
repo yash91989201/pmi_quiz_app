@@ -1,8 +1,9 @@
 "use client";
 import { useFormContext } from "react-hook-form";
 // TYPES
-import type { QuizFormSchemaType, UserSchemaType } from "@/lib/schema";
+import type { CreateUserFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -10,57 +11,61 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-// ICONS
-export default function AvailableUsersField({
+
+export default function AvailableQuizzesField({
   isLoading,
-  availableUsers,
+  availableQuizzes,
   fieldHeading,
 }: {
   isLoading: boolean;
-  availableUsers: UserSchemaType[];
+  availableQuizzes: {
+    quizId: string;
+    quizTitle: string;
+  }[];
   fieldHeading: string;
 }) {
-  const { control } = useFormContext<QuizFormSchemaType>();
+  const { control } = useFormContext<CreateUserFormSchemaType>();
 
-  if (isLoading) return <p>Loading available Users.</p>;
+  if (isLoading) return <p>Loading available quizzes.</p>;
 
-  if (availableUsers.length == 0) return <p>No users available.</p>;
+  if (availableQuizzes.length === 0) return <p>No quizzes available.</p>;
 
   return (
     <div className="flex flex-col gap-3">
       <p className="text-lg font-medium">{fieldHeading}</p>
       <FormField
         control={control}
-        name="usersId"
+        name="quizzesId"
         render={() => (
           <FormItem>
-            {availableUsers.map((user) => (
+            {availableQuizzes.map((quiz) => (
               <FormField
-                key={user.id}
+                key={quiz.quizId}
                 control={control}
-                name="usersId"
+                name="quizzesId"
                 render={({ field }) => {
                   return (
                     <FormItem
-                      key={user.id}
+                      key={quiz.quizId}
                       className="flex flex-row items-start space-x-3 space-y-0"
                     >
                       <FormControl>
                         <Checkbox
-                          checked={field.value?.includes(user.id)}
+                          checked={field.value?.includes(quiz.quizId)}
                           onCheckedChange={(checked) => {
                             return checked
-                              ? field.onChange([...field.value, user.id])
+                              ? field.onChange([...field.value, quiz.quizId])
                               : field.onChange(
                                   field.value?.filter(
-                                    (value) => value !== user.id,
+                                    (value) => value !== quiz.quizId,
                                   ),
                                 );
                           }}
                         />
                       </FormControl>
-                      <FormLabel className="font-normal">{user.name}</FormLabel>
+                      <FormLabel className="font-normal">
+                        {quiz.quizTitle}
+                      </FormLabel>
                     </FormItem>
                   );
                 }}

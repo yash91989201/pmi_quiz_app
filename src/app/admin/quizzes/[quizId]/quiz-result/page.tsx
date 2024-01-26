@@ -8,7 +8,7 @@ export default async function Page({ params }: { params: { quizId: string } }) {
   const data = await api.quiz.getUsersQuizzes.query({ quizId: params.quizId });
   return (
     <>
-      <h2 className="text-base  md:text-3xl">Quiz Results</h2>
+      <h3 className="text-base  md:text-xl">Quiz Results</h3>
       <DataTable columns={usersQuizzesTableColumns} data={data} />
     </>
   );

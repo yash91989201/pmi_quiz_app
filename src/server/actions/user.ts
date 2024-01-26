@@ -28,11 +28,12 @@ import { signIn, signOut } from "@/server/utils/auth";
 // SCHEMAS
 import {
   AdminLoginSchema,
-  CreateNewUserSchema,
+  CreateUserFormSchema,
   DeleteUserSchema,
   NewPasswordSchema,
   ResetPasswordSchema,
   SignUpSchema,
+  UpdateUserFormSchema,
   UserLoginSchema,
 } from "@/lib/schema";
 import {
@@ -48,11 +49,12 @@ import type {
   SignUpSchemaType,
   ResetPasswordSchemaType,
   NewPasswordSchemaType,
-  CreateNewUserSchemaType,
+  CreateUserFormSchemaType,
   DeleteUserSchemaType,
   AdminLoginSchemaType,
   UserLoginSchemaType,
   UserSchemaType,
+  UpdateUserFormSchemaType,
 } from "@/lib/schema";
 // CONSTANTS
 import {
@@ -62,7 +64,7 @@ import {
 } from "@/config/routes";
 import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
-async function adminLogin(
+export async function adminLogin(
   formData: AdminLoginSchemaType,
 ): Promise<AdminLoginFormStatusType> {
   const validatedFormData = AdminLoginSchema.safeParse(formData);
@@ -192,7 +194,7 @@ async function adminLogin(
   }
 }
 
-async function userLogin(
+export async function userLogin(
   formData: UserLoginSchemaType,
 ): Promise<UserLoginFormStatusType> {
   const validatedFormData = UserLoginSchema.safeParse(formData);
@@ -337,7 +339,7 @@ async function userLogin(
   }
 }
 
-async function newVerification(
+export async function newVerification(
   formData: NewVerificationSchemaType,
 ): Promise<NewVerificationStatusType> {
   const existingToken = await getVerificationTokenByToken(formData.token);
@@ -386,7 +388,7 @@ async function newVerification(
   };
 }
 
-async function signUp(
+export async function signUp(
   formData: SignUpSchemaType,
 ): Promise<SignUpFormStatusType> {
   const validatedFormData = SignUpSchema.safeParse(formData);
@@ -455,7 +457,7 @@ async function signUp(
   };
 }
 
-async function resetPassword(
+export async function resetPassword(
   formData: ResetPasswordSchemaType,
 ): Promise<ResetPasswordStatusType> {
   const validatedFormData = ResetPasswordSchema.safeParse(formData);
@@ -488,7 +490,7 @@ async function resetPassword(
   };
 }
 
-async function newPassword(
+export async function newPassword(
   formData: NewPasswordSchemaType,
 ): Promise<NewPasswordStatusType> {
   const validatedFormData = NewPasswordSchema.safeParse(formData);
@@ -542,14 +544,14 @@ async function newPassword(
   return { status: "FAILED", message: "Unable to reset password, try again." };
 }
 
-async function logoutUser() {
+export async function logoutUser() {
   await signOut();
 }
 
-async function createNewUser(
-  formData: CreateNewUserSchemaType,
-): Promise<CreateNewUserFormStatusType> {
-  const validatedFormData = CreateNewUserSchema.safeParse(formData);
+export async function createNewUser(
+  formData: CreateUserFormSchemaType,
+): Promise<UserFormStatusType> {
+  const validatedFormData = CreateUserFormSchema.safeParse(formData);
 
   if (!validatedFormData.success) {
     let formFieldErrors: CreateNewUserFormErrorsType = {};
@@ -576,7 +578,7 @@ async function createNewUser(
       errors: {
         name: "User with this username already exists.",
       },
-      message: "Unable to create user.",
+      message: "User with this username already exists.",
     };
   }
 
@@ -644,7 +646,176 @@ async function createNewUser(
   };
 }
 
-async function deleteUser(
+export async function updateUser(
+  formData: UpdateUserFormSchemaType,
+): Promise<UpdateUserFormStatusType> {
+  const validatedFormData = UpdateUserFormSchema.safeParse(formData);
+
+  if (!validatedFormData.success) {
+    return { status: "FAILED", message: "Unable to update user." };
+  }
+
+  const {
+    id,
+    name,
+    email,
+    password,
+    quizzesId: updatedUserQuizzesId,
+  } = validatedFormData.data;
+
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.id, id),
+  });
+
+  const allQuizzesData = await db.query.quizzes.findMany();
+
+  const existingUserQuizzes = await db.query.userQuizzes.findMany({
+    where: eq(userQuizzes.userId, id),
+  });
+
+  const inProgressQuizzesId = existingUserQuizzes
+    .filter((userQuiz) => userQuiz.status === "IN_PROGRESS")
+    .map((userQuiz) => userQuiz.quizId);
+
+  const existingUserQuizzesId = existingUserQuizzes.map(
+    (existingUserQuiz) => existingUserQuiz.quizId,
+  );
+
+  if (!existingUser) {
+    return { status: "FAILED", message: "User doesnot exists." };
+  }
+
+  const newPassword = await bcrypt.hash(password, 12);
+
+  const isUserDataUpdated =
+    email !== existingUser.email || name !== existingUser.name;
+
+  const addedQuizzesId: string[] = [];
+  const deletedQuizzesId: string[] = [];
+
+  /*
+  if a user quiz from existing list is not in updated list
+  then that user quiz was removed
+  */
+  existingUserQuizzesId.forEach((existingUserQuizId) => {
+    if (inProgressQuizzesId.includes(existingUserQuizId)) return;
+    if (!updatedUserQuizzesId.includes(existingUserQuizId))
+      deletedQuizzesId.push(existingUserQuizId);
+  });
+
+  /*
+  if a user quiz from updated list is not in existing list 
+  then that user quiz was added 
+*/
+  updatedUserQuizzesId.forEach((updatedUserQuizId) => {
+    if (!existingUserQuizzesId.includes(updatedUserQuizId))
+      addedQuizzesId.push(updatedUserQuizId);
+  });
+
+  let updateUserStatus: UpdateUserFormStatusType = {
+    status: "SUCCESS",
+    message: "User Update Done",
+    user: {},
+    quizzes: {},
+  };
+
+  if (isUserDataUpdated) {
+    const updateUserQuery = await db
+      .update(users)
+      .set({
+        name,
+        email,
+        password: newPassword,
+      })
+      .where(eq(users.id, id));
+
+    const userUpdateSuccess = updateUserQuery[0].affectedRows > 0;
+    updateUserStatus = {
+      ...updateUserStatus,
+      user: {
+        ...updateUserStatus.user,
+        update: {
+          status: userUpdateSuccess ? "SUCCESS" : "FAILED",
+          message: userUpdateSuccess
+            ? "User updated successfully."
+            : "Unable to update user. Try again!",
+        },
+      },
+    };
+  }
+
+  if (addedQuizzesId.length > 0) {
+    const userQuizzesInsertQuery = await Promise.all(
+      addedQuizzesId.map(async (addedQuizId) => {
+        const quizData = allQuizzesData.find(
+          (quizData) => quizData.quizId === addedQuizId,
+        )!;
+
+        const userQuizInsertQuery = await db.insert(userQuizzes).values({
+          quizId: quizData.quizId,
+          quizTitle: quizData.quizTitle,
+          totalMark: quizData.totalMark,
+          userId: id,
+        });
+        return userQuizInsertQuery[0];
+      }),
+    );
+    const userQuizzesInsertSuccess = userQuizzesInsertQuery.every(
+      (userQuizInsertQuery) => userQuizInsertQuery.affectedRows > 0,
+    );
+
+    updateUserStatus = {
+      ...updateUserStatus,
+      quizzes: {
+        ...updateUserStatus.quizzes,
+        insert: {
+          status: userQuizzesInsertSuccess ? "SUCCESS" : "FAILED",
+          message: userQuizzesInsertSuccess
+            ? "New quiz/s added successfully."
+            : "Unable to add new quiz/s. Try again!",
+        },
+      },
+    };
+  }
+
+  if (deletedQuizzesId.length > 0) {
+    const userQuizzesDeleteQuery = await Promise.all(
+      deletedQuizzesId.map(async (deletedQuizId) => {
+        const userQuizDeleteQuery = await db
+          .delete(userQuizzes)
+          .where(
+            and(
+              eq(userQuizzes.quizId, deletedQuizId),
+              eq(userQuizzes.userId, id),
+            ),
+          );
+        return userQuizDeleteQuery[0];
+      }),
+    );
+
+    const userQuizzesDeleteSuccess = userQuizzesDeleteQuery.every(
+      (userQuizDeleteQuery) => userQuizDeleteQuery.affectedRows > 0,
+    );
+    updateUserStatus = {
+      ...updateUserStatus,
+      quizzes: {
+        ...updateUserStatus.quizzes,
+        delete: {
+          status: userQuizzesDeleteSuccess ? "SUCCESS" : "FAILED",
+          message: userQuizzesDeleteSuccess
+            ? "User quizzes deleted successfully."
+            : "Unable to delete user quiz/s. Try again!",
+        },
+      },
+    };
+  }
+
+  revalidatePath("/admin/users/[userId]", "page");
+
+  return updateUserStatus;
+}
+
+export async function deleteUser(
   formData: DeleteUserSchemaType,
 ): Promise<DeleteUserFormStatusType> {
   const validatedFormData = DeleteUserSchema.safeParse(formData);
@@ -695,16 +866,3 @@ async function deleteUser(
     message: "Cannot delete user while taking quiz.",
   };
 }
-
-export {
-  adminLogin,
-  userLogin,
-  newVerification,
-  signUp,
-  logoutUser,
-  resetPassword,
-  newPassword,
-  // actions for ROLE == USER
-  createNewUser,
-  deleteUser,
-};

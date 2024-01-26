@@ -17,7 +17,7 @@ export default function UsersPage({
       <div className="flex gap-3">
         <URLSearchBox />
         <Link
-          href="/admin/quizzes/create-new-user"
+          href="/admin/users/create-new-user"
           className={cn(buttonVariants(), "h-full w-36 md:text-lg")}
         >
           New User

@@ -118,7 +118,45 @@ type NewPasswordStatusType =
   | NewPasswordFormSuccessType
   | FormFailType<NewPasswordErrorsType>;
 
-type CreateNewUserFormStatusType =
+type UpdateUserPartialSuccessType = {
+  insert?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+  update?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+  delete?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+};
+
+type UpdateUserFormInitialType = {
+  status: "UNINITIALIZED";
+  user: UpdateUserPartialSuccessType;
+  quizzes: UpdateUserPartialSuccessType;
+};
+
+type UpdateUserFormSuccessType = {
+  status: "SUCCESS";
+  message: string;
+  user: UpdateUserPartialSuccessType;
+  quizzes: UpdateUserPartialSuccessType;
+};
+
+type UpdateUserFormFailType = {
+  status: "FAILED";
+  message: string;
+};
+
+type UpdateUserFormStatusType =
+  | UpdateUserFormInitialType
+  | UpdateUserFormSuccessType
+  | UpdateUserFormFailType;
+
+type UserFormStatusType =
   | FormInitialType<CreateNewUserFormErrorsType>
   | FormSuccessType
   | FormFailType<CreateNewUserFormErrorsType>;
@@ -186,6 +224,15 @@ type UserQuizFormStatusType =
   | FormInitialType<UserQuizFormFailType>
   | FormSuccessType
   | FormFailType<UserQuizFormFailType>;
+
+type UserQuizDeleteFormErrorsType = {
+  message: string;
+};
+
+type UserQuizDeleteFormStatusType =
+  | FormInitialType<UserQuizDeleteFormErrorsType>
+  | FormSuccessType
+  | FormFailType<UserQuizDeleteFormErrorsType>;
 
 type UserRole = "ADMIN" | "USER";
 

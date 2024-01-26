@@ -8,11 +8,12 @@ import { buttonVariants } from "@/components/ui/button";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
+import { Badge } from "@/components/ui/badge";
 import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
 import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
+import DeleteUserQuizButton from "@/components/admin/user/delete-user-quiz-button";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
-import { Badge } from "@/components/ui/badge";
 import { Edit2, Eye, FileCheck2 } from "lucide-react";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
@@ -69,8 +70,8 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
           <Eye />
         </Link>
         <Link
-          title="Edit User Info"
-          href={`/admin/users/${row.original.id}/edit-user`}
+          title="Update User Info"
+          href={`/admin/users/${row.original.id}/update-user`}
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "h-fit p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4",
@@ -170,6 +171,18 @@ export const userQuizzesTableColumnsForAdmin: ColumnDef<UserQuizzesTableSchemaTy
     {
       accessorKey: "totalMark",
       header: "Total Mark",
+    },
+    {
+      accessorKey: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <>
+          <DeleteUserQuizButton
+            userQuizId={row.original.userQuizId}
+            userQuizStatus={row.original.status}
+          />
+        </>
+      ),
     },
   ];
 

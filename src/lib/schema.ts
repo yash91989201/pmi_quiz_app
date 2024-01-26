@@ -65,11 +65,19 @@ const NewPasswordSchema = z.object({
   token: z.string(),
 });
 
-const CreateNewUserSchema = z.object({
+const CreateUserFormSchema = z.object({
   name: z.string().min(6, { message: "Full name is required." }),
   email: z.string().email(),
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
+  quizzesId: z.array(z.string()).default([]),
+});
+
+const UpdateUserFormSchema = z.object({
+  id: z.string(),
+  name: z.string().min(6, { message: "Full name is required." }),
+  email: z.string().email(),
+  password: z.string(),
   quizzesId: z.array(z.string()).default([]),
 });
 
@@ -125,6 +133,10 @@ const DeleteQuizFormSchema = z.object({
   quizId: z.string(),
 });
 
+const DeleteUserQuizFormSchema = z.object({
+  userQuizId: z.string(),
+});
+
 // NON-ACTION SCHEMA TYPES
 type UserSchemaType = z.infer<typeof UserSchema>;
 type QuizSchemaType = z.infer<typeof QuizSchema>;
@@ -150,13 +162,15 @@ type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 type NewVerificationSchemaType = z.infer<typeof NewVerificationSchema>;
 type ResetPasswordSchemaType = z.infer<typeof ResetPasswordSchema>;
 type NewPasswordSchemaType = z.infer<typeof NewPasswordSchema>;
-type CreateNewUserSchemaType = z.infer<typeof CreateNewUserSchema>;
+type CreateUserFormSchemaType = z.infer<typeof CreateUserFormSchema>;
+type UpdateUserFormSchemaType = z.infer<typeof UpdateUserFormSchema>;
 type DeleteUserSchemaType = z.infer<typeof DeleteUserSchema>;
 type QuizFormSchemaType = z.infer<typeof QuizFormSchema>;
 type UserQuizFormSchemaType = z.infer<typeof UserQuizFormSchema>;
 type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
+type DeleteUserQuizFormSchemaType = z.infer<typeof DeleteUserQuizFormSchema>;
 
 export {
   // NON-ACTION SCHEMAS
@@ -177,13 +191,15 @@ export {
   NewVerificationSchema,
   ResetPasswordSchema,
   NewPasswordSchema,
-  CreateNewUserSchema,
+  CreateUserFormSchema,
+  UpdateUserFormSchema,
   DeleteUserSchema,
   QuizFormSchema,
   UserQuizFormSchema,
   DeleteQuizFormSchema,
   QuestionsSchema,
   OptionsSchema,
+  DeleteUserQuizFormSchema,
 };
 
 export type {
@@ -206,11 +222,13 @@ export type {
   NewVerificationSchemaType,
   ResetPasswordSchemaType,
   NewPasswordSchemaType,
-  CreateNewUserSchemaType,
+  CreateUserFormSchemaType,
+  UpdateUserFormSchemaType,
   DeleteUserSchemaType,
   QuizFormSchemaType,
   DeleteQuizFormSchemaType,
   QuestionsSchemaType,
   OptionsSchemaType,
   UserQuizFormSchemaType,
+  DeleteUserQuizFormSchemaType,
 };

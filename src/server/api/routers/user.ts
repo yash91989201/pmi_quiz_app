@@ -97,6 +97,19 @@ const userRouter = createTRPCRouter({
   }),
 
   /**
+   * Returns all the id's of user with role=USER
+   * used for adding users to quiz
+   * used in ADMIN side
+   */
+  getUserById: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.users.findMany({
+        where: eq(users.id, input.userId),
+      });
+    }),
+
+  /**
    * Returns all the quizzes for a specific user id
    * which is retrieved by using the session stored in ctx
    * only for use in USER side.

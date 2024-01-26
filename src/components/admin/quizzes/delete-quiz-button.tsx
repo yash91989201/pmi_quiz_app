@@ -40,14 +40,14 @@ export function DeleteQuizButton({ quizId }: { quizId: string }) {
       <Button
         className="flex gap-3 [&>svg]:size-4"
         variant="destructive"
-        type="submit"
+        size="sm"
       >
-        <span>Delete Quiz</span>
         {formState.isSubmitting ? (
           <Loader2 className="animate-spin text-white" />
         ) : (
           <Trash2 />
         )}
+        <span>Delete Quiz</span>
       </Button>
     </form>
   );

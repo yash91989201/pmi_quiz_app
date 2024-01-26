@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 // UTILS
 import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
-import QuizPageBreadcrumb from "@/components/admin/quizzes/quiz-page-breadcrumb";
+import QuizPageBreadcrumbs from "@/components/admin/quizzes/quiz-page-breadcrumbs";
 
 export default async function QuizLayout({
   children,
@@ -16,8 +16,8 @@ export default async function QuizLayout({
   });
   return (
     <section className="flex flex-col gap-6">
-      <h3 className="text-base  md:text-3xl">{data.quizTitle}</h3>
-      <QuizPageBreadcrumb quizId={data.quizId} quizTitle={data.quizTitle} />
+      <h2 className="text-base  md:text-3xl">{data.quizTitle}</h2>
+      <QuizPageBreadcrumbs quizId={data.quizId} quizTitle={data.quizTitle} />
       {children}
     </section>
   );

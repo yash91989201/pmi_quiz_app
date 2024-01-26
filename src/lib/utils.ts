@@ -69,7 +69,7 @@ export function generateRandomDummyEmail() {
   return `${DUMMY_EMAIL_PREFIX}${randomId}@gmail.com`;
 }
 
-export function quizEditActionToast(action?: {
+export function editActionToast(action?: {
   status: "SUCCESS" | "FAILED";
   message: string;
 }) {

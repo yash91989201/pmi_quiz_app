@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 // ICONS
 import { ChevronRight, Home } from "lucide-react";
 
-export default function QuizPageBreadcrumb({
+export default function QuizPageBreadcrumbs({
   quizId,
   quizTitle,
 }: {

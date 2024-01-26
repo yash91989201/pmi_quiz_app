@@ -1,11 +1,12 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
 import { updateQuiz } from "@/server/actions/quiz";
 // UTILS
-import { quizEditActionToast } from "@/lib/utils";
+import { editActionToast } from "@/lib/utils";
 import { api } from "@/trpc/react";
 // SCHEMAS
 import { QuizFormSchema } from "@/lib/schema";
@@ -27,6 +28,7 @@ export default function UpdateQuizForm({
 }: {
   defaultValues: QuizFormSchemaType;
 }) {
+  const router = useRouter();
   const { data, isLoading } = api.user.getAllUsers.useQuery();
   const availableUsers = data ?? [];
 
@@ -57,16 +59,20 @@ export default function UpdateQuizForm({
       const questionsActions = actionResponse.fields?.questions;
       const usersActions = actionResponse.fields?.users;
 
-      quizEditActionToast(optionsActions?.insert);
-      quizEditActionToast(optionsActions?.update);
-      quizEditActionToast(optionsActions?.delete);
+      editActionToast(optionsActions?.insert);
+      editActionToast(optionsActions?.update);
+      editActionToast(optionsActions?.delete);
 
-      quizEditActionToast(questionsActions?.insert);
-      quizEditActionToast(questionsActions?.update);
-      quizEditActionToast(questionsActions?.delete);
+      editActionToast(questionsActions?.insert);
+      editActionToast(questionsActions?.update);
+      editActionToast(questionsActions?.delete);
 
-      quizEditActionToast(usersActions?.insert);
-      quizEditActionToast(usersActions?.delete);
+      editActionToast(usersActions?.insert);
+      editActionToast(usersActions?.delete);
+
+      setTimeout(() => {
+        router.replace("/admin/quizzes");
+      }, 4000);
     }
   };
 
@@ -103,6 +109,7 @@ export default function UpdateQuizForm({
         <AvailableUsersField
           isLoading={isLoading}
           availableUsers={availableUsers}
+          fieldHeading="Add/Remove users from quiz"
         />
 
         {actionResponse?.status === "SUCCESS" && (

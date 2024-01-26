@@ -6,6 +6,7 @@ import { db } from "@/server/db";
 // SCHEMAS
 import {
   DeleteQuizFormSchema,
+  DeleteUserQuizFormSchema,
   QuizFormSchema,
   UserQuizFormSchema,
 } from "@/lib/schema";
@@ -13,13 +14,14 @@ import { options, questions, quizzes, userQuizzes } from "@/server/db/schema";
 // TYPES
 import type {
   DeleteQuizFormSchemaType,
+  DeleteUserQuizFormSchemaType,
   OptionSchemaType,
   QuestionSchemaType,
   QuizFormSchemaType,
   UserQuizFormSchemaType,
 } from "@/lib/schema";
 
-async function createQuiz(
+export async function createQuiz(
   formData: QuizFormSchemaType,
 ): Promise<QuizFormStatusType> {
   const validatedFormData = QuizFormSchema.safeParse(formData);
@@ -92,7 +94,7 @@ async function createQuiz(
   };
 }
 
-async function updateQuiz(
+export async function updateQuiz(
   formData: QuizFormSchemaType,
 ): Promise<UpdateQuizFormStatusType> {
   const validatedFormData = QuizFormSchema.safeParse(formData);
@@ -563,7 +565,7 @@ async function updateQuiz(
   return updateAllQuizDataStatus;
 }
 
-async function deleteQuiz(
+export async function deleteQuiz(
   formData: DeleteQuizFormSchemaType,
 ): Promise<DeleteQuizFormStatusType> {
   const validatedFormData = DeleteQuizFormSchema.safeParse(formData);
@@ -609,7 +611,7 @@ async function deleteQuiz(
   };
 }
 
-async function submitQuiz(
+export async function submitQuiz(
   formData: UserQuizFormSchemaType,
 ): Promise<UserQuizFormStatusType> {
   const validatedFormData = UserQuizFormSchema.safeParse(formData);
@@ -674,4 +676,47 @@ async function submitQuiz(
   };
 }
 
-export { createQuiz, deleteQuiz, submitQuiz, updateQuiz };
+export async function deleteUserQuiz(
+  formData: DeleteUserQuizFormSchemaType,
+): Promise<UserQuizDeleteFormStatusType> {
+  const validatedFormData = DeleteUserQuizFormSchema.safeParse(formData);
+
+  if (!validatedFormData.success) {
+    return {
+      status: "FAILED",
+      message: "Unable to delete user's quiz. Try again!",
+    };
+  }
+  const { userQuizId } = validatedFormData.data;
+  const existingUserQuiz = await db.query.userQuizzes.findFirst({
+    where: eq(userQuizzes.userQuizId, userQuizId),
+  });
+
+  if (!existingUserQuiz) {
+    return {
+      status: "FAILED",
+      message: "Unable to delete user's quiz. Try again!",
+    };
+  }
+
+  if (existingUserQuiz.status === "IN_PROGRESS") {
+    return {
+      status: "FAILED",
+      message: "User is taking this quiz. Try later!",
+    };
+  }
+
+  const userQuizDeleteQuery = await db
+    .delete(userQuizzes)
+    .where(eq(userQuizzes.userQuizId, userQuizId));
+
+  revalidatePath("/admin/users/[userId]", "page");
+
+  if (userQuizDeleteQuery[0].affectedRows > 0) {
+    return { status: "SUCCESS", message: "User quiz deleted successfully." };
+  }
+  return {
+    status: "FAILED",
+    message: "Unable to delete user's quiz. Try again!",
+  };
+}

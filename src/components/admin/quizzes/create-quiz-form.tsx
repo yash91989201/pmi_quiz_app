@@ -93,7 +93,7 @@ export default function CreateQuizForm() {
   return (
     <Form {...quizForm}>
       <form
-        className="flex max-w-[1024] flex-col gap-3"
+        className="flex max-w-[1024] flex-col gap-6"
         onSubmit={handleSubmit(createQuizAction)}
       >
         <FormField
@@ -118,6 +118,7 @@ export default function CreateQuizForm() {
         <AvailableUsersField
           isLoading={isLoading}
           availableUsers={availableUsers}
+          fieldHeading="Add users to this quiz"
         />
 
         {actionResponse?.status === "SUCCESS" && (
@@ -136,7 +137,7 @@ export default function CreateQuizForm() {
         <Button
           type="submit"
           disabled={formState.isSubmitting}
-          className="flex w-fit items-center justify-center gap-3 self-end disabled:cursor-not-allowed"
+          className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
         >
           <h6 className="md:text-lg">Create Quiz</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}

@@ -14,20 +14,23 @@ export default async function Page({ params }: { params: { quizId: string } }) {
   const totalQuestions = data.questions.length;
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex items-center justify-end gap-3">
-        <Link
-          href={`/admin/quizzes/${data.quizId}/edit-quiz`}
-          className={cn(
-            buttonVariants({ variant: "secondary" }),
-            "flex items-center gap-3 bg-blue-500 text-white hover:bg-blue-500/90 [&>svg]:size-4",
-          )}
-        >
-          <Edit2 />
-          <span>Edit Quiz</span>
-        </Link>
-        <DeleteQuizButton quizId={data.quizId} />
+      <div className="flex flex-col gap-3">
+        <h3 className="text-base  md:text-xl">Quiz Actions</h3>
+        <div className="flex gap-3">
+          <Link
+            href={`/admin/quizzes/${data.quizId}/edit-quiz`}
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "sm" }),
+              "flex items-center gap-3  [&>svg]:size-3",
+            )}
+          >
+            <Edit2 />
+            <span>Edit Quiz</span>
+          </Link>
+          <DeleteQuizButton quizId={data.quizId} />
+        </div>
       </div>
-      <h2 className="text-base md:text-xl">Questions</h2>
+      <h3 className="text-base md:text-xl">Questions</h3>
       {data.questions.map(
         ({ mark, options, questionText, questionId }, index) => (
           <Card key={questionId}>
