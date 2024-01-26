@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
+import { Toaster } from "@/components/ui/sonner";
 // UTILS
 import { TRPCReactProvider } from "@/trpc/react";
 // CUSTOM COMPONENT
@@ -24,12 +25,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body className={`font-sans ${inter.variable} overflow-hidden`}>
         <AuthSessionProvider>
           <TRPCReactProvider cookies={cookies().toString()}>
             {children}
           </TRPCReactProvider>
         </AuthSessionProvider>
+        <Toaster richColors theme="light" />
       </body>
     </html>
   );

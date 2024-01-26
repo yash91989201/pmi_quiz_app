@@ -141,20 +141,29 @@ const quizRouter = createTRPCRouter({
    * only for use in ADMIN side.
    */
   getQuizData: protectedProcedure
-    .input(z.object({ quizid: z.string() }))
+    .input(z.object({ quizId: z.string() }))
     .query(async ({ ctx, input }) => {
       const quizData = (await ctx.db.query.quizzes.findFirst({
-        where: eq(quizzes.quizId, input.quizid),
+        where: eq(quizzes.quizId, input.quizId),
       }))!;
 
       const questionsData = await ctx.db.query.questions.findMany({
-        where: eq(questions.quizId, input.quizid),
+        where: eq(questions.quizId, input.quizId),
         with: {
           options: true,
         },
       });
 
-      return { ...quizData, questions: questionsData };
+      const usersInQuiz = await ctx.db.query.userQuizzes.findMany({
+        where: eq(userQuizzes.quizId, input.quizId),
+        columns: {
+          userId: true,
+        },
+      });
+
+      const usersId = usersInQuiz.map((user) => user.userId);
+
+      return { ...quizData, usersId, questions: questionsData };
     }),
 });
 

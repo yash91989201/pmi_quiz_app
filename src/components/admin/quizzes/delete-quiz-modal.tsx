@@ -59,7 +59,7 @@ export function DeleteQuizModal({ quizId }: { quizId: string }) {
           className="hover:bg-red-100 hover:text-red-500 [&>svg]:size-4"
           variant="ghost"
         >
-          <Trash2 />
+          <Trash2 size={16} />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

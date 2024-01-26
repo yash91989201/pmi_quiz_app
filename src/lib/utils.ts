@@ -2,29 +2,18 @@ import { clsx } from "clsx";
 import dynamic from "next/dynamic";
 import { twMerge } from "tailwind-merge";
 import { createId } from "@paralleldrive/cuid2";
+import { toast } from "sonner";
 // TYPES
 import type { ClassValue } from "clsx";
 import type { FunctionComponent } from "react";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
-function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-type PaginationResult = {
-  current: number;
-  prev: number;
-  next: number;
-  items: string[];
-};
-
-type PaginationParams = {
-  current: number;
-  max: number;
-};
-
-function paginationWithEllepsis({
+export function paginationWithEllepsis({
   current,
   max,
 }: PaginationParams): PaginationResult {
@@ -49,11 +38,11 @@ function paginationWithEllepsis({
   return { current, prev, next, items };
 }
 
-function renderOnClient<T>(Component: FunctionComponent<T>) {
+export function renderOnClient<T>(Component: FunctionComponent<T>) {
   return dynamic(() => Promise.resolve(Component), { ssr: false });
 }
 
-function formatAmount(amount: number): string {
+export function formatAmount(amount: number): string {
   const formattedAmount = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -62,7 +51,7 @@ function formatAmount(amount: number): string {
   return formattedAmount;
 }
 
-function formatDate(date: Date): string {
+export function formatDate(date: Date): string {
   const formattedDate = new Intl.DateTimeFormat("en-IN", {
     month: "short",
     day: "numeric",
@@ -72,19 +61,23 @@ function formatDate(date: Date): string {
 }
 
 /**
- * This function will create a dummy email
+ * This export function will create a dummy email
  * prefixed with DUMMY_EMAIL_PREFIX
  */
-function generateRandomDummyEmail() {
+export function generateRandomDummyEmail() {
   const randomId = createId();
   return `${DUMMY_EMAIL_PREFIX}${randomId}@gmail.com`;
 }
 
-export {
-  cn,
-  renderOnClient,
-  paginationWithEllepsis,
-  formatAmount,
-  formatDate,
-  generateRandomDummyEmail,
-};
+export function quizEditActionToast(action?: {
+  status: "SUCCESS" | "FAILED";
+  message: string;
+}) {
+  if (action !== undefined) {
+    if (action.status === "SUCCESS") {
+      toast.success(action.message);
+    } else {
+      toast.error(action.message);
+    }
+  }
+}

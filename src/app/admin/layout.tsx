@@ -18,7 +18,7 @@ export default async function AdminLayout({
   return (
     <main className="flex h-screen flex-col overflow-hidden lg:flex-row">
       <SideNav />
-      <section className="flex-1 overflow-y-auto p-3 lg:max-h-screen">
+      <section className="flex-1 overflow-y-auto p-3 lg:max-h-screen lg:pb-8 ">
         {children}
       </section>
     </main>

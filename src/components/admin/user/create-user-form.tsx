@@ -150,11 +150,10 @@ export default function CreateNewUserForm() {
           )}
         />
 
-        {isLoading ? (
-          <AvailableQuizzesLoading />
-        ) : (
-          <AvailableQuizzesField availableQuizzes={availableQuizzes} />
-        )}
+        <AvailableQuizzesField
+          isLoading={isLoading}
+          availableQuizzes={availableQuizzes}
+        />
 
         {actionResponse?.status === "SUCCESS" && (
           <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
@@ -184,8 +183,10 @@ export default function CreateNewUserForm() {
 }
 
 function AvailableQuizzesField({
+  isLoading,
   availableQuizzes,
 }: {
+  isLoading: boolean;
   availableQuizzes: {
     quizId: string;
     quizTitle: string;
@@ -193,68 +194,55 @@ function AvailableQuizzesField({
 }) {
   const { control } = useFormContext<CreateNewUserSchemaType>();
 
-  return (
-    <>
-      {availableQuizzes.length > 0 ? (
-        <div className="flex flex-col gap-3">
-          <p className="text-lg font-medium">Add Quiz for New User</p>
-          <FormField
-            control={control}
-            name="quizzesId"
-            render={() => (
-              <FormItem>
-                {availableQuizzes.map((quiz) => (
-                  <FormField
-                    key={quiz.quizId}
-                    control={control}
-                    name="quizzesId"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={quiz.quizId}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(quiz.quizId)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([
-                                      ...field.value,
-                                      quiz.quizId,
-                                    ])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== quiz.quizId,
-                                      ),
-                                    );
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {quiz.quizTitle}
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      ) : (
-        <p>No quizzes available.</p>
-      )}
-    </>
-  );
-}
+  if (isLoading) return <p>Loading available quizzes.</p>;
 
-function AvailableQuizzesLoading() {
+  if (availableQuizzes.length === 0) return <p>No quizzes available.</p>;
+
   return (
-    <div>
-      <p>Loading available Quizzes.</p>
+    <div className="flex flex-col gap-3">
+      <p className="text-lg font-medium">Add Quiz for New User</p>
+      <FormField
+        control={control}
+        name="quizzesId"
+        render={() => (
+          <FormItem>
+            {availableQuizzes.map((quiz) => (
+              <FormField
+                key={quiz.quizId}
+                control={control}
+                name="quizzesId"
+                render={({ field }) => {
+                  return (
+                    <FormItem
+                      key={quiz.quizId}
+                      className="flex flex-row items-start space-x-3 space-y-0"
+                    >
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value?.includes(quiz.quizId)}
+                          onCheckedChange={(checked) => {
+                            return checked
+                              ? field.onChange([...field.value, quiz.quizId])
+                              : field.onChange(
+                                  field.value?.filter(
+                                    (value) => value !== quiz.quizId,
+                                  ),
+                                );
+                          }}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        {quiz.quizTitle}
+                      </FormLabel>
+                    </FormItem>
+                  );
+                }}
+              />
+            ))}
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

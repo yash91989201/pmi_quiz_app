@@ -128,10 +128,54 @@ type DeleteUserFormStatusType =
   | FormSuccessType
   | FormFailType<DeleteUserFormErrorsType>;
 
-type CreateQuizFormSatusType =
+type QuizFormStatusType =
   | FormInitialType<CreateQuizFormErrorsType>
   | FormSuccessType
   | FormFailType<CreateQuizFormErrorsType>;
+
+type FieldOperationPartialSuccessType = {
+  insert?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+  update?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+  delete?: {
+    status: "SUCCESS" | "FAILED";
+    message: string;
+  };
+};
+
+type UpdateQuizFormPartialSuccessType = {
+  quiz?: FieldOperationPartialSuccessType;
+  questions?: FieldOperationPartialSuccessType;
+  options?: FieldOperationPartialSuccessType;
+  users?: FieldOperationPartialSuccessType;
+};
+
+type UpdateFormInitialType = {
+  status: "UNINITIALIZED";
+  message: string;
+  fields: UpdateQuizFormPartialSuccessType;
+};
+
+type UpdateQuizFormFailType = {
+  status: "FAILED";
+  message: string;
+};
+
+type UpdateQuizFormSuccessType = {
+  status: "SUCCESS";
+  message: string;
+  fields: UpdateQuizFormPartialSuccessType;
+};
+
+type UpdateQuizFormStatusType =
+  | FormInitialType<UpdateQuizFormPartialSuccessType>
+  | UpdateQuizFormSuccessType
+  | FormFailType<UpdateQuizFormPartialSuccessType>;
 
 type DeleteQuizFormStatusType =
   | FormInitialType<DeleteQuizFormErrorsType>
@@ -152,4 +196,16 @@ type AuthCardWrapperProps = {
   headerLabel: string;
   backButtonLabel?: string;
   backButtonHref?: string;
+};
+
+type PaginationResult = {
+  current: number;
+  prev: number;
+  next: number;
+  items: string[];
+};
+
+type PaginationParams = {
+  current: number;
+  max: number;
 };

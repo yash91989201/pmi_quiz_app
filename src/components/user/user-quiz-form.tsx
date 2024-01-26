@@ -50,8 +50,7 @@ export default function UserQuizForm({
   questions: QuestionType[];
 }) {
   const router = useRouter();
-  const [actionResponse, setActionResponse] =
-    useState<CreateQuizFormSatusType>();
+  const [actionResponse, setActionResponse] = useState<QuizFormStatusType>();
 
   const quizForm = useForm<UserQuizFormSchemaType>({
     defaultValues: {

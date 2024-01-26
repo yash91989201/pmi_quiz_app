@@ -13,6 +13,7 @@ import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
 import { Badge } from "@/components/ui/badge";
+import { Edit2 } from "lucide-react";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -100,8 +101,17 @@ export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <div>
+      <div className="space-x-2">
         <DeleteQuizModal quizId={row.original.quizId} />
+        <Link
+          href={`/admin/quizzes/${row.original.quizId}/edit-quiz`}
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "hover:bg-amber-100 hover:text-amber-500",
+          )}
+        >
+          <Edit2 size={16} />
+        </Link>
       </div>
     ),
   },
