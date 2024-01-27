@@ -1,9 +1,15 @@
 import z from "zod";
-import { and, eq, like, sql } from "drizzle-orm";
+import { and, asc, eq, like, sql } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
-import { questions, quizzes, userQuizzes, users } from "@/server/db/schema";
+import {
+  options,
+  questions,
+  quizzes,
+  userQuizzes,
+  users,
+} from "@/server/db/schema";
 
 const userRouter = createTRPCRouter({
   /**
@@ -156,8 +162,10 @@ const userRouter = createTRPCRouter({
             columns: {
               isCorrectOption: false,
             },
+            orderBy: [asc(options.optionOrder)],
           },
         },
+        orderBy: [asc(questions.questionOrder)],
       });
 
       const questionsData = userQuestions.map((question) => {

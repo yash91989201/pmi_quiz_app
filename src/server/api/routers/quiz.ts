@@ -1,9 +1,15 @@
 import z from "zod";
-import { count, countDistinct, eq, like } from "drizzle-orm";
+import { asc, count, countDistinct, eq, like } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 // SCHEMAS
-import { questions, quizzes, userQuizzes, users } from "@/server/db/schema";
+import {
+  options,
+  questions,
+  quizzes,
+  userQuizzes,
+  users,
+} from "@/server/db/schema";
 
 const quizRouter = createTRPCRouter({
   /**
@@ -150,8 +156,11 @@ const quizRouter = createTRPCRouter({
       const questionsData = await ctx.db.query.questions.findMany({
         where: eq(questions.quizId, input.quizId),
         with: {
-          options: true,
+          options: {
+            orderBy: [asc(options.optionOrder)],
+          },
         },
+        orderBy: [asc(questions.questionOrder)],
       });
 
       const usersInQuiz = await ctx.db.query.userQuizzes.findMany({

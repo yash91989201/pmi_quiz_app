@@ -11,17 +11,27 @@ import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 // ICONS
 import { Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function OptionsField({
   questionIndex,
 }: {
   questionIndex: number;
 }) {
-  const { control, getValues } = useFormContext<QuizFormSchemaType>();
+  const { control, getValues, setValue } = useFormContext<QuizFormSchemaType>();
   const { fields, remove, append, update } = useFieldArray({
     control,
     name: `questions.${questionIndex}.options`,
   });
+
+  useEffect(() => {
+    fields.map((field, index) => {
+      setValue(
+        `questions.${questionIndex}.options.${index}.optionOrder`,
+        index + 1,
+      );
+    });
+  }, [fields, questionIndex, setValue]);
 
   const addOption = () => {
     const questionId = getValues(`questions.${questionIndex}`).questionId;
@@ -31,6 +41,7 @@ export default function OptionsField({
       questionId,
       optionText: "",
       isCorrectOption: false,
+      optionOrder: fields.length + 1,
     });
   };
 

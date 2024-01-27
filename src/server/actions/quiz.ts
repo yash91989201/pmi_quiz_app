@@ -596,10 +596,25 @@ export async function deleteQuiz(
     .delete(quizzes)
     .where(eq(quizzes.quizId, quizId));
 
-  await db.delete(userQuizzes).where(eq(userQuizzes.quizId, quizId));
-
   revalidatePath("/admin/quizzes");
-  if (deleteQuizQuery[0].affectedRows >= 1) {
+  if (deleteQuizQuery[0].affectedRows > 0) {
+    if (existingUserQuizzes.length > 0) {
+      const deleteUsersQuizQuery = await db
+        .delete(userQuizzes)
+        .where(eq(userQuizzes.quizId, quizId));
+
+      if (deleteUsersQuizQuery[0].affectedRows > 0) {
+        return {
+          status: "SUCCESS",
+          message: "Quiz deleted but user quiz were not deleted.",
+        };
+      }
+
+      return {
+        status: "SUCCESS",
+        message: "Quiz and user quizzes deleted successfully.",
+      };
+    }
     return {
       status: "SUCCESS",
       message: "Quiz deleted successfully.",
@@ -607,7 +622,7 @@ export async function deleteQuiz(
   }
   return {
     status: "FAILED",
-    message: JSON.stringify(deleteQuizQuery),
+    message: "Unable to delete quiz. Try again!",
   };
 }
 

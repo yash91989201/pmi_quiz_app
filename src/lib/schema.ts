@@ -90,6 +90,7 @@ const OptionsSchema = z.object({
   questionId: z.string(),
   optionText: z.string().min(1, { message: "Option Text is required." }),
   isCorrectOption: z.boolean(),
+  optionOrder: z.number(),
 });
 
 const QuestionsSchema = z.object({
@@ -98,6 +99,7 @@ const QuestionsSchema = z.object({
   questionText: z.string().min(1, { message: "Question Text is required." }),
   mark: z.number().min(1, { message: "Min. mark is 1" }),
   options: z.array(OptionsSchema),
+  questionOrder: z.number(),
 });
 
 const QuizFormSchema = z.object({

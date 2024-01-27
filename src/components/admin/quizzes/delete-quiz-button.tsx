@@ -1,6 +1,7 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
 import { deleteQuiz } from "@/server/actions/quiz";
 // CUSTOM HOOKS
@@ -16,6 +17,7 @@ import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export function DeleteQuizButton({ quizId }: { quizId: string }) {
+  const router = useRouter();
   const deleteQuizForm = useForm<DeleteQuizFormSchemaType>({
     defaultValues: {
       quizId,
@@ -29,7 +31,7 @@ export function DeleteQuizButton({ quizId }: { quizId: string }) {
   ) => {
     const actionResponse = await deleteQuiz(data);
     if (actionResponse.status === "SUCCESS") {
-      toast.success(actionResponse.message);
+      router.replace("/admin/quizzes");
     } else {
       toast.error(actionResponse.message);
     }

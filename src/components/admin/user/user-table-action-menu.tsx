@@ -45,7 +45,7 @@ export default function UserTableActionMenu({ userId }: { userId: string }) {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Link
-              href={`/admin/quizzes/${userId}/update-user`}
+              href={`/admin/users/${userId}/update-user`}
               className={cn(
                 buttonVariants({ variant: "ghost" }),
                 "h-fit w-full items-center justify-start space-x-2 p-0 [&>svg]:size-4",

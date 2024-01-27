@@ -1,6 +1,6 @@
 "use client";
 import { createId } from "@paralleldrive/cuid2";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 // TYPES
 import type { QuizFormSchemaType } from "@/lib/schema";
@@ -19,12 +19,18 @@ import OptionsField from "@/components/admin/quizzes/quiz-form-fields/options-fi
 import { Trash2 } from "lucide-react";
 
 export default function QuestionsField() {
-  const { control, getValues } = useFormContext<QuizFormSchemaType>();
+  const { control, getValues, setValue } = useFormContext<QuizFormSchemaType>();
 
   const { fields, append, remove } = useFieldArray({
     name: "questions",
     control: control,
   });
+
+  useEffect(() => {
+    fields.map((field, index) => {
+      setValue(`questions.${index}.questionOrder`, index + 1);
+    });
+  }, [fields, setValue]);
 
   const addQuestion = () => {
     const newQuestionId = createId();
@@ -35,18 +41,21 @@ export default function QuestionsField() {
       quizId,
       questionText: "",
       mark: 5,
+      questionOrder: fields.length + 1,
       options: [
         {
           optionId: createId(),
           questionId: newQuestionId,
           optionText: "",
           isCorrectOption: true,
+          optionOrder: 1,
         },
         {
           optionId: createId(),
           questionId: newQuestionId,
           optionText: "",
           isCorrectOption: false,
+          optionOrder: 2,
         },
       ],
     });
@@ -54,6 +63,9 @@ export default function QuestionsField() {
 
   const deleteQuestion = (index: number) => {
     remove(index);
+    // fields.map((field, index) => {
+    //   setValue(`questions.${index}.questionOrder`, index + 1);
+    // });
   };
 
   return (
@@ -79,7 +91,7 @@ export default function QuestionsField() {
               )}
             />
 
-            <div className="flex justify-between">
+            <div className="flex items-center gap-3">
               <FormField
                 name={`questions.${index}.mark`}
                 render={({ field }) => (

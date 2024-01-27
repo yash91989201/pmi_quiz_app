@@ -1,7 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
-  int,
   mysqlTableCreator,
   primaryKey,
   text,
@@ -9,6 +8,7 @@ import {
   varchar,
   mysqlEnum,
   boolean,
+  smallint,
 } from "drizzle-orm/mysql-core";
 
 export const mysqlTable = mysqlTableCreator((name) => name);
@@ -34,7 +34,7 @@ export const quizzes = mysqlTable("quizzes", {
     .primaryKey()
     .$defaultFn(() => createId()),
   quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
-  totalMark: int("totalMark").notNull(),
+  totalMark: smallint("totalMark").notNull(),
 });
 
 export const questions = mysqlTable("questions", {
@@ -47,7 +47,8 @@ export const questions = mysqlTable("questions", {
       onDelete: "cascade",
     }),
   questionText: text("questionText").notNull(),
-  mark: int("mark").notNull(),
+  mark: smallint("mark").notNull(),
+  questionOrder: smallint("questionOrder").notNull(),
 });
 
 export const questionRelations = relations(questions, ({ many }) => ({
@@ -61,6 +62,7 @@ export const options = mysqlTable("options", {
     .references(() => questions.questionId, {
       onDelete: "cascade",
     }),
+  optionOrder: smallint("optionOrder").notNull(),
   optionText: varchar("optionText", { length: 255 }).notNull(),
   isCorrectOption: boolean("isCorrectOption").default(false).notNull(),
 });
@@ -87,8 +89,8 @@ export const userQuizzes = mysqlTable("userQuizzes", {
       onDelete: "cascade",
     }),
   quizTitle: varchar("quizTitle", { length: 32 }).notNull(),
-  totalMark: int("totalMark").notNull(),
-  score: int("score").default(0).notNull(),
+  totalMark: smallint("totalMark").notNull(),
+  score: smallint("score").default(0).notNull(),
   status: mysqlEnum("status", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"])
     .default("NOT_STARTED")
     .notNull(),

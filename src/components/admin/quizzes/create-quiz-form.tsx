@@ -42,18 +42,21 @@ export default function CreateQuizForm() {
         quizId,
         questionText: "What is hoisting ?",
         mark: 5,
+        questionOrder: 1,
         options: [
           {
             optionId: createId(),
             questionId: initialQuestionId,
             optionText: "block scope",
             isCorrectOption: true,
+            optionOrder: 1,
           },
           {
             optionId: createId(),
             questionId: initialQuestionId,
             optionText: "global scope",
             isCorrectOption: false,
+            optionOrder: 2,
           },
         ],
       },
