@@ -139,6 +139,10 @@ const DeleteUserQuizFormSchema = z.object({
   userQuizId: z.string(),
 });
 
+const ResetUserQuizFormSchema = z.object({
+  userQuizId: z.string(),
+});
+
 // NON-ACTION SCHEMA TYPES
 type UserSchemaType = z.infer<typeof UserSchema>;
 type QuizSchemaType = z.infer<typeof QuizSchema>;
@@ -173,6 +177,7 @@ type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
 type DeleteUserQuizFormSchemaType = z.infer<typeof DeleteUserQuizFormSchema>;
+type ResetUserQuizFormSchemaType = z.infer<typeof ResetUserQuizFormSchema>;
 
 export {
   // NON-ACTION SCHEMAS
@@ -202,6 +207,7 @@ export {
   QuestionsSchema,
   OptionsSchema,
   DeleteUserQuizFormSchema,
+  ResetUserQuizFormSchema,
 };
 
 export type {
@@ -233,4 +239,5 @@ export type {
   OptionsSchemaType,
   UserQuizFormSchemaType,
   DeleteUserQuizFormSchemaType,
+  ResetUserQuizFormSchemaType,
 };

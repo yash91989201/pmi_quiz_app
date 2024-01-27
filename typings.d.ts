@@ -229,10 +229,19 @@ type UserQuizDeleteFormErrorsType = {
   message: string;
 };
 
+type UserQuizResetFormErrorsType = {
+  message: string;
+};
+
 type UserQuizDeleteFormStatusType =
   | FormInitialType<UserQuizDeleteFormErrorsType>
   | FormSuccessType
   | FormFailType<UserQuizDeleteFormErrorsType>;
+
+type UserQuizResetFormStatusType =
+  | FormInitialType<UserQuizResetFormErrorsType>
+  | FormSuccessType
+  | FormFailType<UserQuizResetFormErrorsType>;
 
 type UserRole = "ADMIN" | "USER";
 

@@ -3,37 +3,37 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
-import { deleteUserQuiz } from "@/server/actions/quiz";
+import { resetUserQuiz } from "@/server/actions/quiz";
 // SCHEMAS
-import { DeleteUserQuizFormSchema } from "@/lib/schema";
+import { ResetUserQuizFormSchema } from "@/lib/schema";
 // TYPES
-import type { DeleteUserQuizFormSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
+import type { ResetUserQuizFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
 // ICONS
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Undo2 } from "lucide-react";
 
-export default function DeleteUserQuizButton({
+export default function ResetUserQuizButton({
   userQuizId,
   userQuizStatus,
 }: {
   userQuizId: string;
   userQuizStatus: UserQuizStatus;
 }) {
-  const deleteQuizForm = useForm<DeleteUserQuizFormSchemaType>({
+  const deleteQuizForm = useForm<ResetUserQuizFormSchemaType>({
     defaultValues: {
       userQuizId,
     },
-    resolver: zodResolver(DeleteUserQuizFormSchema),
+    resolver: zodResolver(ResetUserQuizFormSchema),
   });
   const { handleSubmit, formState } = deleteQuizForm;
 
   const deleteUserQuizAction: SubmitHandler<
-    DeleteUserQuizFormSchemaType
+    ResetUserQuizFormSchemaType
   > = async (data) => {
     console.log(data);
-    const actionResponse = await deleteUserQuiz(data);
+    const actionResponse = await resetUserQuiz(data);
     if (actionResponse.status === "SUCCESS") {
       toast.success(actionResponse.message);
     } else {
@@ -44,15 +44,15 @@ export default function DeleteUserQuizButton({
   return (
     <form onSubmit={handleSubmit(deleteUserQuizAction)} className="w-fit">
       <Button
-        title="Delete user quiz"
-        className="hover:bg-red-100 hover:text-red-500 [&>svg]:size-4"
+        title="Reset user quiz"
         variant="ghost"
-        disabled={userQuizStatus === "IN_PROGRESS"}
+        className="hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4"
+        disabled={userQuizStatus === "NOT_STARTED"}
       >
         {formState.isSubmitting ? (
-          <Loader2 className="animate-spin text-red-500" />
+          <Loader2 className="animate-spin text-blue-500" />
         ) : (
-          <Trash2 />
+          <Undo2 />
         )}
       </Button>
     </form>

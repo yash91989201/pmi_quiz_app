@@ -8,6 +8,7 @@ import {
   DeleteQuizFormSchema,
   DeleteUserQuizFormSchema,
   QuizFormSchema,
+  ResetUserQuizFormSchema,
   UserQuizFormSchema,
 } from "@/lib/schema";
 import { options, questions, quizzes, userQuizzes } from "@/server/db/schema";
@@ -18,6 +19,7 @@ import type {
   OptionSchemaType,
   QuestionSchemaType,
   QuizFormSchemaType,
+  ResetUserQuizFormSchemaType,
   UserQuizFormSchemaType,
 } from "@/lib/schema";
 
@@ -733,5 +735,54 @@ export async function deleteUserQuiz(
   return {
     status: "FAILED",
     message: "Unable to delete user's quiz. Try again!",
+  };
+}
+
+export async function resetUserQuiz(
+  formData: ResetUserQuizFormSchemaType,
+): Promise<UserQuizResetFormStatusType> {
+  const validatedFormData = ResetUserQuizFormSchema.safeParse(formData);
+
+  if (!validatedFormData.success) {
+    return {
+      status: "FAILED",
+      message: "Unable to delete user's quiz. Try again!",
+    };
+  }
+  const { userQuizId } = validatedFormData.data;
+  const existingUserQuiz = await db.query.userQuizzes.findFirst({
+    where: eq(userQuizzes.userQuizId, userQuizId),
+  });
+
+  if (!existingUserQuiz) {
+    return {
+      status: "FAILED",
+      message: "Unable to delete user's quiz. Try again!",
+    };
+  }
+
+  if (existingUserQuiz.status === "IN_PROGRESS") {
+    return {
+      status: "FAILED",
+      message: "User is taking this quiz. Try later!",
+    };
+  }
+
+  const userQuizDeleteQuery = await db
+    .update(userQuizzes)
+    .set({
+      score: 0,
+      status: "NOT_STARTED",
+    })
+    .where(eq(userQuizzes.userQuizId, userQuizId));
+
+  revalidatePath("/admin/users/[userId]", "page");
+
+  if (userQuizDeleteQuery[0].affectedRows > 0) {
+    return { status: "SUCCESS", message: "User quiz reset done." };
+  }
+  return {
+    status: "FAILED",
+    message: "Unable to reset user's quiz. Try again!",
   };
 }

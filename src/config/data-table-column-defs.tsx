@@ -13,6 +13,7 @@ import QuizTableActions from "@/components/admin/quizzes/quiz-table-actions";
 import QuizTableActionMenu from "@/components/admin/quizzes/quiz-table-action-menu";
 import UserTableActions from "@/components/admin/user/user-table-actions";
 import UserTableActionMenu from "@/components/admin/user/user-table-action-menu";
+import ResetUserQuizButton from "@/components/admin/user/reset-user-quiz-button";
 import DeleteUserQuizButton from "@/components/admin/user/delete-user-quiz-button";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
@@ -137,12 +138,16 @@ export const userQuizzesTableColumnsForAdmin: ColumnDef<UserQuizzesTableSchemaTy
       accessorKey: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <>
+        <div className="flex items-center gap-3">
+          <ResetUserQuizButton
+            userQuizId={row.original.userQuizId}
+            userQuizStatus={row.original.status}
+          />
           <DeleteUserQuizButton
             userQuizId={row.original.userQuizId}
             userQuizStatus={row.original.status}
           />
-        </>
+        </div>
       ),
     },
   ];
