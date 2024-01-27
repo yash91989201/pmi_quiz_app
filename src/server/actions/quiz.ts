@@ -334,15 +334,18 @@ export async function updateQuiz(
   if (updatedQuestionsId.length > 0) {
     const questionsUpdateQuery = await Promise.all(
       updatedQuestionsId.map(async (updatedQuestionId) => {
-        const { questionText, mark, questionId } = updatedQuestions.find(
-          (updatedQuestion) => updatedQuestion.questionId === updatedQuestionId,
-        )!;
+        const { questionText, mark, questionId, questionOrder } =
+          updatedQuestions.find(
+            (updatedQuestion) =>
+              updatedQuestion.questionId === updatedQuestionId,
+          )!;
 
         const updateQuestionQuery = await db
           .update(questions)
           .set({
-            questionText,
             mark,
+            questionText,
+            questionOrder,
           })
           .where(eq(questions.questionId, questionId));
 
@@ -428,15 +431,17 @@ export async function updateQuiz(
   if (updatedOptionsId.length > 0) {
     const optionsUpdateQuery = await Promise.all(
       updatedOptionsId.map(async (updatedOptionId) => {
-        const { optionId, optionText, isCorrectOption } = updatedOptions.find(
-          (updatedOption) => updatedOption.optionId === updatedOptionId,
-        )!;
+        const { optionId, optionText, isCorrectOption, optionOrder } =
+          updatedOptions.find(
+            (updatedOption) => updatedOption.optionId === updatedOptionId,
+          )!;
 
         const optionUpdateQuery = await db
           .update(options)
           .set({
             optionText,
             isCorrectOption,
+            optionOrder,
           })
           .where(eq(options.optionId, optionId));
         return optionUpdateQuery[0];
