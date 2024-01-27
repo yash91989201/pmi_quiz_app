@@ -192,7 +192,7 @@ export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
             disabled={formState.isSubmitting}
             className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
           >
-            <h6 className="md:text-lg">Update Quiz</h6>
+            <h6 className="md:text-lg">Update User Info</h6>
             {formState.isSubmitting && <Loader2 className="animate-spin" />}
           </Button>
           <Button

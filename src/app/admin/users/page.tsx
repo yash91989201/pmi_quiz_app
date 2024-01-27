@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 // CUSTOM COMPONENTS
 import UserTable from "@/components/admin/user/user-table";
 import URLSearchBox from "@/components/shared/url-search-box";
+import { Plus } from "lucide-react";
 
 export default function UsersPage({
   searchParams,
@@ -17,10 +18,14 @@ export default function UsersPage({
       <div className="flex gap-3">
         <URLSearchBox />
         <Link
-          href="/admin/users/create-new-user"
-          className={cn(buttonVariants(), "h-full w-36 md:text-lg")}
+          href="/admin/quizzes/create-new-user"
+          className={cn(
+            buttonVariants(),
+            "flex w-fit items-center gap-2 md:h-full md:text-lg",
+          )}
         >
-          New User
+          <Plus className="size-6 md:size-5" />
+          <span className="hidden sm:block">New User</span>
         </Link>
       </div>
 

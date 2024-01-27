@@ -53,10 +53,11 @@ export function DeleteUserModal({ id }: { id: string }) {
       <DialogTrigger asChild>
         <Button
           title="Delete User"
-          className="hover:bg-red-100 hover:text-red-500 [&>svg]:size-4"
+          className="h-fit gap-2 space-x-2 p-0 hover:bg-red-100 hover:text-red-500 lg:h-10 lg:px-4 lg:py-2"
           variant="ghost"
         >
-          <Trash2 />
+          <Trash2 className="size-4" />
+          <span className="lg:hidden">Delete User</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

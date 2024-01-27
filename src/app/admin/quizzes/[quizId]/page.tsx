@@ -34,7 +34,7 @@ export default async function Page({ params }: { params: { quizId: string } }) {
       {data.questions.map(
         ({ mark, options, questionText, questionId }, index) => (
           <Card key={questionId}>
-            <CardHeader className="justify-start gap-3 md:flex-row">
+            <CardHeader className="justify-start gap-3 p-3 md:flex-row md:p-6">
               <div>
                 <span className="text-xl font-bold text-primary">
                   {index + 1}
@@ -46,8 +46,8 @@ export default async function Page({ params }: { params: { quizId: string } }) {
                 Mark:&nbsp;{mark}
               </Badge>
             </CardHeader>
-            <CardContent>
-              <div className="flex min-w-[480px] flex-col  gap-1">
+            <CardContent className="p-3 md:p-6">
+              <div className="flex  flex-col  gap-1">
                 {options.map(({ optionId, optionText, isCorrectOption }) => (
                   <p
                     key={optionId}

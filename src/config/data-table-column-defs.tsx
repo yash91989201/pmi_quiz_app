@@ -1,25 +1,27 @@
 "use client";
-import React from "react";
 import Link from "next/link";
 // UTILS
-import { cn, formatDate } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
+import { cn, formatDate } from "@/lib/utils";
 // TYPES
 import type { ColumnDef } from "@tanstack/react-table";
 import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Badge } from "@/components/ui/badge";
-import { DeleteQuizModal } from "@/components/admin/quizzes/delete-quiz-modal";
-import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
+// CONSTANTS
+import QuizTableActions from "@/components/admin/quizzes/quiz-table-actions";
+import QuizTableActionMenu from "@/components/admin/quizzes/quiz-table-action-menu";
+import UserTableActions from "@/components/admin/user/user-table-actions";
+import UserTableActionMenu from "@/components/admin/user/user-table-action-menu";
 import DeleteUserQuizButton from "@/components/admin/user/delete-user-quiz-button";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
-import { Edit2, Eye, FileCheck2 } from "lucide-react";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
     accessorKey: "name",
     header: "Username",
+    cell: ({ row }) => <p className="min-w-32">{row.original.name}</p>,
   },
 
   {
@@ -56,31 +58,12 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   },
   {
     accessorKey: "Actions",
-    header: "Actions",
+    header: () => <p className="hidden lg:block">Actions</p>,
     cell: ({ row }) => (
-      <div className="space-x-3">
-        <Link
-          title="View User Info"
-          href={`/admin/users/${row.original.id}`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "h-fit p-3 text-gray-700 hover:bg-amber-100 hover:text-amber-500 [&>svg]:size-4",
-          )}
-        >
-          <Eye />
-        </Link>
-        <Link
-          title="Update User Info"
-          href={`/admin/users/${row.original.id}/update-user`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "h-fit p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4",
-          )}
-        >
-          <Edit2 />
-        </Link>
-        <DeleteUserModal id={row.original.id} />
-      </div>
+      <>
+        <UserTableActions userId={row.original.id} />
+        <UserTableActionMenu userId={row.original.id} />
+      </>
     ),
   },
 ];
@@ -89,56 +72,34 @@ export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
     header: "Quiz Title",
+    minSize: 360,
+    cell: ({ row }) => <p className="min-w-36">{row.original.quizTitle}</p>,
   },
   {
     accessorKey: "totalQuestions",
     header: "Questions",
+    cell: ({ row }) => (
+      <p className="min-w-16">{row.original.totalQuestions}</p>
+    ),
   },
   {
     accessorKey: "totalMark",
     header: "Total Mark",
+    cell: ({ row }) => <p className="min-w-20">{row.original.totalMark}</p>,
   },
   {
     accessorKey: "totalUsers",
     header: "Users",
+    cell: ({ row }) => <p className="min-w-12">{row.original.totalUsers}</p>,
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: () => <p className="hidden lg:block">Actions</p>,
     cell: ({ row }) => (
-      <div className="space-x-3">
-        <Link
-          title="View Quiz Info"
-          href={`/admin/quizzes/${row.original.quizId}`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "h-fit p-3 text-gray-700 hover:bg-amber-100 hover:text-amber-500 [&>svg]:size-4",
-          )}
-        >
-          <Eye />
-        </Link>
-        <Link
-          title="View Quiz Result"
-          href={`/admin/quizzes/${row.original.quizId}/quiz-result`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "h-fit p-3 text-gray-700 hover:bg-green-100 hover:text-green-500 [&>svg]:size-4",
-          )}
-        >
-          <FileCheck2 />
-        </Link>
-        <Link
-          title="Edit Quiz"
-          href={`/admin/quizzes/${row.original.quizId}/edit-quiz`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "h-fit p-3 text-gray-700 hover:bg-blue-100 hover:text-blue-500 [&>svg]:size-4",
-          )}
-        >
-          <Edit2 />
-        </Link>
-        <DeleteQuizModal quizId={row.original.quizId} />
-      </div>
+      <>
+        <QuizTableActions quizId={row.original.quizId} />
+        <QuizTableActionMenu quizId={row.original.quizId} />
+      </>
     ),
   },
 ];

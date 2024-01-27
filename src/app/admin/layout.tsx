@@ -4,7 +4,8 @@ import { currentRole } from "@/server/utils/auth";
 // TYPES
 import type { ReactNode } from "react";
 // CUSTOM COMPONENTS
-import SideNav from "@/components/admin/side-nav/side-nav";
+import SideNav from "@/components/admin/side-nav";
+import MobileNav from "@/components/admin/mobile-nav";
 
 export default async function AdminLayout({
   children,
@@ -18,6 +19,7 @@ export default async function AdminLayout({
   return (
     <main className="flex h-screen flex-col overflow-hidden lg:flex-row">
       <SideNav />
+      <MobileNav />
       <section className="flex-1 overflow-y-auto p-3 lg:max-h-screen lg:pb-8 ">
         {children}
       </section>
