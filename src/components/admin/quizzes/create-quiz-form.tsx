@@ -21,6 +21,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import AvailableUsersField from "@/components/admin/quizzes/quiz-form-fields/available-users-field";
 // ICONS
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function CreateQuizForm() {
   const quizId = createId();
@@ -33,28 +34,28 @@ export default function CreateQuizForm() {
 
   const defaultValues: QuizFormSchemaType = {
     quizId,
-    quizTitle: "Javascript Quiz",
+    quizTitle: "",
     totalMark: 5,
     usersId: [],
     questions: [
       {
         questionId: initialQuestionId,
         quizId,
-        questionText: "What is hoisting ?",
+        questionText: "",
         mark: 5,
         questionOrder: 1,
         options: [
           {
             optionId: createId(),
             questionId: initialQuestionId,
-            optionText: "block scope",
+            optionText: "",
             isCorrectOption: true,
             optionOrder: 1,
           },
           {
             optionId: createId(),
             questionId: initialQuestionId,
-            optionText: "global scope",
+            optionText: "",
             isCorrectOption: false,
             optionOrder: 2,
           },
@@ -112,10 +113,10 @@ export default function CreateQuizForm() {
           )}
         />
 
-        <div className="flex gap-2">
-          <span>Total Marks: </span>
-          <span>{totalMark}</span>
-        </div>
+        <Badge variant="outline" className="w-fit">
+          Total Mark:&nbsp;{totalMark}
+        </Badge>
+
         <QuestionsField />
 
         <AvailableUsersField

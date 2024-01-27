@@ -63,9 +63,6 @@ export default function QuestionsField() {
 
   const deleteQuestion = (index: number) => {
     remove(index);
-    // fields.map((field, index) => {
-    //   setValue(`questions.${index}.questionOrder`, index + 1);
-    // });
   };
 
   return (
@@ -104,7 +101,7 @@ export default function QuestionsField() {
                           placeholder="Mark"
                           pattern="[0-9\/]*"
                           minLength={1}
-                          className="w-fit"
+                          className="w-20"
                           onChange={(event) =>
                             field.onChange(Number(event.target.value))
                           }

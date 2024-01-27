@@ -101,7 +101,7 @@ export default function UpdateQuizForm({
         />
 
         <Badge variant="outline" className="w-fit">
-          Total Marks:&nbsp;{totalMark}
+          Total Mark:&nbsp;{totalMark}
         </Badge>
 
         <QuestionsField />
