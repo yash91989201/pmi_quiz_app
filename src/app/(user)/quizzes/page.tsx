@@ -1,32 +1,17 @@
-"use client";
 import { redirect } from "next/navigation";
-// CUSTOM HOOKS
-import { useCurrentUser } from "@/hooks/use-current-user";
 // UTILS
-import { api } from "@/trpc/react";
-// TYPES
-import type { UserQuizStatusType } from "@/lib/schema";
+import { api } from "@/trpc/server";
+import { currentUser } from "@/server/utils/auth";
 // CUSTOM COMPONENTS
 import DataTable from "@/components/ui/data-table";
 import LogoutButton from "@/components/admin/side-nav/logout-button";
 import { userQuizzesTableColumnsForUser } from "@/config/data-table-column-defs";
 
-type UserQuizType = {
-  userQuizId: string;
-  userId: string;
-  quizId: string;
-  quizTitle: string | null;
-  totalMark: number | null;
-  score: number;
-  status: UserQuizStatusType;
-};
-
-export default function QuizzesPage() {
-  const user = useCurrentUser();
+export default async function QuizzesPage() {
+  const user = await currentUser();
   if (!user) redirect("/auth/login");
 
-  const { data } = api.user.getQuizzes.useQuery();
-  const userQuizzes: UserQuizType[] = data ?? [];
+  const userQuizzes = await api.user.getQuizzes.query();
 
   return (
     <>

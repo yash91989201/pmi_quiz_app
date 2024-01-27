@@ -2,7 +2,7 @@
 import "@/styles/tiptap.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { useFieldArray, useForm, useFormContext } from "react-hook-form";
 import parse from "html-react-parser";
 // ACTIONS
@@ -10,7 +10,10 @@ import { submitQuiz } from "@/server/actions/quiz";
 // SCHEMAS
 import { UserQuizFormSchema } from "@/lib/schema";
 // TYPES
-import type { UserQuizFormSchemaType } from "@/lib/schema";
+import type {
+  UserQuestionsSchemaType,
+  UserQuizFormSchemaType,
+} from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
@@ -22,23 +25,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // ICONS
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-
-type QuestionType = {
-  quizId: string;
-  questionId: string;
-  questionText: string;
-  mark: number;
-  options: {
-    optionId: string;
-    questionId: string;
-    optionText: string;
-    isSelected: boolean;
-  }[];
-};
 
 export default function UserQuizForm({
   questions,
@@ -47,7 +43,7 @@ export default function UserQuizForm({
 }: {
   userQuizId: string;
   quizId: string;
-  questions: QuestionType[];
+  questions: UserQuestionsSchemaType[];
 }) {
   const router = useRouter();
   const [actionResponse, setActionResponse] = useState<QuizFormStatusType>();
@@ -80,7 +76,7 @@ export default function UserQuizForm({
   return (
     <Form {...quizForm}>
       <form
-        className="flex w-[480px] flex-col gap-3"
+        className="flex flex-col gap-3"
         onSubmit={handleSubmit(createQuizAction)}
       >
         <QuestionsField />
@@ -101,7 +97,7 @@ export default function UserQuizForm({
         <Button
           type="submit"
           disabled={formState.isSubmitting}
-          className="flex w-fit items-center justify-center gap-3 self-end disabled:cursor-not-allowed"
+          className="flex w-fit items-center justify-center gap-3 disabled:cursor-not-allowed"
         >
           <h6 className="md:text-lg">Submit</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}
@@ -122,8 +118,8 @@ function QuestionsField() {
   return (
     <div className="flex flex-col gap-3">
       {fields.map((question, index) => (
-        <Fragment key={question.id}>
-          <div className="flex justify-between">
+        <Card key={question.id} className="md:min-w-[480px]">
+          <CardHeader className="flex w-full flex-row items-center justify-between">
             <p>
               <span className="text-xl font-bold text-primary">
                 {index + 1}
@@ -131,10 +127,14 @@ function QuestionsField() {
               /{fields.length}
             </p>
             <Badge variant="outline">Mark:&nbsp;{question.mark}</Badge>
-          </div>
-          <section className="tiptap">{parse(question.questionText)}</section>
-          <OptionsField questionIndex={index} />
-        </Fragment>
+          </CardHeader>
+          <CardContent>
+            <section className="tiptap">{parse(question.questionText)}</section>
+          </CardContent>
+          <CardFooter>
+            <OptionsField questionIndex={index} />
+          </CardFooter>
+        </Card>
       ))}
     </div>
   );
@@ -148,7 +148,7 @@ function OptionsField({ questionIndex }: { questionIndex: number }) {
   });
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="flex flex-row gap-3">
       <FormField
         control={control}
         name={`questions.${questionIndex}.options`}

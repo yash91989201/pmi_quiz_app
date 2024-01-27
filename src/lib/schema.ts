@@ -173,6 +173,7 @@ type UpdateUserFormSchemaType = z.infer<typeof UpdateUserFormSchema>;
 type DeleteUserSchemaType = z.infer<typeof DeleteUserSchema>;
 type QuizFormSchemaType = z.infer<typeof QuizFormSchema>;
 type UserQuizFormSchemaType = z.infer<typeof UserQuizFormSchema>;
+type UserQuestionsSchemaType = z.infer<typeof UserQuestionsSchema>;
 type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
@@ -234,6 +235,7 @@ export type {
   UpdateUserFormSchemaType,
   DeleteUserSchemaType,
   QuizFormSchemaType,
+  UserQuestionsSchemaType,
   DeleteQuizFormSchemaType,
   QuestionsSchemaType,
   OptionsSchemaType,
