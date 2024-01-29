@@ -54,8 +54,8 @@ export default async function Page({ params }: { params: { quizId: string } }) {
                     className={cn(
                       "rounded-md  p-2 lg:p-3",
                       isCorrectOption
-                        ? "bg-primary text-white"
-                        : "bg-primary/20",
+                        ? "bg-green-500 text-white"
+                        : "border bg-white",
                     )}
                   >
                     {optionText}

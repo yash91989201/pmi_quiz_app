@@ -45,13 +45,13 @@ export const DEFAULT_USER_REDIRECT = "/quizzes";
 export const USER_UPDATE_REDIRECT = "/profile/update";
 
 /**
- * Links available under admin dashboard
+ * Links available under ADMIN dashboard
  */
-export const NAV_LINKS = [
+export const ADMIN_NAV_LINKS = [
   {
     label: "Home",
     href: "/admin",
-    matchExact: true,
+    matchExact: false,
   },
   {
     label: "Users",
@@ -66,6 +66,52 @@ export const NAV_LINKS = [
   {
     label: "Settings",
     href: "/admin/settings",
+    matchExact: false,
+  },
+] as const;
+
+/**
+ * Links available under USER dashboard
+ */
+export const USER_NAV_LINKS = [
+  {
+    label: "Order",
+    href: "/quizzes",
+    matchExact: true,
+  },
+  {
+    label: "GST. Bill and Study Material",
+    href: "/tbd1",
+    matchExact: false,
+  },
+  {
+    label: "Exam",
+    href: "/tbd2",
+    matchExact: false,
+  },
+  {
+    label: "Certifications",
+    href: "/tbd3",
+    matchExact: false,
+  },
+  {
+    label: "Video Tutorial and Online Classes",
+    href: "/tbd3",
+    matchExact: false,
+  },
+  {
+    label: "Exam Schedule",
+    href: "/tbd3",
+    matchExact: false,
+  },
+  {
+    label: "Final Exam",
+    href: "/tbd3",
+    matchExact: false,
+  },
+  {
+    label: "PMI Number",
+    href: "/tbd3",
     matchExact: false,
   },
 ] as const;

@@ -11,7 +11,7 @@ import LogoutButton from "@/components/admin/side-nav/logout-button";
 // ICONS
 import { Menu } from "lucide-react";
 // CONSTANTS
-import { NAV_LINKS } from "@/config/routes";
+import { ADMIN_NAV_LINKS } from "@/config/routes";
 
 export default function SideBar() {
   return (
@@ -25,7 +25,7 @@ export default function SideBar() {
         </SheetHeader>
         <section className="flex h-full flex-col py-6">
           <nav className="flex flex-1 flex-col gap-3">
-            {NAV_LINKS.map(({ href, label, matchExact }, index) => (
+            {ADMIN_NAV_LINKS.map(({ href, label, matchExact }, index) => (
               <NavLink
                 key={index}
                 href={href}
