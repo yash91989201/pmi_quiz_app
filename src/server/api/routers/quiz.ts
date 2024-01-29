@@ -49,7 +49,7 @@ const quizRouter = createTRPCRouter({
             quizId: quizzes.quizId,
             quizTitle: quizzes.quizTitle,
             totalMark: quizzes.totalMark,
-            totalQuestions: count(questions.questionId),
+            totalQuestions: countDistinct(questions.questionId),
             totalUsers: countDistinct(userQuizzes.quizId),
           })
           .from(quizzes)
