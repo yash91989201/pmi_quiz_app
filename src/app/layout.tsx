@@ -13,7 +13,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Quiz | PMI",
+  title: "PMI",
   description: "Quiz app for PMI",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };

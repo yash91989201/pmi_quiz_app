@@ -1,8 +1,5 @@
 "use client";
 import Link from "next/link";
-import { Poppins } from "next/font/google";
-// UTILS
-import { cn } from "@/lib/utils";
 // CUSTOM COMPONENTS
 import {
   Card,
@@ -11,11 +8,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-const poppinsFont = Poppins({
-  subsets: ["latin"],
-  weight: ["600"],
-});
+import Image from "next/image";
 
 export default function AuthCardWrapper({
   children,
@@ -24,13 +17,13 @@ export default function AuthCardWrapper({
   backButtonHref,
 }: AuthCardWrapperProps) {
   return (
-    <Card className="min-w-[400px] shadow-md">
+    <Card className="border-input shadow-lg lg:min-w-[640px]">
       <CardHeader>
-        <div className="flex w-full flex-col items-center justify-center gap-y-4">
-          <h1 className={cn("text-3xl font-semibold", poppinsFont.className)}>
-            🔐 Project Management Institute
-          </h1>
-          <p className="text-sm text-muted-foreground">{headerLabel}</p>
+        <div className="flex w-full flex-col items-center justify-center gap-y-16">
+          <div className="relative h-24 w-80">
+            <Image src="/pmi_logo.png" alt="PMI" fill />
+          </div>
+          <p className="text-lg md:text-xl md:font-semibold">{headerLabel}</p>
         </div>
       </CardHeader>
       <CardContent>{children}</CardContent>

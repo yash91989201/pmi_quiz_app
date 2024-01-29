@@ -51,7 +51,7 @@ export const ADMIN_NAV_LINKS = [
   {
     label: "Home",
     href: "/admin",
-    matchExact: false,
+    matchExact: true,
   },
   {
     label: "Users",

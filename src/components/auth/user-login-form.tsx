@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
@@ -80,7 +79,7 @@ export default function UserLoginForm() {
   };
 
   return (
-    <AuthCardWrapper headerLabel="Welcome back">
+    <AuthCardWrapper headerLabel="Login">
       <Form {...loginForm}>
         <form
           className="flex flex-col gap-3"
@@ -101,6 +100,7 @@ export default function UserLoginForm() {
                           placeholder="Enter your username"
                           type="text"
                           disabled={userEmail.length > 0}
+                          className="border-gray-600"
                         />
                         <UserRound />
                       </div>
@@ -130,6 +130,7 @@ export default function UserLoginForm() {
                           placeholder="Enter your email"
                           type="email"
                           disabled={getValues("name").length > 0}
+                          className="border-gray-600"
                         />
                         <Mail />
                       </div>
@@ -150,6 +151,7 @@ export default function UserLoginForm() {
                         <Input
                           {...field}
                           type={showPasswordToggle.isOn ? "text" : "password"}
+                          className="border-gray-600"
                           placeholder="********"
                         />
                         {showPasswordToggle.isOn ? (
@@ -186,14 +188,7 @@ export default function UserLoginForm() {
               )}
             />
           )}
-          <Button
-            className="w-fit px-0 font-normal text-gray-600"
-            size="sm"
-            asChild
-            variant="link"
-          >
-            <Link href="/auth/reset-password">Forgot Password?</Link>
-          </Button>
+
           {actionResponse?.status === "SUCCESS" && (
             <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
               <CheckCircle2 />
