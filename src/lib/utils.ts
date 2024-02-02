@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import type { ClassValue } from "clsx";
 import type { FunctionComponent } from "react";
 // CONSTANTS
-import { DUMMY_EMAIL_PREFIX } from "@/config/constants";
+import { ABSTRACT_PATTERN_PATHS, DUMMY_EMAIL_PREFIX } from "@/config/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -61,7 +61,7 @@ export function formatDate(date: Date): string {
 }
 
 /**
- * This export function will create a dummy email
+ * This function will create a dummy email
  * prefixed with DUMMY_EMAIL_PREFIX
  */
 export function generateRandomDummyEmail() {
@@ -69,6 +69,10 @@ export function generateRandomDummyEmail() {
   return `${DUMMY_EMAIL_PREFIX}${randomId}@gmail.com`;
 }
 
+/**
+ * shows toast for update action performed
+ * on user or quiz data
+ */
 export function editActionToast(action?: {
   status: "SUCCESS" | "FAILED";
   message: string;
@@ -80,4 +84,10 @@ export function editActionToast(action?: {
       toast.error(action.message);
     }
   }
+}
+
+export function getRandomizedPatternPath() {
+  const randomNumber =
+    Math.floor(Math.random() * ABSTRACT_PATTERN_PATHS.length) + 1;
+  return ABSTRACT_PATTERN_PATHS[randomNumber];
 }

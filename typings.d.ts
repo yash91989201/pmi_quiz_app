@@ -88,6 +88,10 @@ type UserQuizFormFailType = {
   message: string;
 };
 
+type StartUserQuizFormFailType = {
+  message: string;
+};
+
 type AdminLoginFormStatusType =
   | FormInitialType<AdminLoginFormErrorsType>
   | AdminLoginFormSuccessType
@@ -246,6 +250,11 @@ type UserQuizResetFormStatusType =
 type UserRole = "ADMIN" | "USER";
 
 type UserQuizStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+
+type StartUserQuizFormStatusType =
+  | FormInitialType<StartUserQuizFormFailType>
+  | FormSuccessType
+  | FormFailType<StartUserQuizFormFailType>;
 
 type AuthCardWrapperProps = {
   children: React.ReactNode;

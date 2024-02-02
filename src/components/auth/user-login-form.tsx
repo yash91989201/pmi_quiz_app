@@ -79,7 +79,7 @@ export default function UserLoginForm() {
   };
 
   return (
-    <AuthCardWrapper headerLabel="Login">
+    <AuthCardWrapper headerLabel="Welcome Back">
       <Form {...loginForm}>
         <form
           className="flex flex-col gap-3"
@@ -92,7 +92,7 @@ export default function UserLoginForm() {
                 control={control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel className="text-base">Username</FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-3">
                         <Input
@@ -100,7 +100,6 @@ export default function UserLoginForm() {
                           placeholder="Enter your username"
                           type="text"
                           disabled={userEmail.length > 0}
-                          className="border-gray-600"
                         />
                         <UserRound />
                       </div>
@@ -122,7 +121,7 @@ export default function UserLoginForm() {
                 control={control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-base">Email</FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-3">
                         <Input
@@ -130,7 +129,6 @@ export default function UserLoginForm() {
                           placeholder="Enter your email"
                           type="email"
                           disabled={getValues("name").length > 0}
-                          className="border-gray-600"
                         />
                         <Mail />
                       </div>
@@ -145,13 +143,12 @@ export default function UserLoginForm() {
                 control={control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-base">Password</FormLabel>
                     <FormControl>
                       <div className="flex items-center gap-3 [&>svg]:size-5 md:[&>svg]:size-6">
                         <Input
                           {...field}
                           type={showPasswordToggle.isOn ? "text" : "password"}
-                          className="border-gray-600"
                           placeholder="********"
                         />
                         {showPasswordToggle.isOn ? (
@@ -204,12 +201,11 @@ export default function UserLoginForm() {
           )}
 
           <Button
-            type="submit"
             disabled={formState.isSubmitting}
-            className="flex items-center justify-center gap-3 disabled:cursor-not-allowed"
+            className="mt-3 flex h-12 items-center justify-center gap-3 rounded-full font-medium disabled:cursor-not-allowed"
           >
             <h6 className="md:text-lg">
-              {!twoFactorAuthenticationField.isShowing ? "Login" : "Confirm"}
+              {!twoFactorAuthenticationField.isShowing ? "LOG IN" : "Confirm"}
             </h6>
             {formState.isSubmitting && <Loader2 className="animate-spin" />}
           </Button>

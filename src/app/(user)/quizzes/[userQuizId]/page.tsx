@@ -15,11 +15,16 @@ export default async function Page({
 
   return (
     <div className="mx-auto my-12 mt-8 flex max-w-3xl flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold md:text-2xl">{userQuizData.quizTitle}</h3>
-        <Badge variant="outline" className="w-fit">
-          Total Mark:&nbsp;{userQuizData.totalMark}
-        </Badge>
+      <div className="overflow-hidden rounded-lg border bg-white shadow">
+        <div className="h-3 bg-primary" />
+        <div className="flex h-44 items-center justify-between gap-8 p-6">
+          <h3 className="font-semibold md:text-2xl">
+            {userQuizData.quizTitle}
+          </h3>
+          <Badge className="w-fit">
+            Total Mark:&nbsp;{userQuizData.totalMark}
+          </Badge>
+        </div>
       </div>
       <UserQuizForm
         quizId={userQuizData.quizId}

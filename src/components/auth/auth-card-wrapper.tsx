@@ -17,14 +17,12 @@ export default function AuthCardWrapper({
   backButtonHref,
 }: AuthCardWrapperProps) {
   return (
-    <Card className="border-input shadow-lg lg:min-w-[640px]">
-      <CardHeader>
-        <div className="flex w-full flex-col items-center justify-center gap-y-16">
-          <div className="relative h-24 w-80">
-            <Image src="/pmi_logo.png" alt="PMI" fill />
-          </div>
-          <p className="text-lg md:text-xl md:font-semibold">{headerLabel}</p>
+    <Card className="w-[80vw] shadow-lg md:max-w-[480px] lg:min-w-[640px]">
+      <CardHeader className="flex flex-col items-center justify-center gap-y-3">
+        <div className="relative h-16 w-60">
+          <Image src="/pmi_logo.png" alt="PMI" fill />
         </div>
+        <p className="text-base text-gray-500">{headerLabel}</p>
       </CardHeader>
       <CardContent>{children}</CardContent>
       {backButtonLabel && backButtonHref && (

@@ -139,6 +139,10 @@ const DeleteUserQuizFormSchema = z.object({
   userQuizId: z.string(),
 });
 
+const StartUserQuizFormSchema = z.object({
+  userQuizId: z.string(),
+});
+
 const ResetUserQuizFormSchema = z.object({
   userQuizId: z.string(),
 });
@@ -178,6 +182,7 @@ type DeleteQuizFormSchemaType = z.infer<typeof DeleteQuizFormSchema>;
 type QuestionsSchemaType = z.infer<typeof QuestionsSchema>;
 type OptionsSchemaType = z.infer<typeof OptionsSchema>;
 type DeleteUserQuizFormSchemaType = z.infer<typeof DeleteUserQuizFormSchema>;
+type StartUserQuizFormSchemaType = z.infer<typeof StartUserQuizFormSchema>;
 type ResetUserQuizFormSchemaType = z.infer<typeof ResetUserQuizFormSchema>;
 
 export {
@@ -208,6 +213,7 @@ export {
   QuestionsSchema,
   OptionsSchema,
   DeleteUserQuizFormSchema,
+  StartUserQuizFormSchema,
   ResetUserQuizFormSchema,
 };
 
@@ -241,5 +247,6 @@ export type {
   OptionsSchemaType,
   UserQuizFormSchemaType,
   DeleteUserQuizFormSchemaType,
+  StartUserQuizFormSchemaType,
   ResetUserQuizFormSchemaType,
 };

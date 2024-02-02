@@ -23,9 +23,10 @@ export default function NavLink({
       href={href}
       className={cn(
         buttonVariants({
-          variant: isActive ? "default" : "ghost",
-          className: "justify-start",
+          variant: "link",
+          className: isActive ? "text-primary underline" : "text-gray-700",
         }),
+        "px-2 text-base",
       )}
     >
       {label}

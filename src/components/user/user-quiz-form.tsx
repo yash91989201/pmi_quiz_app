@@ -59,7 +59,9 @@ export default function UserQuizForm({
   });
 
   const { handleSubmit, formState } = quizForm;
-  console.log(formState.errors);
+
+  // useBeforeUnload(true, "Your quiz will be submitted as it is.");
+
   const createQuizAction: SubmitHandler<UserQuizFormSchemaType> = async (
     data,
   ) => {

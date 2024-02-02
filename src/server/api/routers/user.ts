@@ -140,7 +140,111 @@ const userRouter = createTRPCRouter({
         userQuizzes.score,
         userQuizzes.status,
       )
-      .where(eq(userQuizzes.userId, ctx.session.user.id));
+      .where(
+        and(
+          eq(userQuizzes.userId, ctx.session.user.id),
+          eq(userQuizzes.status, "NOT_STARTED"),
+        ),
+      );
+  }),
+
+  /**
+   * Returns all the pending quizzes for a specific user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in USER side.
+   */
+  getPendingQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db
+      .select({
+        userQuizId: userQuizzes.userQuizId,
+        userId: userQuizzes.userId,
+        quizId: userQuizzes.quizId,
+        score: userQuizzes.score,
+        status: userQuizzes.status,
+        quizTitle: quizzes.quizTitle,
+        totalMark: quizzes.totalMark,
+      })
+      .from(userQuizzes)
+      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+      .groupBy(
+        userQuizzes.userQuizId,
+        userQuizzes.userId,
+        userQuizzes.quizId,
+        userQuizzes.score,
+        userQuizzes.status,
+      )
+      .where(
+        and(
+          eq(userQuizzes.userId, ctx.session.user.id),
+          eq(userQuizzes.status, "NOT_STARTED"),
+        ),
+      );
+  }),
+
+  /**
+   * Returns all the in progress quizzes for a specific user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in USER side.
+   */
+  getInProgressQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db
+      .select({
+        userQuizId: userQuizzes.userQuizId,
+        userId: userQuizzes.userId,
+        quizId: userQuizzes.quizId,
+        score: userQuizzes.score,
+        status: userQuizzes.status,
+        quizTitle: quizzes.quizTitle,
+        totalMark: quizzes.totalMark,
+      })
+      .from(userQuizzes)
+      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+      .groupBy(
+        userQuizzes.userQuizId,
+        userQuizzes.userId,
+        userQuizzes.quizId,
+        userQuizzes.score,
+        userQuizzes.status,
+      )
+      .where(
+        and(
+          eq(userQuizzes.userId, ctx.session.user.id),
+          eq(userQuizzes.status, "IN_PROGRESS"),
+        ),
+      );
+  }),
+
+  /**
+   * Returns all the completed quizzes for a specific user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in USER side.
+   */
+  getCompletedQuizzes: protectedProcedure.query(({ ctx }) => {
+    return ctx.db
+      .select({
+        userQuizId: userQuizzes.userQuizId,
+        userId: userQuizzes.userId,
+        quizId: userQuizzes.quizId,
+        score: userQuizzes.score,
+        status: userQuizzes.status,
+        quizTitle: quizzes.quizTitle,
+        totalMark: quizzes.totalMark,
+      })
+      .from(userQuizzes)
+      .leftJoin(quizzes, eq(userQuizzes.quizId, quizzes.quizId))
+      .groupBy(
+        userQuizzes.userQuizId,
+        userQuizzes.userId,
+        userQuizzes.quizId,
+        userQuizzes.score,
+        userQuizzes.status,
+      )
+      .where(
+        and(
+          eq(userQuizzes.userId, ctx.session.user.id),
+          eq(userQuizzes.status, "COMPLETED"),
+        ),
+      );
   }),
 
   /**

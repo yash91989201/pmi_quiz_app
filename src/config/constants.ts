@@ -14,3 +14,20 @@ export const STATUS_TEXT = {
   IN_PROGRESS: "In Progress",
   COMPLETED: "Completed",
 } as const;
+
+/**
+ * abstract pattern paths for showing quiz card
+ * @type {string[]}
+ */
+export const ABSTRACT_PATTERN_PATHS: string[] = [
+  "/assets/dot-grid.webp",
+  "/assets/memphis-colorful.webp",
+  "/assets/memphis-mini.webp",
+  "/assets/spiration-light.webp",
+  "/assets/swirl_pattern.webp",
+  "/assets/tic-tac-toe.webp",
+  "/assets/topography.webp",
+  "/assets/webb.webp",
+  "/assets/what-the-hex.webp",
+  "/assets/y-so-serious-white.webp",
+] as const;

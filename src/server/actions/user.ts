@@ -33,6 +33,7 @@ import {
   NewPasswordSchema,
   ResetPasswordSchema,
   SignUpSchema,
+  StartUserQuizFormSchema,
   UpdateUserFormSchema,
   UserLoginSchema,
 } from "@/lib/schema";
@@ -55,6 +56,7 @@ import type {
   UserLoginSchemaType,
   UserSchemaType,
   UpdateUserFormSchemaType,
+  StartUserQuizFormSchemaType,
 } from "@/lib/schema";
 // CONSTANTS
 import {
@@ -864,5 +866,39 @@ export async function deleteUser(
   return {
     status: "FAILED",
     message: "Cannot delete user while taking quiz.",
+  };
+}
+
+export async function startUserQuiz(
+  formData: StartUserQuizFormSchemaType,
+): Promise<StartUserQuizFormStatusType> {
+  const validatedFormData = StartUserQuizFormSchema.safeParse(formData);
+
+  if (!validatedFormData.success) {
+    return {
+      status: "FAILED",
+      message: "Unable to start exam.",
+    };
+  }
+
+  const startUserQuizQuery = await db
+    .update(userQuizzes)
+    .set({
+      status: "IN_PROGRESS",
+    })
+    .where(eq(userQuizzes.userQuizId, validatedFormData.data.userQuizId));
+
+  revalidatePath("/(user)", "layout");
+
+  if (startUserQuizQuery[0].affectedRows > 0) {
+    return {
+      status: "SUCCESS",
+      message: "Quiz started",
+    };
+  }
+
+  return {
+    status: "FAILED",
+    message: "Unable to start exam. Try Again!",
   };
 }

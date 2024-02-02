@@ -4,7 +4,9 @@ import { currentRole, currentUser } from "@/server/utils/auth";
 // TYPES
 import type { ReactNode } from "react";
 // CUSTOM COMPONENTS
-import SideNav from "@/components/user/side-nav";
+import UserNavbar from "@/components/user/user-navbar";
+import { api } from "@/trpc/server";
+import { cn } from "@/lib/utils";
 
 export default async function UserLayout({
   children,
@@ -17,12 +19,21 @@ export default async function UserLayout({
   if (!user) redirect("/auth/login");
   if (userRole === "ADMIN") redirect("/admin");
 
+  const inProgressQuizzes = await api.user.getInProgressQuizzes.query();
+
   return (
-    <main className="relative flex flex-col lg:flex-row lg:overflow-hidden">
-      <SideNav />
-      <section className="flex-1 overflow-y-auto p-3 lg:max-h-screen">
-        {children}
-      </section>
-    </main>
+    <>
+      {inProgressQuizzes.length > 0 ? null : <UserNavbar />}
+      <div
+        className={cn(
+          "min-h-screen",
+          inProgressQuizzes.length > 0 && "bg-primary/15",
+        )}
+      >
+        <main className="mx-auto h-full max-w-6xl py-6">
+          <section>{children}</section>
+        </main>
+      </div>
+    </>
   );
 }

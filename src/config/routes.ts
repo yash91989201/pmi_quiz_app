@@ -75,43 +75,18 @@ export const ADMIN_NAV_LINKS = [
  */
 export const USER_NAV_LINKS = [
   {
-    label: "Order",
+    label: "Exams",
     href: "/quizzes",
-    matchExact: true,
-  },
-  {
-    label: "GST. Bill and Study Material",
-    href: "/tbd1",
     matchExact: false,
   },
   {
-    label: "Exam",
-    href: "/tbd2",
+    label: "Orders",
+    href: "/orders",
     matchExact: false,
   },
   {
-    label: "Certifications",
-    href: "/tbd3",
-    matchExact: false,
-  },
-  {
-    label: "Video Tutorial and Online Classes",
-    href: "/tbd3",
-    matchExact: false,
-  },
-  {
-    label: "Exam Schedule",
-    href: "/tbd3",
-    matchExact: false,
-  },
-  {
-    label: "Final Exam",
-    href: "/tbd3",
-    matchExact: false,
-  },
-  {
-    label: "PMI Number",
-    href: "/tbd3",
+    label: "Certificates",
+    href: "/certificates",
     matchExact: false,
   },
 ] as const;
