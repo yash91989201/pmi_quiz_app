@@ -53,13 +53,10 @@ export default function UserTableActionMenu({ userId }: { userId: string }) {
             >
               <Edit2 />
 
-              <span>Quiz Results</span>
+              <span>Update Info</span>
             </Link>
           </DropdownMenuItem>
-
-          <DropdownMenuItem>
-            <DeleteUserModal id={userId} />
-          </DropdownMenuItem>
+          <DeleteUserModal id={userId} />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

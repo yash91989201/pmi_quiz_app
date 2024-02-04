@@ -9,6 +9,9 @@ export default async function Page({ params }: { params: { userId: string } }) {
   });
   const user = data[0]!;
   const quizzesId = userQuizzes.map((userQuiz) => userQuiz.quizId);
+  const userOrders = await api.user.getUserOrdersOnAdmin.query({
+    userId: user.id,
+  });
 
   return (
     <>
@@ -20,6 +23,7 @@ export default async function Page({ params }: { params: { userId: string } }) {
           email: user.email,
           password: "password",
           quizzesId,
+          orders: userOrders,
         }}
       />
     </>

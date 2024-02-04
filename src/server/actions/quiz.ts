@@ -199,7 +199,8 @@ export async function updateQuiz(
     }
     if (
       updatedQuestion.questionText !== existingQuestion.questionText ||
-      updatedQuestion.mark !== existingQuestion.mark
+      updatedQuestion.mark !== existingQuestion.mark ||
+      updatedQuestion.questionOrder !== existingQuestion.questionOrder
     ) {
       updatedQuestionsId.push(updatedQuestion.questionId);
     }

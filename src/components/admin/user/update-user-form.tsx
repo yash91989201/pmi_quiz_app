@@ -12,7 +12,10 @@ import { api } from "@/trpc/react";
 // SCHEMAS
 import { UpdateUserFormSchema } from "@/lib/schema";
 // TYPES
-import type { UpdateUserFormSchemaType } from "@/lib/schema";
+import type {
+  UpdateUserFormSchemaType,
+  UserOrderSchemaType,
+} from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
 // CUSTOM COMPONENTS
 import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
@@ -38,6 +41,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { editActionToast } from "@/lib/utils";
+import OrdersField from "@/components/admin/user/orders-field";
 
 type UpdateUserFormProps = {
   defaultValues: {
@@ -46,6 +50,7 @@ type UpdateUserFormProps = {
     email: string;
     password: string;
     quizzesId: string[];
+    orders: UserOrderSchemaType[];
   };
 };
 
@@ -67,7 +72,7 @@ export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
   });
   const { control, handleSubmit, formState, reset } = createNewUserForm;
 
-  const signInAction: SubmitHandler<UpdateUserFormSchemaType> = async (
+  const updateUserAction: SubmitHandler<UpdateUserFormSchemaType> = async (
     data,
   ) => {
     const actionResponse = await updateUser(data);
@@ -81,10 +86,15 @@ export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
     if (actionResponse.status === "SUCCESS") {
       const userActions = actionResponse.user;
       const userQuizzesActions = actionResponse.quizzes;
+      const userOrdersActions = actionResponse.orders;
 
       editActionToast(userActions?.update);
       editActionToast(userQuizzesActions?.insert);
       editActionToast(userQuizzesActions?.delete);
+      editActionToast(userOrdersActions?.insert);
+      editActionToast(userOrdersActions?.update);
+      editActionToast(userOrdersActions?.delete);
+
       setTimeout(() => {
         router.replace("/admin/users");
       }, 4000);
@@ -95,7 +105,7 @@ export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
     <Form {...createNewUserForm}>
       <form
         className="flex flex-col gap-3"
-        onSubmit={handleSubmit(signInAction)}
+        onSubmit={handleSubmit(updateUserAction)}
         onReset={() => reset()}
       >
         <FormField
@@ -171,6 +181,8 @@ export default function UpdateUserForm({ defaultValues }: UpdateUserFormProps) {
           availableQuizzes={availableQuizzes}
           fieldHeading="Add/Remove quizzes from user."
         />
+
+        <OrdersField />
 
         {actionResponse?.status === "SUCCESS" && (
           <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">

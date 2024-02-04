@@ -64,8 +64,8 @@ export const ADMIN_NAV_LINKS = [
     matchExact: false,
   },
   {
-    label: "Settings",
-    href: "/admin/settings",
+    label: "Orders",
+    href: "/admin/orders",
     matchExact: false,
   },
 ] as const;

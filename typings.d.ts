@@ -141,6 +141,7 @@ type UpdateUserFormInitialType = {
   status: "UNINITIALIZED";
   user: UpdateUserPartialSuccessType;
   quizzes: UpdateUserPartialSuccessType;
+  orders: UpdateUserPartialSuccessType;
 };
 
 type UpdateUserFormSuccessType = {
@@ -148,6 +149,7 @@ type UpdateUserFormSuccessType = {
   message: string;
   user: UpdateUserPartialSuccessType;
   quizzes: UpdateUserPartialSuccessType;
+  orders: UpdateUserPartialSuccessType;
 };
 
 type UpdateUserFormFailType = {
@@ -160,7 +162,7 @@ type UpdateUserFormStatusType =
   | UpdateUserFormSuccessType
   | UpdateUserFormFailType;
 
-type UserFormStatusType =
+type CreateUsesrFormStatusType =
   | FormInitialType<CreateNewUserFormErrorsType>
   | FormSuccessType
   | FormFailType<CreateNewUserFormErrorsType>;
@@ -255,6 +257,15 @@ type StartUserQuizFormStatusType =
   | FormInitialType<StartUserQuizFormFailType>
   | FormSuccessType
   | FormFailType<StartUserQuizFormFailType>;
+
+type OrderFormErrorsType = {
+  orderText?: string;
+};
+
+type OrderFormStatusType =
+  | FormInitialType<OrderFormErrorsType>
+  | FormSuccessType
+  | FormFailType<OrderFormErrorsType>;
 
 type AuthCardWrapperProps = {
   children: React.ReactNode;

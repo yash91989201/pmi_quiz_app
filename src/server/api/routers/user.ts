@@ -7,6 +7,7 @@ import {
   options,
   questions,
   quizzes,
+  userOrders,
   userQuizzes,
   users,
 } from "@/server/db/schema";
@@ -245,6 +246,32 @@ const userRouter = createTRPCRouter({
           eq(userQuizzes.status, "COMPLETED"),
         ),
       );
+  }),
+
+  /**
+   * Returns all the user orders by user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in ADMIN side.
+   */
+  getUserOrdersOnAdmin: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.query.userOrders.findMany({
+        where: eq(userOrders.userId, input.userId),
+        orderBy: [asc(userOrders.orderPriority)],
+      });
+    }),
+
+  /**
+   * Returns all the user orders by user id
+   * which is retrieved by using the session stored in ctx
+   * only for use in USER side.
+   */
+  getUserOrdersOnUser: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.userOrders.findMany({
+      where: eq(userOrders.userId, ctx.session.user.id),
+      orderBy: [asc(userOrders.orderPriority)],
+    });
   }),
 
   /**

@@ -29,6 +29,10 @@ export const users = mysqlTable("users", {
   image: varchar("image", { length: 255 }),
 });
 
+export const userRelations = relations(users, ({ many }) => ({
+  userOrder: many(userOrders),
+}));
+
 export const quizzes = mysqlTable("quizzes", {
   quizId: varchar("quizId", { length: 32 })
     .primaryKey()
@@ -95,6 +99,48 @@ export const userQuizzes = mysqlTable("userQuizzes", {
     .default("NOT_STARTED")
     .notNull(),
 });
+
+export const orders = mysqlTable("orders", {
+  orderId: varchar("orderId", { length: 32 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  orderText: varchar("orderText", { length: 255 }).notNull(),
+  orderPriority: smallint("orderPriority").default(0).notNull(),
+});
+
+export const orderRelations = relations(orders, ({ many }) => ({
+  userOrder: many(userOrders),
+}));
+
+export const userOrders = mysqlTable("userOrders", {
+  userOrderId: varchar("userOrderId", { length: 32 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  userId: varchar("userId", { length: 32 })
+    .notNull()
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
+  orderId: varchar("orderId", { length: 32 })
+    .notNull()
+    .references(() => orders.orderId, {
+      onDelete: "cascade",
+    }),
+  orderText: varchar("orderText", { length: 255 }).notNull(),
+  orderPriority: smallint("orderPriority").default(0).notNull(),
+  isCompleted: boolean("isCompleted").default(false).notNull(),
+});
+
+export const userOrderRelation = relations(userOrders, ({ one }) => ({
+  user: one(users, {
+    fields: [userOrders.userId],
+    references: [users.id],
+  }),
+  order: one(orders, {
+    fields: [userOrders.orderId],
+    references: [orders.orderId],
+  }),
+}));
 
 export const verificationTokens = mysqlTable(
   "verificationTokens",

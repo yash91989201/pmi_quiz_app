@@ -43,6 +43,7 @@ import {
   twoFactorTokens,
   twoFactorConfimation,
   userQuizzes,
+  userOrders,
 } from "@/server/db/schema";
 // TYPES
 import type {
@@ -57,6 +58,7 @@ import type {
   UserSchemaType,
   UpdateUserFormSchemaType,
   StartUserQuizFormSchemaType,
+  UserOrderSchemaType,
 } from "@/lib/schema";
 // CONSTANTS
 import {
@@ -552,7 +554,7 @@ export async function logoutUser() {
 
 export async function createNewUser(
   formData: CreateUserFormSchemaType,
-): Promise<UserFormStatusType> {
+): Promise<CreateUsesrFormStatusType> {
   const validatedFormData = CreateUserFormSchema.safeParse(formData);
 
   if (!validatedFormData.success) {
@@ -584,7 +586,7 @@ export async function createNewUser(
     };
   }
 
-  const { email, name, password, quizzesId } = validatedFormData.data;
+  const { email, name, password, quizzesId, orders } = validatedFormData.data;
   const hashedPassword = await bcrypt.hash(password, 12);
 
   //  create user with ROLE user
@@ -624,18 +626,23 @@ export async function createNewUser(
       .insert(userQuizzes)
       .values(quizzesSelectedForUser);
 
-    revalidatePath("/admin/quizzes");
-    if (newUser[0].affectedRows == 1 && newUserQuizzes[0].affectedRows >= 1) {
+    if (newUser[0].affectedRows > 0 && newUserQuizzes[0].affectedRows > 0) {
       return {
         status: "SUCCESS",
-        message: "User Created and quizzes added successfully.",
+        message: "User Created, quizzes and orders added successfully.",
       };
     }
   }
 
+  const createdUserOrders = orders.map((order) => ({
+    ...order,
+    userId: createdUser.id,
+  }));
+
+  await db.insert(userOrders).values(createdUserOrders);
   revalidatePath("/admin/users");
 
-  if (newUser[0].affectedRows == 1) {
+  if (newUser[0].affectedRows > 0) {
     return {
       status: "SUCCESS",
       message: "User Created Successfully.",
@@ -663,6 +670,7 @@ export async function updateUser(
     email,
     password,
     quizzesId: updatedUserQuizzesId,
+    orders: updatedUserOrders,
   } = validatedFormData.data;
 
   const existingUser = await db.query.users.findFirst({
@@ -674,6 +682,14 @@ export async function updateUser(
   const existingUserQuizzes = await db.query.userQuizzes.findMany({
     where: eq(userQuizzes.userId, id),
   });
+
+  const existingUserOrders = await db.query.userOrders.findMany({
+    where: eq(userOrders.userId, id),
+  });
+
+  const existingUserOrdersId = existingUserOrders.map(
+    (existingUserOrder) => existingUserOrder.userOrderId,
+  );
 
   const inProgressQuizzesId = existingUserQuizzes
     .filter((userQuiz) => userQuiz.status === "IN_PROGRESS")
@@ -694,6 +710,9 @@ export async function updateUser(
 
   const addedQuizzesId: string[] = [];
   const deletedQuizzesId: string[] = [];
+  const addedUserOrders: UserOrderSchemaType[] = [];
+  const updateOrdersId: string[] = [];
+  const deletedUserOrdersId: string[] = [];
 
   /*
   if a user quiz from existing list is not in updated list
@@ -708,10 +727,42 @@ export async function updateUser(
   /*
   if a user quiz from updated list is not in existing list 
   then that user quiz was added 
-*/
+  */
   updatedUserQuizzesId.forEach((updatedUserQuizId) => {
     if (!existingUserQuizzesId.includes(updatedUserQuizId))
       addedQuizzesId.push(updatedUserQuizId);
+  });
+
+  /*
+  if a user quiz from existing list is not in updated list
+  then that user quiz was removed
+  */
+  existingUserOrders.forEach((existingUserOrder) => {
+    const updatedUserOrder = updatedUserOrders.find(
+      (updatedUserOrder) =>
+        updatedUserOrder.userOrderId === existingUserOrder.userOrderId,
+    );
+    if (updatedUserOrder === undefined) {
+      deletedUserOrdersId.push(existingUserOrder.userOrderId);
+      return;
+    }
+
+    if (
+      updatedUserOrder.orderText !== existingUserOrder.orderText ||
+      updatedUserOrder.isCompleted !== existingUserOrder.isCompleted ||
+      updatedUserOrder.orderPriority !== existingUserOrder.orderPriority
+    ) {
+      updateOrdersId.push(existingUserOrder.userOrderId);
+    }
+  });
+
+  /*
+  if a user order from updated list is not in existing list 
+  then that user order was added 
+  */
+  updatedUserOrders.forEach((updatedUserOrder) => {
+    if (!existingUserOrdersId.includes(updatedUserOrder.userOrderId))
+      addedUserOrders.push(updatedUserOrder);
   });
 
   let updateUserStatus: UpdateUserFormStatusType = {
@@ -719,6 +770,7 @@ export async function updateUser(
     message: "User Update Done",
     user: {},
     quizzes: {},
+    orders: {},
   };
 
   if (isUserDataUpdated) {
@@ -807,6 +859,94 @@ export async function updateUser(
           message: userQuizzesDeleteSuccess
             ? "User quizzes deleted successfully."
             : "Unable to delete user quiz/s. Try again!",
+        },
+      },
+    };
+  }
+
+  if (addedUserOrders.length > 0) {
+    const userOrdersInsertQuery = await db
+      .insert(userOrders)
+      .values(addedUserOrders);
+
+    const userOrderInsertSuccess =
+      userOrdersInsertQuery[0].affectedRows === addedUserOrders.length;
+    updateUserStatus = {
+      ...updateUserStatus,
+      orders: {
+        ...updateUserStatus.orders,
+        insert: {
+          status: userOrderInsertSuccess ? "SUCCESS" : "FAILED",
+          message: userOrderInsertSuccess
+            ? "User order added successfully."
+            : "Unable to add user order. Try again!",
+        },
+      },
+    };
+  }
+
+  if (updateOrdersId.length > 0) {
+    const userOrdersUpdateQuery = await Promise.all(
+      updateOrdersId.map(async (updatedOrderId) => {
+        const { isCompleted, orderPriority, orderText } =
+          updatedUserOrders.find(
+            (updatedUserOrder) =>
+              updatedUserOrder.userOrderId === updatedOrderId,
+          )!;
+
+        const updateUserOrderQuery = await db
+          .update(userOrders)
+          .set({
+            isCompleted,
+            orderPriority,
+            orderText,
+          })
+          .where(eq(userOrders.userOrderId, updatedOrderId));
+        return updateUserOrderQuery[0];
+      }),
+    );
+
+    const ordersUpdateSuccess = userOrdersUpdateQuery.every(
+      (userOrderUpdateQuery) => userOrderUpdateQuery.affectedRows > 0,
+    );
+
+    updateUserStatus = {
+      ...updateUserStatus,
+      orders: {
+        ...updateUserStatus.orders,
+        update: {
+          status: ordersUpdateSuccess ? "SUCCESS" : "FAILED",
+          message: ordersUpdateSuccess
+            ? "User order updated successfully."
+            : "Unable to update user order. Try again!",
+        },
+      },
+    };
+  }
+
+  if (deletedUserOrdersId.length > 0) {
+    const userOrdersDeleteQuery = await Promise.all(
+      deletedUserOrdersId.map(async (deletedUserOrderId) => {
+        const userOrderDeleteQuery = await db
+          .delete(userOrders)
+          .where(eq(userOrders.userOrderId, deletedUserOrderId));
+        return userOrderDeleteQuery[0];
+      }),
+    );
+
+    const userOrdersDeleteSuccess = userOrdersDeleteQuery.every(
+      (userOrderDeleteQuery) => userOrderDeleteQuery.affectedRows > 0,
+    );
+
+    updateUserStatus = {
+      ...updateUserStatus,
+      orders: {
+        ...updateUserStatus.orders,
+        delete: {
+          status: userOrdersDeleteSuccess ? "SUCCESS" : "FAILED",
+          message: userOrdersDeleteSuccess
+            ? "User order deleted successfully."
+            : "Unable to delete user order. Try again!",
         },
       },
     };

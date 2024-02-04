@@ -138,7 +138,7 @@ export default function UpdateQuizForm({
           <Button
             type="reset"
             variant="outline"
-            disabled={formState.isSubmitting}
+            disabled={!formState.isDirty}
             className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
           >
             <h6 className="md:text-lg">Reset</h6>

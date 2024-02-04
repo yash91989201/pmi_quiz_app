@@ -11,6 +11,8 @@ import {
   users,
   verificationTokens,
   options,
+  userOrders,
+  orders,
 } from "@/server/db/schema";
 
 // NON-ACTION SCHEMAS
@@ -18,6 +20,8 @@ const UserSchema = createSelectSchema(users);
 const QuizSchema = createSelectSchema(quizzes);
 const QuestionSchema = createSelectSchema(questions);
 const OptionSchema = createSelectSchema(options);
+const OrderSchema = createSelectSchema(orders);
+const UserOrderSchema = createSelectSchema(userOrders);
 const UserQuizSchema = createSelectSchema(userQuizzes);
 const VerficationTokenSchema = createSelectSchema(verificationTokens);
 const PasswordResetTokenSchema = createSelectSchema(passwordResetTokens);
@@ -71,6 +75,16 @@ const CreateUserFormSchema = z.object({
   password: z.string(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
   quizzesId: z.array(z.string()).default([]),
+  orders: z
+    .array(
+      z.object({
+        orderId: z.string(),
+        orderText: z.string().min(4, { message: "Min. order name is 4" }),
+        orderPriority: z.number(),
+        isCompleted: z.boolean(),
+      }),
+    )
+    .default([]),
 });
 
 const UpdateUserFormSchema = z.object({
@@ -79,6 +93,18 @@ const UpdateUserFormSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   quizzesId: z.array(z.string()).default([]),
+  orders: z
+    .array(
+      z.object({
+        orderId: z.string(),
+        userId: z.string(),
+        userOrderId: z.string(),
+        orderText: z.string().min(4, { message: "Min. order name is 4" }),
+        orderPriority: z.number(),
+        isCompleted: z.boolean(),
+      }),
+    )
+    .default([]),
 });
 
 const DeleteUserSchema = z.object({
@@ -147,11 +173,17 @@ const ResetUserQuizFormSchema = z.object({
   userQuizId: z.string(),
 });
 
+const OrderFormSchema = z.object({
+  orders: z.array(OrderSchema),
+});
+
 // NON-ACTION SCHEMA TYPES
 type UserSchemaType = z.infer<typeof UserSchema>;
 type QuizSchemaType = z.infer<typeof QuizSchema>;
 type QuestionSchemaType = z.infer<typeof QuestionSchema>;
 type OptionSchemaType = z.infer<typeof OptionSchema>;
+type OrderSchemaType = z.infer<typeof OrderSchema>;
+type UserOrderSchemaType = z.infer<typeof UserOrderSchema>;
 type UserQuizSchemaType = z.infer<typeof UserQuizSchema>;
 type UserQuizStatusType = UserQuizSchemaType["status"];
 type VerficationTokenSchemaType = z.infer<typeof VerficationTokenSchema>;
@@ -184,6 +216,7 @@ type OptionsSchemaType = z.infer<typeof OptionsSchema>;
 type DeleteUserQuizFormSchemaType = z.infer<typeof DeleteUserQuizFormSchema>;
 type StartUserQuizFormSchemaType = z.infer<typeof StartUserQuizFormSchema>;
 type ResetUserQuizFormSchemaType = z.infer<typeof ResetUserQuizFormSchema>;
+type OrderFormSchemaType = z.infer<typeof OrderFormSchema>;
 
 export {
   // NON-ACTION SCHEMAS
@@ -191,6 +224,9 @@ export {
   QuizSchema,
   QuestionSchema,
   OptionSchema,
+  OrderSchema,
+  OrderFormSchema,
+  UserOrderSchema,
   UserQuizSchema,
   VerficationTokenSchema,
   PasswordResetTokenSchema,
@@ -223,6 +259,8 @@ export type {
   QuizSchemaType,
   QuestionSchemaType,
   OptionSchemaType,
+  OrderSchemaType,
+  UserOrderSchemaType,
   UserQuizSchemaType,
   UserQuizStatusType,
   VerficationTokenSchemaType,
@@ -245,6 +283,7 @@ export type {
   DeleteQuizFormSchemaType,
   QuestionsSchemaType,
   OptionsSchemaType,
+  OrderFormSchemaType,
   UserQuizFormSchemaType,
   DeleteUserQuizFormSchemaType,
   StartUserQuizFormSchemaType,

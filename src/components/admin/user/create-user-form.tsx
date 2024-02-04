@@ -1,21 +1,22 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 // ACTIONS
 import { createNewUser } from "@/server/actions/user";
 // CUSTOM HOOKS
 import useToggle from "@/hooks/use-toggle";
 // UTILS
-import { api } from "@/trpc/react";
 import { generateRandomDummyEmail } from "@/lib/utils";
+import { api } from "@/trpc/react";
 // SCHEMAS
 import { CreateUserFormSchema } from "@/lib/schema";
 // TYPES
-import type { SubmitHandler } from "react-hook-form";
 import type { CreateUserFormSchemaType } from "@/lib/schema";
+import type { SubmitHandler } from "react-hook-form";
 // CUSTOM COMPONENTS
+import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -24,66 +25,64 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
 // ICONS
-import {
-  CheckCircle2,
-  Eye,
-  EyeOff,
-  Info,
-  Loader2,
-  UserRound,
-  XCircle,
-} from "lucide-react";
+import OrdersField from "@/components/admin/user/orders-field";
+import { Eye, EyeOff, Info, Loader2, UserRound } from "lucide-react";
 
-export default function CreateNewUserForm() {
+export default function CreateNewUserForm({
+  availableOrders,
+}: {
+  availableOrders: {
+    orderId: string;
+    orderText: string;
+    orderPriority: number;
+    isCompleted: boolean;
+  }[];
+}) {
   const router = useRouter();
-
-  const [actionResponse, setActionResponse] = useState<UserFormStatusType>();
 
   const showPasswordToggle = useToggle(false);
 
-  const { data, isLoading } = api.quiz.getQuizzes.useQuery();
-  const availableQuizzes = data ?? [];
+  const { data: quizzesData, isLoading: quizzesLoading } =
+    api.quiz.getQuizzes.useQuery();
+  const availableQuizzes = quizzesData ?? [];
 
   const dummyEmail = generateRandomDummyEmail();
 
   const createNewUserForm = useForm<CreateUserFormSchemaType>({
     shouldUseNativeValidation: true,
     defaultValues: {
+      name: "",
       email: dummyEmail,
       password: "password",
       role: "USER",
       quizzesId: [],
+      orders: availableOrders,
     },
     resolver: zodResolver(CreateUserFormSchema),
   });
-  const { control, handleSubmit, formState, reset } = createNewUserForm;
+  const { control, handleSubmit, formState } = createNewUserForm;
 
   const signInAction: SubmitHandler<CreateUserFormSchemaType> = async (
     data,
   ) => {
     const actionResponse = await createNewUser(data);
-    setActionResponse(actionResponse);
     if (actionResponse.status === "SUCCESS") {
       router.replace("/admin/users");
-    } else {
-      reset();
     }
   };
 
   return (
     <Form {...createNewUserForm}>
       <form
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-6"
         onSubmit={handleSubmit(signInAction)}
       >
         <FormField
@@ -152,25 +151,12 @@ export default function CreateNewUserForm() {
         />
 
         <AvailableQuizzesField
-          isLoading={isLoading}
+          isLoading={quizzesLoading}
           availableQuizzes={availableQuizzes}
           fieldHeading="Add quizzes for user."
         />
 
-        {actionResponse?.status === "SUCCESS" && (
-          <div className="flex items-center justify-start gap-2 rounded-md bg-green-100 p-3 text-sm text-green-600 [&>svg]:size-4">
-            <CheckCircle2 />
-            <p>{actionResponse.message}</p>
-          </div>
-        )}
-
-        {actionResponse?.status === "FAILED" && (
-          <div className="flex items-center justify-start gap-3 rounded-md bg-red-100 p-3 text-sm text-red-600 [&>svg]:size-4">
-            <XCircle />
-            <p>{actionResponse.message}</p>
-          </div>
-        )}
-
+        <OrdersField />
         <Button
           type="submit"
           disabled={formState.isSubmitting}
