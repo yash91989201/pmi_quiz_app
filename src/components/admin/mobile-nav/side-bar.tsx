@@ -16,7 +16,7 @@ import { ADMIN_NAV_LINKS } from "@/config/routes";
 export default function SideBar() {
   return (
     <Sheet>
-      <SheetTrigger>
+      <SheetTrigger asChild>
         <Menu />
       </SheetTrigger>
       <SheetContent className="h-full">
@@ -34,9 +34,7 @@ export default function SideBar() {
               />
             ))}
           </nav>
-          <SheetTrigger asChild>
-            <LogoutButton />
-          </SheetTrigger>
+          <LogoutButton />
         </section>
       </SheetContent>
     </Sheet>

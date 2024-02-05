@@ -143,7 +143,7 @@ const quizRouter = createTRPCRouter({
     }),
   /**
    * Returns  all the data for single quiz
-   * used to update quiz
+   * used to update exam
    * only for use in ADMIN side.
    */
   getQuizData: protectedProcedure

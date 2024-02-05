@@ -15,7 +15,7 @@ export default function UserOrders({
           {index > 0 && (
             <div
               className={cn(
-                "ml-3 h-10  w-2 rounded-full sm:ml-0 sm:mt-3 sm:h-2 sm:flex-1",
+                "ml-3.5 h-10  w-1 rounded-full sm:ml-0 sm:mt-3 sm:h-2 sm:flex-1",
                 isCompleted ? "bg-green-500" : "bg-gray-100",
               )}
             />

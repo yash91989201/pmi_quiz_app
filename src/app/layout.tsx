@@ -10,6 +10,7 @@ import AuthSessionProvider from "@/components/shared/auth-session-provider";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  preload: false,
 });
 
 export const metadata = {

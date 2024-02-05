@@ -29,7 +29,7 @@ export default function QuizTableActionMenu({ quizId }: { quizId: string }) {
           alignOffset={8}
           className="space-y-2 p-0.5"
         >
-          <DropdownMenuLabel>Quiz Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>Exam Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link

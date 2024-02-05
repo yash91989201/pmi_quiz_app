@@ -1042,3 +1042,26 @@ export async function startUserQuiz(
     message: "Unable to start exam. Try Again!",
   };
 }
+
+export async function updateCertificate({
+  certificateId,
+  userQuizId,
+}: {
+  certificateId: string;
+  userQuizId: string;
+}): Promise<{ status: "SUCCESS" | "FAILED"; message: string }> {
+  const updateCertificateQuery = await db
+    .update(userQuizzes)
+    .set({ certificateId })
+    .where(eq(userQuizzes.userQuizId, userQuizId));
+
+  revalidatePath("/admin/users/userId", "page");
+
+  if (updateCertificateQuery[0].affectedRows > 0) {
+    return { status: "SUCCESS", message: "User's quiz certificate updated" };
+  }
+  return {
+    status: "FAILED",
+    message: "Unable to update certificate try again.",
+  };
+}

@@ -15,7 +15,7 @@ export default async function Page({ params }: { params: { quizId: string } }) {
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h3 className="text-base  md:text-xl">Quiz Actions</h3>
+        <h3 className="text-base  md:text-xl">Exam Actions</h3>
         <div className="flex gap-3">
           <Link
             href={`/admin/quizzes/${data.quizId}/edit-quiz`}
@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: { quizId: string } }) {
             )}
           >
             <Edit2 />
-            <span>Edit Quiz</span>
+            <span>Edit Exam</span>
           </Link>
           <DeleteQuizButton quizId={data.quizId} />
         </div>

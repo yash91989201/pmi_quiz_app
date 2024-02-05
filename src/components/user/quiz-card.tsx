@@ -29,6 +29,7 @@ export default function QuizCard({
     status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
     quizTitle: string | null;
     totalMark: number | null;
+    certificateId: string | null;
   };
 }) {
   const router = useRouter();
@@ -79,10 +80,11 @@ export default function QuizCard({
         )}
         {userQuiz.status === "COMPLETED" && (
           <Link
-            href={`/certificates/${userQuiz.userQuizId}`}
+            href={`https://drive.usercontent.google.com/download?id=${userQuiz.certificateId}&export=download`}
             className={cn(
               buttonVariants({ variant: "destructive" }),
               "flex h-12 items-center gap-3 rounded-full text-white",
+              userQuiz.certificateId === null && "pointer-events-none",
             )}
           >
             <span className="text-xl font-semibold">Download Certificate</span>

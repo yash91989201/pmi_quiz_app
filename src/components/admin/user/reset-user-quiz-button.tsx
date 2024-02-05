@@ -32,7 +32,6 @@ export default function ResetUserQuizButton({
   const deleteUserQuizAction: SubmitHandler<
     ResetUserQuizFormSchemaType
   > = async (data) => {
-    console.log(data);
     const actionResponse = await resetUserQuiz(data);
     if (actionResponse.status === "SUCCESS") {
       toast.success(actionResponse.message);

@@ -26,9 +26,9 @@ export default function AvailableQuizzesField({
 }) {
   const { control } = useFormContext<CreateUserFormSchemaType>();
 
-  if (isLoading) return <p>Loading available quizzes.</p>;
+  if (isLoading) return <p>Loading available exams.</p>;
 
-  if (availableQuizzes.length === 0) return <p>No quizzes available.</p>;
+  if (availableQuizzes.length === 0) return <p>No exams available.</p>;
 
   return (
     <div className="flex flex-col gap-3">

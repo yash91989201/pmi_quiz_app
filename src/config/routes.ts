@@ -31,7 +31,7 @@ export const apiAuthPrefix = "/api/auth";
  * The default redirect path after logging in as ADMIN role
  * @type {string}
  */
-export const DEFAULT_ADMIN_REDIRECT = "/admin";
+export const DEFAULT_ADMIN_REDIRECT = "/admin/users";
 /**
  * The default redirect path after logging in as USER role
  * @type {string}
@@ -49,17 +49,12 @@ export const USER_UPDATE_REDIRECT = "/profile/update";
  */
 export const ADMIN_NAV_LINKS = [
   {
-    label: "Home",
-    href: "/admin",
-    matchExact: true,
-  },
-  {
     label: "Users",
     href: "/admin/users",
     matchExact: false,
   },
   {
-    label: "Quizzes",
+    label: "Exams",
     href: "/admin/quizzes",
     matchExact: false,
   },

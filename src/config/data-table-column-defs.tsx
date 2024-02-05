@@ -1,11 +1,13 @@
 "use client";
-import Link from "next/link";
 // UTILS
-import { buttonVariants } from "@/components/ui/button";
-import { cn, formatDate } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 // TYPES
 import type { ColumnDef } from "@tanstack/react-table";
-import type { QuizTableSchemaType, UserSchemaType } from "@/lib/schema";
+import type {
+  QuizTableSchemaType,
+  UserQuizSchemaType,
+  UserSchemaType,
+} from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Badge } from "@/components/ui/badge";
 // CONSTANTS
@@ -17,6 +19,7 @@ import ResetUserQuizButton from "@/components/admin/user/reset-user-quiz-button"
 import DeleteUserQuizButton from "@/components/admin/user/delete-user-quiz-button";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
+import { UpdateCertificateModal } from "@/components/admin/user/update-certificate-modal";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {
@@ -55,7 +58,7 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   },
   {
     accessorKey: "totalQuizzes",
-    header: "Total Quizzes",
+    header: "Total Exams",
   },
   {
     accessorKey: "Actions",
@@ -72,7 +75,7 @@ export const userTableColumns: ColumnDef<UserSchemaType>[] = [
 export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   {
     accessorKey: "quizTitle",
-    header: "Quiz Title",
+    header: "Exam Name",
     minSize: 360,
     cell: ({ row }) => <p className="min-w-36">{row.original.quizTitle}</p>,
   },
@@ -105,90 +108,59 @@ export const quizTableColumns: ColumnDef<QuizTableSchemaType>[] = [
   },
 ];
 
-type UserQuizzesTableSchemaType = {
-  userQuizId: string;
-  userId: string;
-  quizId: string;
-  score: number;
-  status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
-  quizTitle: string | null;
-  totalMark: number | null;
-};
-
-export const userQuizzesTableColumnsForAdmin: ColumnDef<UserQuizzesTableSchemaType>[] =
-  [
-    {
-      accessorKey: "quizTitle",
-      header: "Quiz",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
-    },
-    {
-      accessorKey: "score",
-      header: "Score",
-    },
-    {
-      accessorKey: "totalMark",
-      header: "Total Mark",
-    },
-    {
-      accessorKey: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-3">
-          <ResetUserQuizButton
-            userQuizId={row.original.userQuizId}
-            userQuizStatus={row.original.status}
-          />
-          <DeleteUserQuizButton
-            userQuizId={row.original.userQuizId}
-            userQuizStatus={row.original.status}
-          />
-        </div>
-      ),
-    },
-  ];
-
-export const userQuizzesTableColumnsForUser: ColumnDef<UserQuizzesTableSchemaType>[] =
-  [
-    {
-      accessorKey: "quizTitle",
-      header: "Quiz",
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
-    },
-    {
-      accessorKey: "score",
-      header: "Score",
-    },
-    {
-      accessorKey: "totalMark",
-      header: "Total Mark",
-    },
-    {
-      accessorKey: "actions",
-      header: "",
-      cell: ({ row }) => (
-        <Link
-          href={`/quizzes/${row.original.userQuizId}`}
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            " text-gray-700",
-            row.original.status === "COMPLETED" &&
-              "pointer-events-none text-gray-500",
-          )}
-        >
-          Start Quiz
-        </Link>
-      ),
-    },
-  ];
+export const userQuizzesTableColumns: ColumnDef<UserQuizSchemaType>[] = [
+  {
+    accessorKey: "quizTitle",
+    header: "Quiz",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <p>{STATUS_TEXT[row.original.status]}</p>,
+  },
+  {
+    accessorKey: "score",
+    header: "Score",
+  },
+  {
+    accessorKey: "totalMark",
+    header: "Total Mark",
+  },
+  {
+    accessorKey: "certificateId",
+    header: "Certificate",
+    cell: ({ row }) => (
+      <Badge
+        variant={
+          row.original.certificateId === null ? "destructive" : "success"
+        }
+        className="w-20"
+      >
+        {row.original.certificateId === null ? "Not added" : "Added"}
+      </Badge>
+    ),
+  },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <div className="flex items-center gap-3">
+        <ResetUserQuizButton
+          userQuizId={row.original.userQuizId}
+          userQuizStatus={row.original.status}
+        />
+        <UpdateCertificateModal
+          userQuizId={row.original.userQuizId}
+          userQuizStatus={row.original.status}
+        />
+        <DeleteUserQuizButton
+          userQuizId={row.original.userQuizId}
+          userQuizStatus={row.original.status}
+        />
+      </div>
+    ),
+  },
+];
 
 type UsersQuizzesTableSchemaType = {
   userQuizId: string;

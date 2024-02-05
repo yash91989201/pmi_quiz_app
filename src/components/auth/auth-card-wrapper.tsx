@@ -20,7 +20,13 @@ export default function AuthCardWrapper({
     <Card className="w-[80vw] shadow-lg md:max-w-[480px] lg:min-w-[640px]">
       <CardHeader className="flex flex-col items-center justify-center gap-y-3">
         <div className="relative h-16 w-60">
-          <Image src="/pmi_logo.png" alt="PMI" fill />
+          <Image
+            src="/pmi_logo.png"
+            alt="PMI"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
+          />
         </div>
         <p className="text-base text-gray-500">{headerLabel}</p>
       </CardHeader>

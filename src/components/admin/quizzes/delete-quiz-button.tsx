@@ -49,7 +49,7 @@ export function DeleteQuizButton({ quizId }: { quizId: string }) {
         ) : (
           <Trash2 />
         )}
-        <span>Delete Quiz</span>
+        <span>Delete Exam</span>
       </Button>
     </form>
   );

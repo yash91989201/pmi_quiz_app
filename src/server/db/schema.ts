@@ -98,6 +98,7 @@ export const userQuizzes = mysqlTable("userQuizzes", {
   status: mysqlEnum("status", ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"])
     .default("NOT_STARTED")
     .notNull(),
+  certificateId: varchar("certificateId", { length: 64 }),
 });
 
 export const orders = mysqlTable("orders", {

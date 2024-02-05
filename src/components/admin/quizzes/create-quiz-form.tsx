@@ -106,7 +106,7 @@ export default function CreateQuizForm() {
             <div className="flex flex-col gap-3">
               <FormItem>
                 <FormControl>
-                  <Input {...field} placeholder="Quiz Name" type="text" />
+                  <Input {...field} placeholder="Exam Name" type="text" />
                 </FormControl>
               </FormItem>
             </div>
@@ -122,7 +122,7 @@ export default function CreateQuizForm() {
         <AvailableUsersField
           isLoading={isLoading}
           availableUsers={availableUsers}
-          fieldHeading="Add users to this quiz"
+          fieldHeading="Add users to this exam"
         />
 
         {actionResponse?.status === "SUCCESS" && (
@@ -143,7 +143,7 @@ export default function CreateQuizForm() {
           disabled={formState.isSubmitting}
           className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
         >
-          <h6 className="md:text-lg">Create Quiz</h6>
+          <h6 className="md:text-lg">Create Exam</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}
         </Button>
       </form>

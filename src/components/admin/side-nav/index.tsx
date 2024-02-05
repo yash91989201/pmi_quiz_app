@@ -7,9 +7,16 @@ export default function SideNav() {
   return (
     <aside className="hidden h-screen w-64  flex-shrink-0 flex-col gap-6 border-r p-3 lg:flex xl:w-72">
       {/* heading section */}
-      <section className="flex min-h-40 flex-col justify-end rounded-lg bg-primary/15 p-3 xl:min-h-44 ">
-        <div className="relative h-14 w-full xl:h-[4.5rem]">
-          <Image src="/assets/pmi_logo.webp" alt="PMI" fill />
+      <section className="flex min-h-36 flex-col justify-end rounded-lg bg-gray-50 p-3 shadow xl:min-h-40">
+        <div className="relative h-12 w-4/5 xl:h-14">
+          <Image
+            src="/assets/pmi_logo.webp"
+            alt="PMI"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={100}
+            priority
+          />
         </div>
       </section>
       {/* navigation section */}

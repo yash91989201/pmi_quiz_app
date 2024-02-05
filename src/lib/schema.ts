@@ -177,6 +177,11 @@ const OrderFormSchema = z.object({
   orders: z.array(OrderSchema),
 });
 
+const UpdateCertificateSchema = z.object({
+  userQuizId: z.string().min(6),
+  certificateId: z.string().min(6),
+});
+
 // NON-ACTION SCHEMA TYPES
 type UserSchemaType = z.infer<typeof UserSchema>;
 type QuizSchemaType = z.infer<typeof QuizSchema>;
@@ -217,6 +222,7 @@ type DeleteUserQuizFormSchemaType = z.infer<typeof DeleteUserQuizFormSchema>;
 type StartUserQuizFormSchemaType = z.infer<typeof StartUserQuizFormSchema>;
 type ResetUserQuizFormSchemaType = z.infer<typeof ResetUserQuizFormSchema>;
 type OrderFormSchemaType = z.infer<typeof OrderFormSchema>;
+type UpdateCertificateSchemaType = z.infer<typeof UpdateCertificateSchema>;
 
 export {
   // NON-ACTION SCHEMAS
@@ -251,6 +257,7 @@ export {
   DeleteUserQuizFormSchema,
   StartUserQuizFormSchema,
   ResetUserQuizFormSchema,
+  UpdateCertificateSchema,
 };
 
 export type {
@@ -288,4 +295,5 @@ export type {
   DeleteUserQuizFormSchemaType,
   StartUserQuizFormSchemaType,
   ResetUserQuizFormSchemaType,
+  UpdateCertificateSchemaType,
 };

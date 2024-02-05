@@ -177,7 +177,7 @@ export default function AdminLoginForm() {
           <Button
             type="submit"
             disabled={formState.isSubmitting}
-            className="flex items-center justify-center gap-3 disabled:cursor-not-allowed"
+            className="mt-3 flex h-12 items-center justify-center gap-3 rounded-full font-medium disabled:cursor-not-allowed"
           >
             <h6 className="md:text-lg">
               {!twoFactorAuthenticationField.isShowing ? "Login" : "Confirm"}

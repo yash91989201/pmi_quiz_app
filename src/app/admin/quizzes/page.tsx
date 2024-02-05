@@ -14,7 +14,7 @@ export default function QuizzesPage({
 }) {
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-base  md:text-3xl">All Quizzes</h2>
+      <h2 className="text-base  md:text-3xl">All Exams</h2>
       <div className="flex  gap-3">
         <URLSearchBox />
         <Link
@@ -25,7 +25,7 @@ export default function QuizzesPage({
           )}
         >
           <Plus className="size-6 md:size-5" />
-          <span className="hidden sm:block">New Quiz</span>
+          <span className="hidden sm:block">New Exam</span>
         </Link>
       </div>
 

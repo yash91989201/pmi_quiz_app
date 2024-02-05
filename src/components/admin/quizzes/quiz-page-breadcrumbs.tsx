@@ -37,7 +37,7 @@ export default function QuizPageBreadcrumbs({
           "h-8 rounded-full px-3 py-1 last:pointer-events-none",
         )}
       >
-        Quizzes
+        Exams
       </Link>
       <ChevronRight />
       <Link

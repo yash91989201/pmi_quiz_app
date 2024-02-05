@@ -31,7 +31,7 @@ export async function createQuiz(
   if (!validatedFormData.success) {
     return {
       status: "FAILED",
-      message: "Unable to create quiz.",
+      message: "Unable to create exam.",
     };
   }
 
@@ -79,7 +79,7 @@ export async function createQuiz(
     } else {
       return {
         status: "FAILED",
-        message: "Unable to create quiz.",
+        message: "Unable to create exam.",
       };
     }
   }
@@ -92,7 +92,7 @@ export async function createQuiz(
 
   return {
     status: "FAILED",
-    message: "Unable to create quiz.",
+    message: "Unable to create exam.",
   };
 }
 
@@ -104,7 +104,7 @@ export async function updateQuiz(
   if (!validatedFormData.success) {
     return {
       status: "FAILED",
-      message: "Unable to create quiz.",
+      message: "Unable to create exam.",
     };
   }
 
@@ -779,6 +779,7 @@ export async function resetUserQuiz(
     .set({
       score: 0,
       status: "NOT_STARTED",
+      certificateId: null,
     })
     .where(eq(userQuizzes.userQuizId, userQuizId));
 

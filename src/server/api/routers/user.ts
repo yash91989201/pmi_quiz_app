@@ -162,6 +162,7 @@ const userRouter = createTRPCRouter({
         quizId: userQuizzes.quizId,
         score: userQuizzes.score,
         status: userQuizzes.status,
+        certificateId: userQuizzes.certificateId,
         quizTitle: quizzes.quizTitle,
         totalMark: quizzes.totalMark,
       })
@@ -173,6 +174,7 @@ const userRouter = createTRPCRouter({
         userQuizzes.quizId,
         userQuizzes.score,
         userQuizzes.status,
+        userQuizzes.certificateId,
       )
       .where(
         and(
@@ -228,6 +230,7 @@ const userRouter = createTRPCRouter({
         quizId: userQuizzes.quizId,
         score: userQuizzes.score,
         status: userQuizzes.status,
+        certificateId: userQuizzes.certificateId,
         quizTitle: quizzes.quizTitle,
         totalMark: quizzes.totalMark,
       })
@@ -239,6 +242,7 @@ const userRouter = createTRPCRouter({
         userQuizzes.quizId,
         userQuizzes.score,
         userQuizzes.status,
+        userQuizzes.certificateId,
       )
       .where(
         and(
