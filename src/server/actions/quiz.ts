@@ -200,7 +200,8 @@ export async function updateQuiz(
     if (
       updatedQuestion.questionText !== existingQuestion.questionText ||
       updatedQuestion.mark !== existingQuestion.mark ||
-      updatedQuestion.questionOrder !== existingQuestion.questionOrder
+      updatedQuestion.questionOrder !== existingQuestion.questionOrder ||
+      updatedQuestion.questionImageId !== existingQuestion.questionImageId
     ) {
       updatedQuestionsId.push(updatedQuestion.questionId);
     }
@@ -335,11 +336,15 @@ export async function updateQuiz(
   if (updatedQuestionsId.length > 0) {
     const questionsUpdateQuery = await Promise.all(
       updatedQuestionsId.map(async (updatedQuestionId) => {
-        const { questionText, mark, questionId, questionOrder } =
-          updatedQuestions.find(
-            (updatedQuestion) =>
-              updatedQuestion.questionId === updatedQuestionId,
-          )!;
+        const {
+          questionText,
+          mark,
+          questionId,
+          questionOrder,
+          questionImageId,
+        } = updatedQuestions.find(
+          (updatedQuestion) => updatedQuestion.questionId === updatedQuestionId,
+        )!;
 
         const updateQuestionQuery = await db
           .update(questions)
@@ -347,6 +352,7 @@ export async function updateQuiz(
             mark,
             questionText,
             questionOrder,
+            questionImageId,
           })
           .where(eq(questions.questionId, questionId));
 

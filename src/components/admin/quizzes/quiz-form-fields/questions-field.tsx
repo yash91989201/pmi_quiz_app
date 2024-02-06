@@ -42,6 +42,7 @@ export default function QuestionsField() {
       questionText: "",
       mark: 5,
       questionOrder: fields.length + 1,
+      questionImageId: "",
       options: [
         {
           optionId: createId(),
@@ -88,7 +89,7 @@ export default function QuestionsField() {
               )}
             />
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <FormField
                 name={`questions.${index}.mark`}
                 render={({ field }) => (
@@ -113,11 +114,26 @@ export default function QuestionsField() {
                 )}
               />
 
+              <FormField
+                name={`questions.${index}.questionImageId`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="flex items-center gap-3">
+                        <p>Question image id</p>
+                        <Input {...field} className="w-48" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <Button
                 variant="ghost"
+                className="w-fit"
                 onClick={() => deleteQuestion(index)}
                 disabled={fields.length == 1}
-                type="button"
               >
                 <Trash2 size={16} />
               </Button>

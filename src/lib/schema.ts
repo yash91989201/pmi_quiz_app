@@ -126,6 +126,7 @@ const QuestionsSchema = z.object({
   mark: z.number().min(1, { message: "Min. mark is 1" }),
   options: z.array(OptionsSchema),
   questionOrder: z.number(),
+  questionImageId: z.string().nullable(),
 });
 
 const QuizFormSchema = z.object({
@@ -149,6 +150,7 @@ const UserQuestionsSchema = z.object({
   questionText: z.string(),
   mark: z.number(),
   options: z.array(UserOptionsSchema),
+  questionImageId: z.string().nullable(),
 });
 
 const UserQuizFormSchema = z.object({

@@ -35,6 +35,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // ICONS
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function UserQuizForm({
   questions,
@@ -131,7 +132,21 @@ function QuestionsField() {
             <Badge variant="outline">Mark:&nbsp;{question.mark}</Badge>
           </CardHeader>
           <CardContent>
-            <section className="tiptap">{parse(question.questionText)}</section>
+            <div className="flex flex-col gap-3">
+              {(question.questionImageId ?? "").length > 0 && (
+                <div className="relative h-48 w-4/5 sm:h-52 sm:w-96">
+                  <Image
+                    src={`https://drive.google.com/uc?export=view&id=${question.questionImageId}`}
+                    alt="PMI"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+              )}
+              <section className="flex-1">
+                {parse(question.questionText)}
+              </section>
+            </div>
           </CardContent>
           <CardFooter>
             <OptionsField questionIndex={index} />

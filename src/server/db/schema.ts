@@ -53,6 +53,7 @@ export const questions = mysqlTable("questions", {
   questionText: text("questionText").notNull(),
   mark: smallint("mark").notNull(),
   questionOrder: smallint("questionOrder").notNull(),
+  questionImageId: varchar("questionImageId", { length: 64 }),
 });
 
 export const questionRelations = relations(questions, ({ many }) => ({

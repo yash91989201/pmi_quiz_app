@@ -152,6 +152,7 @@ export const userQuizzesTableColumns: ColumnDef<UserQuizSchemaType>[] = [
         <UpdateCertificateModal
           userQuizId={row.original.userQuizId}
           userQuizStatus={row.original.status}
+          certificateId={row.original.certificateId}
         />
         <DeleteUserQuizButton
           userQuizId={row.original.userQuizId}

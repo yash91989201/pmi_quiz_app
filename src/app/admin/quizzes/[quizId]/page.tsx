@@ -8,6 +8,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { Edit2 } from "lucide-react";
 import { DeleteQuizButton } from "@/components/admin/quizzes/delete-quiz-button";
+import Image from "next/image";
 
 export default async function Page({ params }: { params: { quizId: string } }) {
   const data = await api.quiz.getQuizData.query({ quizId: params.quizId });
@@ -32,7 +33,10 @@ export default async function Page({ params }: { params: { quizId: string } }) {
       </div>
       <h3 className="text-base md:text-xl">Questions</h3>
       {data.questions.map(
-        ({ mark, options, questionText, questionId }, index) => (
+        (
+          { mark, options, questionText, questionId, questionImageId },
+          index,
+        ) => (
           <Card key={questionId}>
             <CardHeader className="justify-start gap-3 p-3 md:flex-row md:p-6">
               <div>
@@ -41,8 +45,20 @@ export default async function Page({ params }: { params: { quizId: string } }) {
                 </span>
                 <span>/{totalQuestions}</span>
               </div>
-              <section className="flex-1">{parse(questionText)}</section>
-              <Badge variant="outline" className="w-fit">
+              <div className="flex flex-1 flex-col gap-3">
+                {(questionImageId ?? "").length > 0 && (
+                  <div className="relative h-48 w-4/5 sm:h-52 sm:w-96">
+                    <Image
+                      src={`https://drive.google.com/uc?export=view&id=${questionImageId}`}
+                      alt="PMI"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+                <section>{parse(questionText)}</section>
+              </div>
+              <Badge variant="outline" className="h-fit w-fit">
                 Mark:&nbsp;{mark}
               </Badge>
             </CardHeader>

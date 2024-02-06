@@ -21,7 +21,12 @@ export default async function QuizzesPage() {
           </div>
         </div>
       ) : (
-        <p>No exams available</p>
+        <div className="flex flex-col gap-6">
+          <h3 className="rounded-md bg-primary  p-3 text-base font-medium text-white md:text-3xl">
+            Available Exams
+          </h3>
+          <p>No exams available</p>
+        </div>
       )}
       {completedUserQuizzes.length > 0 && (
         <div className="flex flex-col gap-6">

@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,9 +37,11 @@ import { Loader2, ScrollText } from "lucide-react";
 export function UpdateCertificateModal({
   userQuizId,
   userQuizStatus,
+  certificateId,
 }: {
   userQuizId: string;
   userQuizStatus: UserQuizStatusType;
+  certificateId: string | null;
 }) {
   const updateCertificateModal = useToggle(false);
   const updateCertificateForm = useForm<{
@@ -49,7 +50,7 @@ export function UpdateCertificateModal({
   }>({
     defaultValues: {
       userQuizId,
-      certificateId: "",
+      certificateId: certificateId ?? "",
     },
     resolver: zodResolver(UpdateCertificateSchema),
     shouldUseNativeValidation: true,
@@ -86,9 +87,6 @@ export function UpdateCertificateModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Update exam certificate</DialogTitle>
-          <DialogDescription>
-            This action will delete the user, all its data.
-          </DialogDescription>
         </DialogHeader>
         <Form {...updateCertificateForm}>
           <form
@@ -100,7 +98,7 @@ export function UpdateCertificateModal({
               control={control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Certificate Id</FormLabel>
+                  <FormLabel>Certificate Image Id</FormLabel>
                   <FormControl>
                     <div className="flex items-center gap-3">
                       <Input {...field} placeholder="Enter certificate id" />
