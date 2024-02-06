@@ -634,12 +634,14 @@ export async function createNewUser(
     }
   }
 
-  const createdUserOrders = orders.map((order) => ({
-    ...order,
-    userId: createdUser.id,
-  }));
+  if (orders.length > 0) {
+    const createdUserOrders = orders.map((order) => ({
+      ...order,
+      userId: createdUser.id,
+    }));
 
-  await db.insert(userOrders).values(createdUserOrders);
+    await db.insert(userOrders).values(createdUserOrders);
+  }
   revalidatePath("/admin/users");
 
   if (newUser[0].affectedRows > 0) {
