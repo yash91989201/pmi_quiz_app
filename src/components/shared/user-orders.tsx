@@ -9,18 +9,18 @@ export default function UserOrders({
   userOrders: UserOrderSchemaType[];
 }) {
   return (
-    <div className="flex flex-col  items-start sm:flex-row">
+    <div className="flex flex-col  items-start">
       {userOrders.map(({ userOrderId, isCompleted, orderText }, index) => (
         <Fragment key={userOrderId}>
           {index > 0 && (
             <div
               className={cn(
-                "ml-3.5 h-10  w-1 rounded-full sm:ml-0 sm:mt-3 sm:h-2 sm:flex-1",
+                "ml-3 h-10 w-1.5 rounded-full",
                 isCompleted ? "bg-green-500" : "bg-gray-100",
               )}
             />
           )}
-          <div className="my-2  flex flex-row items-center justify-center gap-3 sm:my-0 sm:ml-2 sm:flex-col">
+          <div className="my-2 flex flex-row items-center justify-center gap-3 ">
             <div
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-full [&>svg]:size-4",
@@ -29,7 +29,7 @@ export default function UserOrders({
             >
               {isCompleted ? <Check /> : <CircleSlash />}
             </div>
-            <p className="text-center sm:max-w-24">{orderText}</p>
+            <p className="text-center">{orderText}</p>
           </div>
         </Fragment>
       ))}

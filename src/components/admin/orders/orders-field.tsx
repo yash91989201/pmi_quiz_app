@@ -86,7 +86,7 @@ export default function OrdersField() {
         type="button"
         className="w-fit"
         onClick={() => addOrder()}
-        disabled={fields.length > 4}
+        disabled={fields.length >= 10}
       >
         Add New Order
       </Button>
