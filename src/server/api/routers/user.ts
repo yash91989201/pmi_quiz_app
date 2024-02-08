@@ -318,7 +318,17 @@ const userRouter = createTRPCRouter({
         quizTitle: userQuiz.quizTitle,
         totalMark: userQuiz.totalMark,
         questions: questionsData,
+        status: userQuiz.status,
       };
+    }),
+
+  leaveQuiz: protectedProcedure
+    .input(z.object({ userQuizId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db
+        .update(userQuizzes)
+        .set({ score: 0, status: "COMPLETED" })
+        .where(eq(userQuizzes.userQuizId, input.userQuizId));
     }),
 });
 

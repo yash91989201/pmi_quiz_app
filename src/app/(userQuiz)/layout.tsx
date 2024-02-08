@@ -4,7 +4,6 @@ import { currentRole, currentUser } from "@/server/utils/auth";
 // TYPES
 import type { ReactNode } from "react";
 // CUSTOM COMPONENTS
-import UserNavbar from "@/components/user/user-navbar";
 
 export default async function UserLayout({
   children,
@@ -18,13 +17,10 @@ export default async function UserLayout({
   if (userRole === "ADMIN") redirect("/admin");
 
   return (
-    <>
-      <UserNavbar />
-      <div className="min-h-screen">
-        <main className="mx-auto h-full w-11/12 py-6  sm:w-4/5 lg:max-w-6xl">
-          <section>{children}</section>
-        </main>
-      </div>
-    </>
+    <div className="min-h-screen bg-primary/15">
+      <main className="mx-auto h-full max-w-6xl py-6">
+        <section>{children}</section>
+      </main>
+    </div>
   );
 }

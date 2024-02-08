@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 // UTILS
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn, getRandomizedPatternPath } from "@/lib/utils";
+import { cn, getRandomizedPatternPath, renderOnClient } from "@/lib/utils";
 // CUSTOM COMPONENTS
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 // ICONS
@@ -16,9 +16,8 @@ import {
 } from "@/lib/schema";
 import { startUserQuiz } from "@/server/actions/user";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-export default function QuizCard({
+function QuizCard({
   userQuiz,
 }: {
   userQuiz: {
@@ -26,13 +25,12 @@ export default function QuizCard({
     userId: string;
     quizId: string;
     score: number;
-    status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
+    status: UserQuizStatus;
     quizTitle: string | null;
     totalMark: number | null;
     certificateId: string | null;
   };
 }) {
-  const router = useRouter();
   const startUserQuizForm = useForm<StartUserQuizFormSchemaType>({
     defaultValues: { userQuizId: userQuiz.userQuizId },
     resolver: zodResolver(StartUserQuizFormSchema),
@@ -45,7 +43,12 @@ export default function QuizCard({
     const actionResponse = await startUserQuiz(data);
     if (actionResponse.status === "SUCCESS") {
       toast.success(actionResponse.message);
-      router.push(`/quizzes/${userQuiz.userQuizId}`);
+      const link = document.createElement("a");
+      link.href = `/${userQuiz.userQuizId}`;
+      link.style.visibility = "hidden";
+      link.target = "_blank";
+      link.click();
+      document.body.appendChild(link);
     } else {
       toast.error(actionResponse.message);
     }
@@ -71,10 +74,14 @@ export default function QuizCard({
           <form onSubmit={handleSubmit(startUserQuizFormAction)}>
             <Button
               variant="ghost"
-              className="flex h-12 items-center gap-3 rounded-full bg-green-500 text-white"
+              className="flex items-center gap-3 rounded-full bg-green-500 text-white hover:text-green-500"
             >
-              <span className="text-xl font-semibold">Start Exam</span>
-              {formState.isSubmitting ? <Loader2 /> : <ArrowBigRight />}
+              <span className="font-semibold md:text-lg">Start Exam</span>
+              {formState.isSubmitting ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <ArrowBigRight />
+              )}
             </Button>
           </form>
         )}
@@ -83,15 +90,18 @@ export default function QuizCard({
             href={`https://drive.usercontent.google.com/download?id=${userQuiz.certificateId}&export=download`}
             className={cn(
               buttonVariants({ variant: "destructive" }),
-              "flex h-12 items-center gap-3 rounded-full text-white",
-              userQuiz.certificateId === null && "pointer-events-none",
+              "flex items-center gap-3 rounded-full text-white",
+              userQuiz.certificateId === null &&
+                "pointer-events-none bg-red-500/75",
             )}
           >
-            <span className="text-xl font-semibold">Download Certificate</span>
-            <Download />
+            <span className="font-semibold md:text-lg">Certificate</span>
+            <Download size={18} />
           </Link>
         )}
       </CardFooter>
     </Card>
   );
 }
+
+export default renderOnClient(QuizCard);

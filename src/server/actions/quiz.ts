@@ -698,7 +698,6 @@ export async function submitQuiz(
     })
     .where(eq(userQuizzes.userQuizId, userQuizId));
 
-  revalidatePath("/quizzes");
   return {
     status: "SUCCESS",
     message: `You scored ${score}`,

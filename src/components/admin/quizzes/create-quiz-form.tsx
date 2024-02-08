@@ -44,6 +44,7 @@ export default function CreateQuizForm() {
         questionText: "",
         mark: 5,
         questionOrder: 1,
+        questionImageId: "",
         options: [
           {
             optionId: createId(),

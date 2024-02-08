@@ -87,7 +87,8 @@ export function editActionToast(action?: {
 }
 
 export function getRandomizedPatternPath() {
-  const randomNumber =
-    Math.floor(Math.random() * ABSTRACT_PATTERN_PATHS.length) + 1;
+  const randomNumber = Math.floor(
+    Math.random() * ABSTRACT_PATTERN_PATHS.length,
+  );
   return ABSTRACT_PATTERN_PATHS[randomNumber];
 }
