@@ -22,6 +22,10 @@ export const env = createEnv({
       process.env.VERCEL ? z.string() : z.string().url(),
     ),
     RESEND_API_KEY: z.string(),
+    DATABASE_HOST: z.string(),
+    DATABASE_USER: z.string(),
+    DATABASE_PASSWORD: z.string(),
+    DATABASE_NAME: z.string(),
   },
 
   /**
@@ -43,6 +47,10 @@ export const env = createEnv({
     AUTH_SECRET: process.env.NEXTAUTH_SECRET,
     AUTH_URL: process.env.NEXTAUTH_URL,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    DATABASE_HOST: process.env.DATABASE_HOST,
+    DATABASE_USER: process.env.DATABASE_USER,
+    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
+    DATABASE_NAME: process.env.DATABASE_NAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
