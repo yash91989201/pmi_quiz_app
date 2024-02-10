@@ -1,6 +1,7 @@
+// UTILS
+import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
 import CreateNewUserForm from "@/components/admin/user/create-user-form";
-import { api } from "@/trpc/server";
 
 export default async function CreateNewUserPage() {
   const orders = await api.order.getAll.query();
