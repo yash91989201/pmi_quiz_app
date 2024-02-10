@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 // CUSTOM COMPONENTS
-import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
+import DeleteUserModal from "@/components/admin/quizzes/delete-user-modal";
 // ICONS
 import { Edit2, Eye } from "lucide-react";
 

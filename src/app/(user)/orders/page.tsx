@@ -1,5 +1,7 @@
-import UserOrders from "@/components/shared/user-orders";
+// UTILS
 import { api } from "@/trpc/server";
+// CUSTOM COMPONENTS
+import UserOrders from "@/components/shared/user-orders";
 
 export default async function OrdersPage() {
   const userOrders = await api.user.getUserOrdersOnUser.query();

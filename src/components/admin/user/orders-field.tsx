@@ -3,7 +3,6 @@ import { Fragment } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 // TYPES
 import type { CreateUserFormSchemaType } from "@/lib/schema";
-// CUSTOM COMPONENTS
 // ICONS
 import { Checkbox } from "@/components/ui/checkbox";
 

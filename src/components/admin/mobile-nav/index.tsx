@@ -1,6 +1,6 @@
+import Image from "next/image";
 // CUSTOM COMPONENTS
 import SideBar from "@/components/admin/mobile-nav/side-bar";
-import Image from "next/image";
 
 export default function MobileNav() {
   return (

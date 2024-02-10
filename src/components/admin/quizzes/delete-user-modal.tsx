@@ -1,7 +1,7 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
 import { deleteUser } from "@/server/actions/user";
 // CUSTOM HOOKS
@@ -9,8 +9,8 @@ import useToggle from "@/hooks/use-toggle";
 // SCHEMAS
 import { DeleteUserSchema } from "@/lib/schema";
 // TYPES
-import type { DeleteUserSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
+import type { DeleteUserSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import {
 // ICONS
 import { CheckCircle2, Loader2, Trash2, XCircle } from "lucide-react";
 
-export function DeleteUserModal({ id }: { id: string }) {
+export default function DeleteUserModal({ id }: { id: string }) {
   const [actionResponse, setActionResponse] =
     useState<DeleteUserFormStatusType>();
   const deleteQuizModal = useToggle(false);

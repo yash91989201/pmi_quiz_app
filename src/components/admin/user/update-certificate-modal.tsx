@@ -15,7 +15,6 @@ import type {
   UserQuizStatusType,
 } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +29,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 // ICONS
 import { Loader2, ScrollText } from "lucide-react";

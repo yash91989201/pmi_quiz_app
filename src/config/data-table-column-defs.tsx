@@ -10,16 +10,15 @@ import type {
 } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Badge } from "@/components/ui/badge";
-// CONSTANTS
-import QuizTableActions from "@/components/admin/quizzes/quiz-table-actions";
-import QuizTableActionMenu from "@/components/admin/quizzes/quiz-table-action-menu";
 import UserTableActions from "@/components/admin/user/user-table-actions";
-import UserTableActionMenu from "@/components/admin/user/user-table-action-menu";
+import QuizTableActions from "@/components/admin/quizzes/quiz-table-actions";
 import ResetUserQuizButton from "@/components/admin/user/reset-user-quiz-button";
+import UserTableActionMenu from "@/components/admin/user/user-table-action-menu";
 import DeleteUserQuizButton from "@/components/admin/user/delete-user-quiz-button";
+import QuizTableActionMenu from "@/components/admin/quizzes/quiz-table-action-menu";
+import { UpdateCertificateModal } from "@/components/admin/user/update-certificate-modal";
 // CONSTANTS
 import { DUMMY_EMAIL_PREFIX, STATUS_TEXT } from "@/config/constants";
-import { UpdateCertificateModal } from "@/components/admin/user/update-certificate-modal";
 
 export const userTableColumns: ColumnDef<UserSchemaType>[] = [
   {

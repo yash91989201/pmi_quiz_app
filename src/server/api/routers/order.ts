@@ -1,7 +1,8 @@
+import { asc } from "drizzle-orm";
 // UTILS
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+// SCHEMAS
 import { orders } from "@/server/db/schema";
-import { asc } from "drizzle-orm";
 
 const orderRouter = createTRPCRouter({
   /**

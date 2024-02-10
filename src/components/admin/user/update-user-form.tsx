@@ -9,6 +9,7 @@ import { updateUser } from "@/server/actions/user";
 import useToggle from "@/hooks/use-toggle";
 // UTILS
 import { api } from "@/trpc/react";
+import { editActionToast } from "@/lib/utils";
 // SCHEMAS
 import { UpdateUserFormSchema } from "@/lib/schema";
 // TYPES
@@ -18,8 +19,6 @@ import type {
 } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
 // CUSTOM COMPONENTS
-import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -29,6 +28,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import OrdersField from "@/components/admin/user/orders-field";
+import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
 // ICONS
 import {
   CheckCircle2,
@@ -40,8 +42,6 @@ import {
   UserRound,
   XCircle,
 } from "lucide-react";
-import { editActionToast } from "@/lib/utils";
-import OrdersField from "@/components/admin/user/orders-field";
 
 type UpdateUserFormProps = {
   defaultValues: {

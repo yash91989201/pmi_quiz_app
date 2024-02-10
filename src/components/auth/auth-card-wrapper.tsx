@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 // CUSTOM COMPONENTS
 import {
   Card,
@@ -8,7 +9,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 export default function AuthCardWrapper({
   children,

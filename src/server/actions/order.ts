@@ -1,17 +1,18 @@
 "use server";
-
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
+import { createId } from "@paralleldrive/cuid2";
+// UTILS
+import { db } from "@/server/db";
+// SCHEMAS
 import { OrderFormSchema } from "@/lib/schema";
-
+import { orders, userOrders, users } from "@/server/db/schema";
+// TYPES
 import type {
   UserOrderSchemaType,
   OrderFormSchemaType,
   OrderSchemaType,
 } from "@/lib/schema";
-import { db } from "@/server/db";
-import { orders, userOrders, users } from "@/server/db/schema";
-import { createId } from "@paralleldrive/cuid2";
-import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 export async function updateOrder(
   formData: OrderFormSchemaType,
@@ -64,7 +65,7 @@ export async function updateOrder(
   });
 
   if (newOrders.length > 0) {
-    const ordersInsertQuery = await db.insert(orders).values(newOrders);
+    await db.insert(orders).values(newOrders);
   }
 
   if (existingUsers.length > 0 && newOrders.length > 0) {
@@ -78,13 +79,11 @@ export async function updateOrder(
 
       newUsersOrders.push(...newUserOrder);
     });
-    const usersOrdersInsertQuery = await db
-      .insert(userOrders)
-      .values(newUsersOrders);
+    await db.insert(userOrders).values(newUsersOrders);
   }
 
   if (updatedOrdersId.length > 0) {
-    const updateOrdersQuery = await Promise.all(
+    await Promise.all(
       updatedOrdersId.map(async (updatedOrderId) => {
         const { orderPriority, orderText } = updatedOrders.find(
           (updatedOrder) => updatedOrder.orderId === updatedOrderId,
@@ -97,7 +96,7 @@ export async function updateOrder(
         return updatedOrderQuery[0];
       }),
     );
-    const updateUsersOrdersQuery = await Promise.all(
+    await Promise.all(
       updatedOrdersId.map(async (updatedOrderId) => {
         const { orderPriority, orderText } = updatedOrders.find(
           (updatedOrder) => updatedOrder.orderId === updatedOrderId,
@@ -113,7 +112,7 @@ export async function updateOrder(
   }
 
   if (deletedOrdersId.length > 0) {
-    const deleteOrdersQuery = await Promise.all(
+    await Promise.all(
       deletedOrdersId.map(async (deletedOrderId) => {
         const deleteOrderQuery = await db
           .delete(orders)
@@ -122,7 +121,7 @@ export async function updateOrder(
         return deleteOrderQuery[0];
       }),
     );
-    const deleteUsersOrdersQuery = await Promise.all(
+    await Promise.all(
       deletedOrdersId.map(async (deletedOrderId) => {
         const updatedUsersOrderQuery = await db
           .delete(userOrders)

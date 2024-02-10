@@ -1,5 +1,7 @@
-import CreateOrderForm from "@/components/admin/orders/create-order-form";
+// UTILS
 import { api } from "@/trpc/server";
+// CUSTOM COMPONENTS
+import CreateOrderForm from "@/components/admin/orders/create-order-form";
 
 export default async function OrdersPage() {
   const orders = await api.order.getAll.query();

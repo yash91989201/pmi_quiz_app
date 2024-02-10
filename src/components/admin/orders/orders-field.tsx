@@ -1,19 +1,19 @@
 "use client";
-import { createId } from "@paralleldrive/cuid2";
 import { Fragment, useEffect } from "react";
+import { createId } from "@paralleldrive/cuid2";
 import { useFieldArray, useFormContext } from "react-hook-form";
 // TYPES
 import type { OrderFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-// ICONS
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+// ICONS
 import { Trash2 } from "lucide-react";
 
 export default function OrdersField() {

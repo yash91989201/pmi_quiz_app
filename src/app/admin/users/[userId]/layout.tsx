@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
 // UTILS
 import { api } from "@/trpc/server";
+// TYPES
+import type { ReactNode } from "react";
 // CUSTOM COMPONENTS
 import UserPageBreadcrumbs from "@/components/admin/user/user-page-breadcrumbs";
 

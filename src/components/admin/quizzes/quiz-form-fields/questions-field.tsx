@@ -5,8 +5,6 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 // TYPES
 import type { QuizFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import TipTap from "@/components/admin/quizzes/TipTap";
-import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -14,6 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import TipTap from "@/components/admin/quizzes/TipTap";
 import OptionsField from "@/components/admin/quizzes/quiz-form-fields/options-field";
 // ICONS
 import { Trash2 } from "lucide-react";

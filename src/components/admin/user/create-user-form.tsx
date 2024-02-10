@@ -7,16 +7,14 @@ import { createNewUser } from "@/server/actions/user";
 // CUSTOM HOOKS
 import useToggle from "@/hooks/use-toggle";
 // UTILS
-import { generateRandomDummyEmail } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import { generateRandomDummyEmail } from "@/lib/utils";
 // SCHEMAS
 import { CreateUserFormSchema } from "@/lib/schema";
 // TYPES
-import type { CreateUserFormSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
+import type { CreateUserFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -32,8 +30,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-// ICONS
+import { Button } from "@/components/ui/button";
 import OrdersField from "@/components/admin/user/orders-field";
+import AvailableQuizzesField from "@/components/admin/user/available-quizzes-field";
+// ICONS
 import { Eye, EyeOff, Info, Loader2, UserRound } from "lucide-react";
 
 export default function CreateNewUserForm({

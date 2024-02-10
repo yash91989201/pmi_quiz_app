@@ -1,8 +1,10 @@
+import Link from "next/link";
 import Image from "next/image";
 // ACTIONS
 import { logoutUser } from "@/server/actions/user";
+// UTILS
+import { currentUser } from "@/server/utils/auth";
 // CUSTOM COMPONENTS
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,11 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import NavLinks from "@/components/user/nav-links";
-import { currentUser } from "@/server/utils/auth";
-import Link from "next/link";
-import { LogOut, UserRound } from "lucide-react";
 import UserSideBar from "@/components/user/user-sidebar";
+// ICONS
+import { LogOut, UserRound } from "lucide-react";
 
 export default async function UserNavbar() {
   const user = await currentUser();

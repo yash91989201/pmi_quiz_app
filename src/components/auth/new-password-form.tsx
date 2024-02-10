@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
@@ -10,8 +10,8 @@ import useToggle from "@/hooks/use-toggle";
 // SCHEMAS
 import { NewPasswordSchema } from "@/lib/schema";
 // TYPES
-import type { NewPasswordSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
+import type { NewPasswordSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import AuthCardWrapper from "@/components/auth/auth-card-wrapper";
 // ICONS
 import { CheckCircle2, Eye, EyeOff, Loader2, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function NewPasswordForm() {
   const router = useRouter();

@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { createId } from "@paralleldrive/cuid2";
 import { useFieldArray, useFormContext } from "react-hook-form";
 // UTILS
@@ -7,11 +8,10 @@ import { cn } from "@/lib/utils";
 import type { QuizFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
-import { FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { FormControl, FormField, FormItem } from "@/components/ui/form";
 // ICONS
 import { Plus, Trash2 } from "lucide-react";
-import { useEffect } from "react";
 
 export default function OptionsField({
   questionIndex,

@@ -1,4 +1,6 @@
 "use client";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+// CUSTOM COMPONENTS
 import {
   Select,
   SelectContent,
@@ -6,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function RowsPerPage({ per_page }: { per_page: number }) {
   const rows = [5, 10, 15, 20, 25, 30];

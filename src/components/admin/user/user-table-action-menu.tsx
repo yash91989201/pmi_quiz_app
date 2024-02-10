@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DeleteUserModal } from "@/components/admin/quizzes/delete-user-modal";
+import DeleteUserModal from "@/components/admin/quizzes/delete-user-modal";
 // ICONS
 import { MoreVertical, Edit2, Eye } from "lucide-react";
 

@@ -5,6 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 // CUSTOM COMPONENTS
 import UserTable from "@/components/admin/user/user-table";
 import URLSearchBox from "@/components/shared/url-search-box";
+// ICONS
 import { Plus } from "lucide-react";
 
 export default function UsersPage({

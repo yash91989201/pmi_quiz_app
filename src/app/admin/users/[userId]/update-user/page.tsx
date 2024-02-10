@@ -1,6 +1,7 @@
+// UTILS
+import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
 import UpdateUserForm from "@/components/admin/user/update-user-form";
-import { api } from "@/trpc/server";
 
 export default async function Page({ params }: { params: { userId: string } }) {
   const data = await api.user.getUserById.query({ userId: params.userId });

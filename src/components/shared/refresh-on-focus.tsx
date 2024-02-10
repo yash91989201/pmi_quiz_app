@@ -1,10 +1,9 @@
 // src/app/components/refresh-on-focus.tsx
 "use client";
-
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export function RefreshOnFocus() {
+export default function RefreshOnFocus() {
   const router = useRouter();
 
   useEffect(() => {

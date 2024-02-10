@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { currentRole, currentUser } from "@/server/utils/auth";
 // TYPES
 import type { ReactNode } from "react";
-// CUSTOM COMPONENTS
 
 export default async function UserLayout({
   children,

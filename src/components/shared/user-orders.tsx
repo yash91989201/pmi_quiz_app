@@ -1,7 +1,10 @@
-import type { UserOrderSchemaType } from "@/lib/schema";
-import { cn } from "@/lib/utils";
-import { Check, CircleSlash } from "lucide-react";
 import { Fragment } from "react";
+// UTILS
+import { cn } from "@/lib/utils";
+// TYPES
+import type { UserOrderSchemaType } from "@/lib/schema";
+// ICONS
+import { Check, CircleSlash } from "lucide-react";
 
 export default function UserOrders({
   userOrders,

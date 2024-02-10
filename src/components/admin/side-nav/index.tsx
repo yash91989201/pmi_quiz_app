@@ -1,7 +1,7 @@
+import Image from "next/image";
 // CUSTOM COMPONENTS
 import NavLinks from "@/components/admin/side-nav/nav-links";
 import LogoutButton from "@/components/admin/side-nav/logout-button";
-import Image from "next/image";
 
 export default function SideNav() {
   return (

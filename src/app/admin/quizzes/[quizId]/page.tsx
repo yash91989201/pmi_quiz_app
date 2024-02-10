@@ -1,14 +1,16 @@
+import Link from "next/link";
+import Image from "next/image";
 import parse from "html-react-parser";
 // UTILS
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { api } from "@/trpc/server";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { api } from "@/trpc/server";
 import { buttonVariants } from "@/components/ui/button";
-import { Edit2 } from "lucide-react";
+// CUSTOM COMPONENTS
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DeleteQuizButton } from "@/components/admin/quizzes/delete-quiz-button";
-import Image from "next/image";
+// ICONS
+import { Edit2 } from "lucide-react";
 
 export default async function Page({ params }: { params: { quizId: string } }) {
   const data = await api.quiz.getQuizData.query({ quizId: params.quizId });

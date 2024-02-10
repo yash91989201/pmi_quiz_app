@@ -1,8 +1,8 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
 import { and, eq } from "drizzle-orm";
-import bcrypt from "bcryptjs";
+import { revalidatePath } from "next/cache";
 // UTILS
 import {
   sendPasswordResetEmail,

@@ -1,8 +1,9 @@
 "use client";
 import { useFormStatus } from "react-dom";
+// ACTIONS
+import { logoutUser } from "@/server/actions/user";
 // CUSTOM COMPONENTS
 import { Button } from "@/components/ui/button";
-import { logoutUser } from "@/server/actions/user";
 // ICONS
 import { Loader2, Power } from "lucide-react";
 

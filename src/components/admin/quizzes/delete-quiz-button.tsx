@@ -1,10 +1,10 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 // ACTIONS
 import { deleteQuiz } from "@/server/actions/quiz";
-// CUSTOM HOOKS
 // SCHEMAS
 import { DeleteQuizFormSchema } from "@/lib/schema";
 // TYPES
@@ -14,7 +14,6 @@ import type { SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 // ICONS
 import { Loader2, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
 export function DeleteQuizButton({ quizId }: { quizId: string }) {
   const router = useRouter();

@@ -2,8 +2,8 @@
 import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
 import DataTable from "@/components/ui/data-table";
-import { userQuizzesTableColumns } from "@/config/data-table-column-defs";
 import UserOrders from "@/components/shared/user-orders";
+import { userQuizzesTableColumns } from "@/config/data-table-column-defs";
 
 export default async function Page({ params }: { params: { userId: string } }) {
   const data = await api.quiz.getUserQuizzes.query({ userId: params.userId });

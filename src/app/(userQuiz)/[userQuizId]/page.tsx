@@ -1,10 +1,11 @@
 "use client";
+import { useEffect } from "react";
 // UTILS
 import { api } from "@/trpc/react";
 // CUSTOM COMPONENTS
 import { Badge } from "@/components/ui/badge";
 import UserQuizForm from "@/components/user/user-quiz-form";
-import { useEffect } from "react";
+// ICONS
 import { Info } from "lucide-react";
 
 export default function UserQuizPage({

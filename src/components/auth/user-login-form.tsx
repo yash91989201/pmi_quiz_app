@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import AuthCardWrapper from "@/components/auth/auth-card-wrapper";
 // ICONS
 import {
@@ -34,7 +35,6 @@ import {
   UserRound,
   XCircle,
 } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 
 export default function UserLoginForm() {
   const showPasswordToggle = useToggle(false);

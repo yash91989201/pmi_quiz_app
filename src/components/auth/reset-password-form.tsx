@@ -8,10 +8,9 @@ import { resetPassword } from "@/server/actions/user";
 // SCHEMAS
 import { ResetPasswordSchema } from "@/lib/schema";
 // TYPES
-import type { ResetPasswordSchemaType } from "@/lib/schema";
 import type { SubmitHandler } from "react-hook-form";
+import type { ResetPasswordSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -28,6 +27,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 // ICONS
 import { CheckCircle2, Loader2, Mail, XCircle } from "lucide-react";
 

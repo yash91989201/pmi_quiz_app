@@ -3,7 +3,6 @@ import { useFormContext } from "react-hook-form";
 // TYPES
 import type { CreateUserFormSchemaType } from "@/lib/schema";
 // CUSTOM COMPONENTS
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -11,6 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AvailableQuizzesField({
   isLoading,

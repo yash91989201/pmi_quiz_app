@@ -1,5 +1,6 @@
-import { currentRole } from "@/server/utils/auth";
 import { redirect } from "next/navigation";
+// UTILS
+import { currentRole } from "@/server/utils/auth";
 
 export default async function Home() {
   const userRole = await currentRole();

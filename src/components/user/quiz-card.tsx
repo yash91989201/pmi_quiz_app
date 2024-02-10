@@ -1,21 +1,24 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+// ACTIONS
+import { startUserQuiz } from "@/server/actions/user";
 // UTILS
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn, getRandomizedPatternPath, renderOnClient } from "@/lib/utils";
-// CUSTOM COMPONENTS
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-// ICONS
-import { ArrowBigRight, Download, Loader2 } from "lucide-react";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+// SCHEMAS
 import {
   StartUserQuizFormSchema,
   type StartUserQuizFormSchemaType,
 } from "@/lib/schema";
-import { startUserQuiz } from "@/server/actions/user";
-import { toast } from "sonner";
+// TYPES
+import { type SubmitHandler, useForm } from "react-hook-form";
+// CUSTOM COMPONENTS
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+// ICONS
+import { ArrowBigRight, Download, Loader2 } from "lucide-react";
 
 function QuizCard({
   userQuiz,

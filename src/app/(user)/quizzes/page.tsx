@@ -2,7 +2,7 @@
 import { api } from "@/trpc/server";
 // CUSTOM COMPONENTS
 import QuizCard from "@/components/user/quiz-card";
-import { RefreshOnFocus } from "@/components/shared/refresh-on-focus";
+import RefreshOnFocus from "@/components/shared/refresh-on-focus";
 
 export default async function QuizzesPage() {
   const pendingUserQuizzes = await api.user.getPendingQuizzes.query();

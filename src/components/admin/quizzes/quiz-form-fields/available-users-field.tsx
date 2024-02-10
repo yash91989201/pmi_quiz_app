@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
-// ICONS
+
 export default function AvailableUsersField({
   isLoading,
   availableUsers,
