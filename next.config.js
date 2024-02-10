@@ -7,7 +7,16 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["drive.usercontent.google.com", "drive.google.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "drive.usercontent.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
+    ],
   },
 };
 
