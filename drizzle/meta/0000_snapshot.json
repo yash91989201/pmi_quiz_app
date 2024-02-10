@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "c1b31d1f-9270-4361-b199-c4f08f1c94a3",
+  "id": "a9c95b09-27fd-40f9-bb18-ff6dfec1f9fe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "option": {
-      "name": "option",
+    "options": {
+      "name": "options",
       "columns": {
         "optionId": {
           "name": "optionId",
@@ -17,6 +17,13 @@
         "questionId": {
           "name": "questionId",
           "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "optionOrder": {
+          "name": "optionOrder",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -39,10 +46,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "option_questionId_question_questionId_fk": {
-          "name": "option_questionId_question_questionId_fk",
-          "tableFrom": "option",
-          "tableTo": "question",
+        "options_questionId_questions_questionId_fk": {
+          "name": "options_questionId_questions_questionId_fk",
+          "tableFrom": "options",
+          "tableTo": "questions",
           "columnsFrom": [
             "questionId"
           ],
@@ -54,8 +61,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "option_optionId": {
-          "name": "option_optionId",
+        "options_optionId": {
+          "name": "options_optionId",
           "columns": [
             "optionId"
           ]
@@ -63,8 +70,46 @@
       },
       "uniqueConstraints": {}
     },
-    "passwordResetToken": {
-      "name": "passwordResetToken",
+    "orders": {
+      "name": "orders",
+      "columns": {
+        "orderId": {
+          "name": "orderId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "orderText": {
+          "name": "orderText",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "orderPriority": {
+          "name": "orderPriority",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "orders_orderId": {
+          "name": "orders_orderId",
+          "columns": [
+            "orderId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "passwordResetTokens": {
+      "name": "passwordResetTokens",
       "columns": {
         "id": {
           "name": "id",
@@ -98,8 +143,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "passwordResetToken_id_token_pk": {
-          "name": "passwordResetToken_id_token_pk",
+        "passwordResetTokens_id_token_pk": {
+          "name": "passwordResetTokens_id_token_pk",
           "columns": [
             "id",
             "token"
@@ -107,22 +152,22 @@
         }
       },
       "uniqueConstraints": {
-        "passwordResetToken_email_unique": {
-          "name": "passwordResetToken_email_unique",
+        "passwordResetTokens_email_unique": {
+          "name": "passwordResetTokens_email_unique",
           "columns": [
             "email"
           ]
         },
-        "passwordResetToken_token_unique": {
-          "name": "passwordResetToken_token_unique",
+        "passwordResetTokens_token_unique": {
+          "name": "passwordResetTokens_token_unique",
           "columns": [
             "token"
           ]
         }
       }
     },
-    "question": {
-      "name": "question",
+    "questions": {
+      "name": "questions",
       "columns": {
         "questionId": {
           "name": "questionId",
@@ -147,18 +192,32 @@
         },
         "mark": {
           "name": "mark",
-          "type": "int",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "questionOrder": {
+          "name": "questionOrder",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "questionImageId": {
+          "name": "questionImageId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "question_quizId_quiz_quizId_fk": {
-          "name": "question_quizId_quiz_quizId_fk",
-          "tableFrom": "question",
-          "tableTo": "quiz",
+        "questions_quizId_quizzes_quizId_fk": {
+          "name": "questions_quizId_quizzes_quizId_fk",
+          "tableFrom": "questions",
+          "tableTo": "quizzes",
           "columnsFrom": [
             "quizId"
           ],
@@ -170,8 +229,8 @@
         }
       },
       "compositePrimaryKeys": {
-        "question_questionId": {
-          "name": "question_questionId",
+        "questions_questionId": {
+          "name": "questions_questionId",
           "columns": [
             "questionId"
           ]
@@ -179,8 +238,8 @@
       },
       "uniqueConstraints": {}
     },
-    "quiz": {
-      "name": "quiz",
+    "quizzes": {
+      "name": "quizzes",
       "columns": {
         "quizId": {
           "name": "quizId",
@@ -196,9 +255,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "totalMarks": {
-          "name": "totalMarks",
-          "type": "int",
+        "totalMark": {
+          "name": "totalMark",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -207,8 +266,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "quiz_quizId": {
-          "name": "quiz_quizId",
+        "quizzes_quizId": {
+          "name": "quizzes_quizId",
           "columns": [
             "quizId"
           ]
@@ -236,10 +295,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "twoFactorConfimation_userId_user_id_fk": {
-          "name": "twoFactorConfimation_userId_user_id_fk",
+        "twoFactorConfimation_userId_users_id_fk": {
+          "name": "twoFactorConfimation_userId_users_id_fk",
           "tableFrom": "twoFactorConfimation",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
@@ -260,8 +319,8 @@
         }
       }
     },
-    "twoFactorToken": {
-      "name": "twoFactorToken",
+    "twoFactorTokens": {
+      "name": "twoFactorTokens",
       "columns": {
         "id": {
           "name": "id",
@@ -295,8 +354,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "twoFactorToken_id_token_pk": {
-          "name": "twoFactorToken_id_token_pk",
+        "twoFactorTokens_id_token_pk": {
+          "name": "twoFactorTokens_id_token_pk",
           "columns": [
             "id",
             "token"
@@ -304,19 +363,106 @@
         }
       },
       "uniqueConstraints": {
-        "twoFactorToken_email_unique": {
-          "name": "twoFactorToken_email_unique",
+        "twoFactorTokens_email_unique": {
+          "name": "twoFactorTokens_email_unique",
           "columns": [
             "email"
           ]
         },
-        "twoFactorToken_token_unique": {
-          "name": "twoFactorToken_token_unique",
+        "twoFactorTokens_token_unique": {
+          "name": "twoFactorTokens_token_unique",
           "columns": [
             "token"
           ]
         }
       }
+    },
+    "userOrders": {
+      "name": "userOrders",
+      "columns": {
+        "userOrderId": {
+          "name": "userOrderId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "orderId": {
+          "name": "orderId",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "orderText": {
+          "name": "orderText",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "orderPriority": {
+          "name": "orderPriority",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "isCompleted": {
+          "name": "isCompleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "userOrders_userId_users_id_fk": {
+          "name": "userOrders_userId_users_id_fk",
+          "tableFrom": "userOrders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "userOrders_orderId_orders_orderId_fk": {
+          "name": "userOrders_orderId_orders_orderId_fk",
+          "tableFrom": "userOrders",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "orderId"
+          ],
+          "columnsTo": [
+            "orderId"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "userOrders_userOrderId": {
+          "name": "userOrders_userOrderId",
+          "columns": [
+            "userOrderId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "userQuizzes": {
       "name": "userQuizzes",
@@ -342,9 +488,23 @@
           "notNull": true,
           "autoincrement": false
         },
+        "quizTitle": {
+          "name": "quizTitle",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "totalMark": {
+          "name": "totalMark",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "score": {
           "name": "score",
-          "type": "int",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
@@ -357,14 +517,21 @@
           "notNull": true,
           "autoincrement": false,
           "default": "'NOT_STARTED'"
+        },
+        "certificateId": {
+          "name": "certificateId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "userQuizzes_userId_user_id_fk": {
-          "name": "userQuizzes_userId_user_id_fk",
+        "userQuizzes_userId_users_id_fk": {
+          "name": "userQuizzes_userId_users_id_fk",
           "tableFrom": "userQuizzes",
-          "tableTo": "user",
+          "tableTo": "users",
           "columnsFrom": [
             "userId"
           ],
@@ -374,10 +541,10 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "userQuizzes_quizId_quiz_quizId_fk": {
-          "name": "userQuizzes_quizId_quiz_quizId_fk",
+        "userQuizzes_quizId_quizzes_quizId_fk": {
+          "name": "userQuizzes_quizId_quizzes_quizId_fk",
           "tableFrom": "userQuizzes",
-          "tableTo": "quiz",
+          "tableTo": "quizzes",
           "columnsFrom": [
             "quizId"
           ],
@@ -398,8 +565,8 @@
       },
       "uniqueConstraints": {}
     },
-    "user": {
-      "name": "user",
+    "users": {
+      "name": "users",
       "columns": {
         "id": {
           "name": "id",
@@ -463,30 +630,30 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "user_id": {
-          "name": "user_id",
+        "users_id": {
+          "name": "users_id",
           "columns": [
             "id"
           ]
         }
       },
       "uniqueConstraints": {
-        "user_name_unique": {
-          "name": "user_name_unique",
+        "users_name_unique": {
+          "name": "users_name_unique",
           "columns": [
             "name"
           ]
         },
-        "user_email_unique": {
-          "name": "user_email_unique",
+        "users_email_unique": {
+          "name": "users_email_unique",
           "columns": [
             "email"
           ]
         }
       }
     },
-    "verificationToken": {
-      "name": "verificationToken",
+    "verificationTokens": {
+      "name": "verificationTokens",
       "columns": {
         "id": {
           "name": "id",
@@ -520,8 +687,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "verificationToken_id_token_pk": {
-          "name": "verificationToken_id_token_pk",
+        "verificationTokens_id_token_pk": {
+          "name": "verificationTokens_id_token_pk",
           "columns": [
             "id",
             "token"
@@ -529,14 +696,14 @@
         }
       },
       "uniqueConstraints": {
-        "verificationToken_email_unique": {
-          "name": "verificationToken_email_unique",
+        "verificationTokens_email_unique": {
+          "name": "verificationTokens_email_unique",
           "columns": [
             "email"
           ]
         },
-        "verificationToken_token_unique": {
-          "name": "verificationToken_token_unique",
+        "verificationTokens_token_unique": {
+          "name": "verificationTokens_token_unique",
           "columns": [
             "token"
           ]

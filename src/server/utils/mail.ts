@@ -1,4 +1,5 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import { render } from "@react-email/render";
 // UTILS
 import { env } from "@/env";
 // CUSTOM COMPONENTS
@@ -6,7 +7,15 @@ import VerificationEmail from "@/components/emails/verfication-form";
 import PasswordResetEmail from "@/components/emails/password-reset-email";
 import TwoFactorAuthEmail from "@/components/emails/two-factor-auth-email";
 
-const resend = new Resend(env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: env.SMTP_HOST,
+  secure: env.NODE_ENV === "production",
+  port: 465,
+  auth: {
+    user: env.SMTP_USER,
+    pass: env.SMTP_PASSWORD,
+  },
+});
 
 async function sendVerificationEmail({
   email,
@@ -20,11 +29,14 @@ async function sendVerificationEmail({
   userName: string;
 }) {
   const confirmationLink = `http://localhost:3000/auth/new-verification?token=${token}`;
-  const res = await resend.emails.send({
+  const verificationEmailHTML = render(
+    VerificationEmail({ confirmationLink, userName }),
+  );
+  const res = await transporter.sendMail({
     from: "mail@devopsprojects.pro",
     to: email,
     subject,
-    react: VerificationEmail({ confirmationLink, userName }),
+    html: verificationEmailHTML,
   });
   console.log(res);
 }
@@ -37,13 +49,16 @@ async function sendPasswordResetEmail({
   token: string;
 }) {
   const passwordResetLink = `http://localhost:3000/auth/new-password?token=${token}`;
-  const res = await resend.emails.send({
+  const sendPasswordResetEmailHTML = render(
+    PasswordResetEmail({
+      passwordResetLink,
+    }),
+  );
+  const res = await transporter.sendMail({
     from: "onboarding@resend.dev",
     to: email,
     subject: "Reset your password",
-    react: PasswordResetEmail({
-      passwordResetLink,
-    }),
+    html: sendPasswordResetEmailHTML,
   });
   console.log(res);
 }
@@ -55,13 +70,16 @@ async function sendTwoFactorTokenEmail({
   email: string;
   token: string;
 }) {
-  const res = await resend.emails.send({
+  const twoFactorAuthEmailHTML = render(
+    TwoFactorAuthEmail({
+      twoFactorCode: token,
+    }),
+  );
+  const res = await transporter.sendMail({
     from: "onboarding@resend.dev",
     to: email,
     subject: "2FA Code For Login",
-    react: TwoFactorAuthEmail({
-      twoFactorCode: token,
-    }),
+    html: twoFactorAuthEmailHTML,
   });
   console.log(res);
 }

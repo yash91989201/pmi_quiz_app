@@ -133,7 +133,6 @@ export const userQuizzesTableColumns: ColumnDef<UserQuizSchemaType>[] = [
         variant={
           row.original.certificateId === null ? "destructive" : "success"
         }
-        className="w-20"
       >
         {row.original.certificateId === null ? "Not added" : "Added"}
       </Badge>
