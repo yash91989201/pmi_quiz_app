@@ -21,7 +21,7 @@ export default function AuthCardWrapper({
       <CardHeader className="flex flex-col items-center justify-center gap-y-3">
         <div className="relative h-16 w-60">
           <Image
-            src="/pmi_logo.png"
+            src="/pmi_logo.webp"
             alt="PMI"
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
