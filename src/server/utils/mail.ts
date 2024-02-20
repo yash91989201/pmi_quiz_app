@@ -28,12 +28,12 @@ async function sendVerificationEmail({
   subject: string;
   userName: string;
 }) {
-  const confirmationLink = `http://localhost:3000/auth/new-verification?token=${token}`;
+  const confirmationLink = `${env.AUTH_URL}/auth/new-verification?token=${token}`;
   const verificationEmailHTML = render(
     VerificationEmail({ confirmationLink, userName }),
   );
   const res = await transporter.sendMail({
-    from: "mail@devopsprojects.pro",
+    from: "mail@exam.pmiusa.info",
     to: email,
     subject,
     html: verificationEmailHTML,
@@ -48,14 +48,14 @@ async function sendPasswordResetEmail({
   email: string;
   token: string;
 }) {
-  const passwordResetLink = `http://localhost:3000/auth/new-password?token=${token}`;
+  const passwordResetLink = `${env.AUTH_URL}/auth/new-password?token=${token}`;
   const sendPasswordResetEmailHTML = render(
     PasswordResetEmail({
       passwordResetLink,
     }),
   );
   const res = await transporter.sendMail({
-    from: "onboarding@resend.dev",
+    from: "mail@exam.pmiusa.info",
     to: email,
     subject: "Reset your password",
     html: sendPasswordResetEmailHTML,
@@ -76,7 +76,7 @@ async function sendTwoFactorTokenEmail({
     }),
   );
   const res = await transporter.sendMail({
-    from: "onboarding@resend.dev",
+    from: "mail@exam.pmiusa.info",
     to: email,
     subject: "2FA Code For Login",
     html: twoFactorAuthEmailHTML,

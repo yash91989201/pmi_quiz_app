@@ -590,7 +590,7 @@ export async function createNewUser(
   const hashedPassword = await bcrypt.hash(password, 12);
 
   //  create user with ROLE user
-  const newUser = await db.insert(users).values({
+  await db.insert(users).values({
     email,
     name,
     password: hashedPassword,
@@ -622,16 +622,7 @@ export async function createNewUser(
       };
     });
 
-    const newUserQuizzes = await db
-      .insert(userQuizzes)
-      .values(quizzesSelectedForUser);
-
-    if (newUser[0].affectedRows > 0 && newUserQuizzes[0].affectedRows > 0) {
-      return {
-        status: "SUCCESS",
-        message: "User Created, quizzes and orders added successfully.",
-      };
-    }
+    await db.insert(userQuizzes).values(quizzesSelectedForUser);
   }
 
   if (orders.length > 0) {
@@ -644,16 +635,9 @@ export async function createNewUser(
   }
   revalidatePath("/admin/users");
 
-  if (newUser[0].affectedRows > 0) {
-    return {
-      status: "SUCCESS",
-      message: "User Created Successfully.",
-    };
-  }
-
   return {
-    status: "FAILED",
-    message: "Unable to create user, please try again.",
+    status: "SUCCESS",
+    message: "User Created successfully.",
   };
 }
 
