@@ -11,7 +11,7 @@ export default async function CertificatesPage() {
       {completedUserQuizzes.length > 0 && (
         <div className="flex flex-col gap-6">
           <h3 className="rounded-md bg-primary  p-3 text-base font-medium text-white md:text-3xl">
-            Completed Exams
+            Results
           </h3>
           <div className="grid grid-cols-2 gap-6">
             {completedUserQuizzes.map((userQuiz) => (

@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 // ICONS
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export default function QuizPageBreadcrumbs({
   quizId,
@@ -20,16 +20,6 @@ export default function QuizPageBreadcrumbs({
 
   return (
     <nav className="flex w-fit items-center justify-center gap-2  [&>svg]:size-4 [&>svg]:text-gray-600">
-      <Link
-        href="/admin"
-        className={cn(
-          buttonVariants({ variant: "outline" }),
-          "h-8 rounded-full px-3 py-1",
-        )}
-      >
-        <Home size={14} />
-      </Link>
-      <ChevronRight />
       <Link
         href="/admin/quizzes"
         className={cn(

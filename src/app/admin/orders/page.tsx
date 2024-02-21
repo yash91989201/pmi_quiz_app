@@ -8,7 +8,7 @@ export default async function OrdersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-base  md:text-3xl">Update Orders</h2>
+      <h2 className="text-base  md:text-3xl">Update Order Status</h2>
       <CreateOrderForm initialOrders={orders} />
     </div>
   );

@@ -15,7 +15,7 @@ export default async function Page({ params }: { params: { userId: string } }) {
     <>
       <h3 className="text-base  md:text-xl">User&apos;s Exams</h3>
       <DataTable columns={userQuizzesTableColumns} data={data} />
-      <h3 className="text-base  md:text-xl">User&apos;s Orders</h3>
+      <h3 className="text-base  md:text-xl">User&apos;s Order Status</h3>
       <UserOrders userOrders={userOrders} />
     </>
   );

@@ -33,7 +33,7 @@ export default function OrdersField() {
 
   return (
     <div className="space-y-6">
-      <p className="text-lg font-medium">Update User Order</p>
+      <p className="text-lg font-medium">Update User Order Status</p>
       <div className="flex flex-col gap-3">
         {fields.map((order, index) => (
           <Fragment key={index}>

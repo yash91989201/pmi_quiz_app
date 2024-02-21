@@ -59,7 +59,7 @@ export const ADMIN_NAV_LINKS = [
     matchExact: false,
   },
   {
-    label: "Orders",
+    label: "Order Status",
     href: "/admin/orders",
     matchExact: false,
   },
@@ -75,12 +75,12 @@ export const USER_NAV_LINKS = [
     matchExact: false,
   },
   {
-    label: "Orders",
+    label: "Order Status",
     href: "/orders",
     matchExact: false,
   },
   {
-    label: "Certificates",
+    label: "Results",
     href: "/certificates",
     matchExact: false,
   },

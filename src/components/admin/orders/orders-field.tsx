@@ -58,7 +58,7 @@ export default function OrdersField() {
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder={`Order ${index + 1}`}
+                      placeholder={`Order Status ${index + 1}`}
                       className="w-60"
                       type="text"
                     />
@@ -88,7 +88,7 @@ export default function OrdersField() {
         onClick={() => addOrder()}
         disabled={fields.length >= 10}
       >
-        Add New Order
+        Add New Order Status
       </Button>
     </div>
   );

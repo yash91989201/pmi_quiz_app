@@ -65,7 +65,7 @@ export default function CreateOrderForm({
           disabled={formState.isSubmitting}
           className="flex w-fit items-center justify-center gap-3  disabled:cursor-not-allowed"
         >
-          <h6 className="md:text-lg">Update Order</h6>
+          <h6 className="md:text-lg">Update Order Status</h6>
           {formState.isSubmitting && <Loader2 className="animate-spin" />}
         </Button>
       </form>

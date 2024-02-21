@@ -98,7 +98,7 @@ function QuizCard({
                 "pointer-events-none bg-red-500/75",
             )}
           >
-            <span className="font-semibold md:text-lg">Certificate</span>
+            <span className="font-semibold md:text-lg">Result</span>
             <Download size={18} />
           </Link>
         )}
